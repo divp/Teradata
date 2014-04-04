@@ -1,7 +1,8 @@
-use tpcds1000g;
+CREATE DATABASE IF NOT EXISTS raw_tpcds1000g;
+USE tpcds1000g;
 
-drop table if exists customer_address_raw;
-create external   table customer_address_raw
+drop table if exists customer_address;
+create external   table customer_address
  (
     ca_address_sk             int               ,
     ca_address_id             varchar(16)              ,
@@ -21,8 +22,8 @@ row format delimited fields terminated by '|' lines terminated by '\n'
 stored as textfile
 location '/data/tpcds1000g/customer_address_raw/';
 
-drop table if exists customer_demographics_raw;
-create external   table customer_demographics_raw
+drop table if exists customer_demographics;
+create external   table customer_demographics
  (
     cd_demo_sk                int               ,
     cd_gender                 varchar(1)                       ,
@@ -38,8 +39,8 @@ row format delimited fields terminated by '|' lines terminated by '\n'
 stored as textfile
 location '/data/tpcds1000g/customer_demographics_raw/';
 
-drop table if exists date_dim_raw;
-create external   table date_dim_raw
+drop table if exists date_dim;
+create external   table date_dim
  (
     d_date_sk                 int               ,
     d_date_id                 varchar(16)              ,
@@ -74,8 +75,8 @@ row format delimited fields terminated by '|' lines terminated by '\n'
 stored as textfile
 location '/data/tpcds1000g/date_dim_raw/';
 
-drop table if exists warehouse_raw;
-create external   table warehouse_raw
+drop table if exists warehouse;
+create external   table warehouse
  (
     w_warehouse_sk            int               ,
     w_warehouse_id            varchar(16)              ,
@@ -96,8 +97,8 @@ row format delimited fields terminated by '|' lines terminated by '\n'
 stored as textfile
 location '/data/tpcds1000g/warehouse_raw/';
 
-drop table if exists ship_mode_raw;
-create external   table ship_mode_raw
+drop table if exists ship_mode;
+create external   table ship_mode
  (
     sm_ship_mode_sk           int               ,
     sm_ship_mode_id           varchar(16)              ,
@@ -110,8 +111,8 @@ row format delimited fields terminated by '|' lines terminated by '\n'
 stored as textfile
 location '/data/tpcds1000g/ship_mode_raw/';
 
-drop table if exists time_dim_raw;
-create external   table time_dim_raw
+drop table if exists time_dim;
+create external   table time_dim
  (
     t_time_sk                 int               ,
     t_time_id                 varchar(16)              ,
@@ -128,8 +129,8 @@ row format delimited fields terminated by '|' lines terminated by '\n'
 stored as textfile
 location '/data/tpcds1000g/time_dim_raw/';
 
-drop table if exists reason_raw;
-create external   table reason_raw
+drop table if exists reason;
+create external   table reason
  (
     r_reason_sk               int               ,
     r_reason_id               varchar(16)              ,
@@ -139,8 +140,8 @@ row format delimited fields terminated by '|' lines terminated by '\n'
 stored as textfile
 location '/data/tpcds1000g/reason_raw/';
 
-drop table if exists income_band_raw;
-create external   table income_band_raw
+drop table if exists income_band;
+create external   table income_band
  (
     ib_income_band_sk         int               ,
     ib_lower_bound            int                       ,
@@ -150,8 +151,8 @@ row format delimited fields terminated by '|' lines terminated by '\n'
 stored as textfile
 location '/data/tpcds1000g/income_band_raw/';
 
-drop table if exists item_raw;
-create external   table item_raw
+drop table if exists item;
+create external   table item
  (
     i_item_sk                 int               ,
     i_item_id                 varchar(16)              ,
@@ -180,8 +181,8 @@ row format delimited fields terminated by '|' lines terminated by '\n'
 stored as textfile
 location '/data/tpcds1000g/item_raw/';
 
-drop table if exists store_raw;
-create external   table store_raw
+drop table if exists store;
+create external   table store
  (
     s_store_sk                int               ,
     s_store_id                varchar(16)              ,
@@ -217,8 +218,8 @@ row format delimited fields terminated by '|' lines terminated by '\n'
 stored as textfile
 location '/data/tpcds1000g/store_raw/';
 
-drop table if exists call_center_raw;
-create external   table call_center_raw
+drop table if exists call_center;
+create external   table call_center
  (
     cc_call_center_sk         int               ,
     cc_call_center_id         varchar(16)              ,
@@ -256,8 +257,8 @@ row format delimited fields terminated by '|' lines terminated by '\n'
 stored as textfile
 location '/data/tpcds1000g/call_center_raw/';
 
-drop table if exists customer_raw;
-create external   table customer_raw
+drop table if exists customer;
+create external   table customer
  (
     c_customer_sk             int               ,
     c_customer_id             varchar(16)              ,
@@ -282,8 +283,8 @@ row format delimited fields terminated by '|' lines terminated by '\n'
 stored as textfile
 location '/data/tpcds1000g/customer_raw/';
 
-drop table if exists web_site_raw;
-create external   table web_site_raw
+drop table if exists web_site;
+create external   table web_site
  (
     web_site_sk               int               ,
     web_site_id               varchar(16)              ,
@@ -316,8 +317,8 @@ row format delimited fields terminated by '|' lines terminated by '\n'
 stored as textfile
 location '/data/tpcds1000g/web_site_raw/';
 
-drop table if exists store_returns_raw;
-create external   table store_returns_raw
+drop table if exists store_returns;
+create external   table store_returns
  (
     sr_returned_date_sk       int                       ,
     sr_return_time_sk         int                       ,
@@ -344,8 +345,8 @@ row format delimited fields terminated by '|' lines terminated by '\n'
 stored as textfile
 location '/data/tpcds1000g/store_returns_raw/';
 
-drop table if exists household_demographics_raw;
-create external   table household_demographics_raw
+drop table if exists household_demographics;
+create external   table household_demographics
  (
     hd_demo_sk                int               ,
     hd_income_band_sk         int                       ,
@@ -357,8 +358,8 @@ row format delimited fields terminated by '|' lines terminated by '\n'
 stored as textfile
 location '/data/tpcds1000g/household_demographics_raw/';
 
-drop table if exists web_page_raw;
-create external   table web_page_raw
+drop table if exists web_page;
+create external   table web_page
  (
     wp_web_page_sk            int               ,
     wp_web_page_id            varchar(16)              ,
@@ -379,8 +380,8 @@ row format delimited fields terminated by '|' lines terminated by '\n'
 stored as textfile
 location '/data/tpcds1000g/web_page_raw/';
 
-drop table if exists promotion_raw;
-create external   table promotion_raw
+drop table if exists promotion;
+create external   table promotion
  (
     p_promo_sk                int               ,
     p_promo_id                varchar(16)              ,
@@ -406,8 +407,8 @@ row format delimited fields terminated by '|' lines terminated by '\n'
 stored as textfile
 location '/data/tpcds1000g/promotion_raw/';
 
-drop table if exists catalog_page_raw;
-create external   table catalog_page_raw
+drop table if exists catalog_page;
+create external   table catalog_page
  (
     cp_catalog_page_sk        int               ,
     cp_catalog_page_id        varchar(16)              ,
@@ -423,8 +424,8 @@ row format delimited fields terminated by '|' lines terminated by '\n'
 stored as textfile
 location '/data/tpcds1000g/catalog_page_raw/';
 
-drop table if exists inventory_raw;
-create external   table inventory_raw
+drop table if exists inventory;
+create external   table inventory
  (
     inv_date_sk               int               ,
     inv_item_sk               int               ,
@@ -435,8 +436,8 @@ row format delimited fields terminated by '|' lines terminated by '\n'
 stored as textfile
 location '/data/tpcds1000g/inventory_raw/';
 
-drop table if exists catalog_returns_raw;
-create external   table catalog_returns_raw
+drop table if exists catalog_returns;
+create external   table catalog_returns
  (
     cr_returned_date_sk       int                       ,
     cr_returned_time_sk       int                       ,
@@ -470,8 +471,8 @@ row format delimited fields terminated by '|' lines terminated by '\n'
 stored as textfile
 location '/data/tpcds1000g/catalog_returns_raw/';
 
-drop table if exists web_returns_raw;
-create external   table web_returns_raw
+drop table if exists web_returns;
+create external   table web_returns
  (
     wr_returned_date_sk       int                       ,
     wr_returned_time_sk       int                       ,
@@ -502,8 +503,8 @@ row format delimited fields terminated by '|' lines terminated by '\n'
 stored as textfile
 location '/data/tpcds1000g/web_returns_raw/';
 
-drop table if exists web_sales_raw;
-create external   table web_sales_raw
+drop table if exists web_sales;
+create external   table web_sales
  (
     ws_sold_date_sk           int                       ,
     ws_sold_time_sk           int                       ,
@@ -544,8 +545,8 @@ row format delimited fields terminated by '|' lines terminated by '\n'
 stored as textfile
 location '/data/tpcds1000g/web_sales_raw/';
 
-drop table if exists catalog_sales_raw;
-create external   table catalog_sales_raw
+drop table if exists catalog_sales;
+create external   table catalog_sales
  (
     cs_sold_date_sk           int                       ,
     cs_sold_time_sk           int                       ,
@@ -586,8 +587,8 @@ row format delimited fields terminated by '|' lines terminated by '\n'
 stored as textfile
 location '/data/tpcds1000g/catalog_sales_raw/';
 
-drop table if exists store_sales_raw;
-create external   table store_sales_raw
+drop table if exists store_sales;
+create external   table store_sales
  (
     ss_sold_date_sk           int                       ,
     ss_sold_time_sk           int                       ,
