@@ -1,5 +1,3 @@
-use ${hiveconf:db};
-
 select   *
 from
 (

@@ -1,4 +1,3 @@
-use ${hiveconf:db};
 select
   cd_gender,
   cd_marital_status,

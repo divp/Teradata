@@ -1,5 +1,3 @@
-use ${hiveconf:db};
-
 select  ca_zip, ca_county, sum(ws_sales_price)
 from web_sales ws
 join customer c on (ws.ws_bill_customer_sk = c.c_customer_sk)

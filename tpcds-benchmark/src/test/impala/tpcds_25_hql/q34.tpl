@@ -1,5 +1,3 @@
-use ${hiveconf:db};
-
 select c_last_name
        ,c_first_name
        ,c_salutation
@@ -26,4 +24,6 @@ select c_last_name
     group by ss_ticket_number,ss_customer_sk) dn
     join customer c on (dn.ss_customer_sk = c.c_customer_sk)
     where cnt between 15 and 20
-    order by c_last_name,c_first_name,c_salutation,c_preferred_cust_flag desc;
+    order by c_last_name,c_first_name,c_salutation,c_preferred_cust_flag desc
+LIMIT 100
+;

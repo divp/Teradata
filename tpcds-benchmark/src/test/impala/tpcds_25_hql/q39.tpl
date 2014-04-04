@@ -1,5 +1,3 @@
-use ${hiveconf:db};
-
 drop table if exists temp_inv9205;
 create table temp_inv9205 as 
 select w_warehouse_name,w_warehouse_sk,i_item_sk,d_moy,stdev,mean, case mean when 0.0 then null else stdev/mean end cov

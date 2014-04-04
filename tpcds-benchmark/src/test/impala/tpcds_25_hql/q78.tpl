@@ -1,5 +1,3 @@
-use ${hiveconf:db};
-
 select
 ss.ss_sold_year, ss_item_sk, ss_customer_sk,
 round(ss.ss_qty/(coalesce(ws_qty+cs_qty,1)),2) ratio,

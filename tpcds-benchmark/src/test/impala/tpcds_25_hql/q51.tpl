@@ -1,5 +1,3 @@
-use ${hiveconf:db};
-
 select  *
 from (select item_sk
      ,d_date

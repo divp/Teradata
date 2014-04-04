@@ -1,5 +1,3 @@
-use ${hiveconf:db};
-
 select  
    s_store_name
   ,s_company_id

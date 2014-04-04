@@ -1,5 +1,3 @@
-use ${hiveconf:db};
-
 select
    sum(ws_ext_discount_amt)  as Excess_Discount_Amount
 from    

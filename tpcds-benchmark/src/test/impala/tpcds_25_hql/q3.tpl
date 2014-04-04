@@ -1,5 +1,3 @@
-use ${hiveconf:db};
-
 select  dt.d_year
         ,i.i_brand_id brand_id
         ,i.i_brand brand
