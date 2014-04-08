@@ -1,0 +1,14 @@
+# Use hadoop examples package under /opt/cloudera/parcels/CDH-5.0.0-1.cdh5.0.0.p0.47/lib/hadoop-0.20-mapreduce/
+cd /opt/cloudera/parcels/CDH-5.0.0-1.cdh5.0.0.p0.47/lib/hadoop-0.20-mapreduce/
+
+#To Generate Data
+#409 map tasks results in 409 input files that are approximately 5 blocks each (Block size of 512MB)
+hadoop jar hadoop-examples.jar teragen -Ddfs.block.size=536870912 -Dmapred.map.tasks=409 10000000000 /data/terasort-input-1TB
+
+#To Sort Data
+hadoop jar hadoop-examples.jar terasort -Ddfs.block.size=536870912 -Dmapred.reduce.tasks=418 -Dio.sort.mb=1024 /data/terasort-input-1TB /data/terasort-
+
+output-1TB
+
+#To Validate Sorted Data
+hadoop jar hadoop-examples.jar teravalidate /data/terasort-output-1TB /data/terasort-validate-1TB
