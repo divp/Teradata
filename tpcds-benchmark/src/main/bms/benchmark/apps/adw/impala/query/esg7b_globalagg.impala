@@ -1,0 +1,9 @@
+connect datanode1:21000;
+
+SELECT count(*) 
+FROM (
+  SELECT count(*)
+    FROM adw_sales_transaction_line2
+   GROUP BY item_id
+) GlobalAgg
+;

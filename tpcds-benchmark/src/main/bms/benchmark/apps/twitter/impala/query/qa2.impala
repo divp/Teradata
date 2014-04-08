@@ -1,0 +1,6 @@
+connect datanode1:21000;
+
+select * from activity_stream2
+  where document_id in (178204616368996353,
+                   178204621574111234,
+                   178204629274861569);

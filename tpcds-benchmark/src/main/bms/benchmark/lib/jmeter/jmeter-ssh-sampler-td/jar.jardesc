@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="WINDOWS-1252" standalone="no"?>
+<jardesc>
+    <jar path="C:/Users/RA185056/Documents/The Lab/Java/teradata.benchmark/aster_hadoop/trunk/benchmark/lib/jmeter/jmeter-ssh-sampler-td-1.0.7.jar"/>
+    <options buildIfNeeded="true" compress="true" descriptionLocation="/teradata.benchmark.jmeter-ssh-sampler/jar.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="true" overwrite="true" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+    <storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+    <selectedProjects/>
+    <manifest generateManifest="true" manifestLocation="" manifestVersion="1.0" reuseManifest="false" saveManifest="false" usesManifest="true">
+        <sealing sealJar="true">
+            <packagesToSeal/>
+            <packagesToUnSeal/>
+        </sealing>
+    </manifest>
+    <selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+        <file path="/teradata.benchmark.jmeter-ssh-sampler/.classpath"/>
+        <file path="/teradata.benchmark.jmeter-ssh-sampler/.project"/>
+        <file path="/teradata.benchmark.jmeter-ssh-sampler/jar.jardesc"/>
+        <javaElement handleIdentifier="=teradata.benchmark.jmeter-ssh-sampler/src"/>
+    </selectedElements>
+</jardesc>

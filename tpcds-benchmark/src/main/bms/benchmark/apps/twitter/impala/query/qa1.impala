@@ -1,0 +1,6 @@
+connect datanode1:21000;
+
+select count(*) 
+from (select count(*),document_id  
+        from activity_stream2
+      group by document_id ) LocalAgg;

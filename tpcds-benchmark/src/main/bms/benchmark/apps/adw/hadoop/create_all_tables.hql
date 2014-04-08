@@ -1,0 +1,190 @@
+DROP TABLE adw_associate;
+CREATE EXTERNAL TABLE adw_associate
+(
+        ASSOCIATE_PARTY_ID INT,
+        MANAGER_ASSOCIATE_ID INT,
+        POSITION_ID INT,
+        LOCATION_ID INT,
+        ASSOC_HR_NUM STRING,
+        ASSOC_HIRE_DT STRING,
+        ASSOC_TERMINATION_DT STRING
+)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n'
+STORED AS TEXTFILE
+LOCATION '/data/raw/retail/associate/'
+;
+
+DROP TABLE adw_district;
+CREATE EXTERNAL TABLE adw_district(
+        DISTRICT_CD STRING,
+        DISTRICT_NAME STRING,
+        REGION_CD STRING,
+        DISTRICT_MGR_ASSOCIATE_ID INT)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n'
+STORED AS TEXTFILE
+LOCATION '/data/raw/retail/district/'
+;
+
+DROP TABLE adw_item;
+CREATE EXTERNAL TABLE adw_item
+(
+        ITEM_ID STRING,                                   
+        ITEM_NAME STRING,             
+        ITEM_DESC STRING,             
+        ITEM_SUBCLASS_CD STRING,       
+        ITEM_TYPE_CD STRING,           
+        INVENTORY_IND STRING,                   
+        VENDOR_PARTY_ID INT,                
+        COMMODITY_CD STRING,           
+        BRAND_CD STRING
+)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n'
+STORED AS TEXTFILE
+LOCATION '/data/raw/retail/item/'
+;
+
+DROP TABLE adw_location;
+CREATE EXTERNAL TABLE adw_location
+(
+        LOCATION_ID INT,
+        LOCATION_NAME STRING,
+        LOCATION_OPEN_DT STRING,
+        LOCATION_CLOSE_DT STRING,
+        LOCATION_EFFECTIVE_DT STRING,
+        LOCATION_TOTAL_AREA_MEAS DOUBLE,
+        CHAIN_CD STRING,
+        CHANNEL_CD STRING,
+        DISTRICT_CD STRING,
+        PARENT_LOCATION_ID INT,
+        LOCATION_MGR_ASSOCIATE_ID INT,
+        LOCATION_TYPE_CD STRING
+)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n'
+STORED AS TEXTFILE
+LOCATION '/data/raw/retail/location/'
+;
+
+DROP TABLE adw_return_transaction_line;
+CREATE EXTERNAL TABLE adw_return_transaction_line
+(
+        SALES_TRAN_ID INT,
+        RETURN_TRAN_LINE_NUM SMALLINT,
+        RETURNED_ITEM_ID STRING,
+        RETURN_ITEM_QTY INT,
+        UNIT_REFUND_AMT DOUBLE,
+        ORIGINAL_SALES_TRAN_ID INT,
+        ORIGINAL_SALES_TRAN_LINE_NUM INT,
+        RETURN_TRAN_LINE_START_DTTM STRING,
+        RETURN_TRAN_LINE_END_DTTM STRING,
+        TRAN_LINE_STATUS_CD STRING,
+        RETURN_REASON_CD STRING,
+        LOCATION_ID INT
+)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n'
+STORED AS TEXTFILE
+LOCATION '/data/raw/retail/return_transaction_line/'
+;
+
+DROP TABLE adw_item_inventory;
+CREATE EXTERNAL TABLE adw_item_inventory
+(
+        LOCATION_ID INT,
+        ITEM_INV_DT STRING,
+        ITEM_ID STRING,
+        ON_HAND_UNIT_QTY INT,
+        ON_HAND_AT_RETAIL_AMT DOUBLE,
+        ON_HAND_COST_AMT FLOAT,
+        ON_ORDER_QTY INT,
+        LOST_SALES_DAY_IND STRING
+)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n'
+STORED AS TEXTFILE
+LOCATION '/data/raw/retail/item_inventory/'
+;
+
+DROP TABLE adw_sales_transaction_temp;
+CREATE EXTERNAL TABLE adw_sales_transaction_temp (
+        SALES_TRAN_ID INT,
+        VISIT_ID INT,
+        TRAN_STATUS_CD STRING,
+        REPORTED_AS_DTTM STRING,
+        TRAN_TYPE_CD   STRING,
+        MKB_COST_AMT DOUBLE,
+        MKB_ITEM_QTY INT,
+        MKB_NUMERIC_UNIQUE_ITEMS_QTY SMALLINT,
+        MKB_REV_AMT DOUBLE,
+        ASSOCIATE_PARTY_ID INT,
+        TRAN_START_DTTM_DD STRING,
+        TRAN_DATE STRING,
+        TRAN_END_DTTM_DD STRING,
+        TRAN_END_HOUR TINYINT,
+        TRAN_END_MINUTE TINYINT,
+        REWARD_CD STRING
+)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n'
+STORED AS TEXTFILE
+LOCATION '/data/raw/retail/sales_transaction/'
+;
+
+DROP TABLE adw_sales_transaction;
+CREATE TABLE IF NOT EXISTS ADW_sales_transaction (
+        SALES_TRAN_ID INT,
+        VISIT_ID INT,
+        TRAN_STATUS_CD STRING,
+        REPORTED_AS_DTTM STRING,
+        TRAN_TYPE_CD   STRING,
+        MKB_COST_AMT DOUBLE,
+        MKB_ITEM_QTY INT,
+        MKB_NUMERIC_UNIQUE_ITEMS_QTY SMALLINT,
+        MKB_REV_AMT DOUBLE,
+        ASSOCIATE_PARTY_ID INT,
+        TRAN_START_DTTM_DD STRING,
+        TRAN_END_DTTM_DD STRING,
+        TRAN_END_HOUR TINYINT,
+        TRAN_END_MINUTE TINYINT,
+        REWARD_CD STRING
+)
+PARTITIONED BY (TRAN_DATE_P STRING)
+STORED AS RCFILE
+;
+
+DROP TABLE adw_sales_transaction_line_temp;
+CREATE EXTERNAL TABLE adw_sales_transaction_line_temp (
+        SALES_TRAN_ID INT,                      
+        SALES_TRAN_LINE_NUM INT,                 
+        ITEM_ID STRING,                    
+        ITEM_QTY SMALLINT,                    
+        UNIT_SELLING_PRICE_AMT FLOAT,             
+        UNIT_COST_AMT FLOAT,                      
+        TRAN_LINE_STATUS_CD STRING,         
+        SALES_TRAN_LINE_START_DTTM STRING,             
+        TRAN_LINE_SALES_TYPE_CD STRING,     
+        SALES_TRAN_LINE_END_DTTM STRING,               
+        TRAN_LINE_DATE STRING,                         
+        LOCATION_ID INT,                   
+        TX_TIME STRING                 
+)
+ROW FORMAT DELIMITED FIELDS TERMINATED BY ',' LINES TERMINATED BY '\n'
+STORED AS TEXTFILE
+LOCATION '/data/raw/retail/sales_transaction_line/'
+;
+
+DROP TABLE adw_sales_transaction_line;
+CREATE TABLE IF NOT EXISTS ADW_sales_transaction_line (
+        SALES_TRAN_ID INT,                      
+        SALES_TRAN_LINE_NUM INT,                 
+        ITEM_ID STRING,                    
+        ITEM_QTY SMALLINT,                    
+        UNIT_SELLING_PRICE_AMT FLOAT,             
+        UNIT_COST_AMT FLOAT,                      
+        TRAN_LINE_STATUS_CD STRING,         
+        SALES_TRAN_LINE_START_DTTM STRING,             
+        TRAN_LINE_SALES_TYPE_CD STRING,     
+        SALES_TRAN_LINE_END_DTTM STRING,               
+        LOCATION_ID INT,                   
+        TX_TIME STRING    
+)
+PARTITIONED BY (TRAN_DATE_P STRING)
+STORED AS RCFILE
+;
+

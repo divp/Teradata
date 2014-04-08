@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
+	<classpathentry kind="lib" path="C:/Program Files (x86)/apache-jmeter-2.11/bin/ApacheJMeter.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files (x86)/apache-jmeter-2.11/lib/jsch-0.1.48.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files (x86)/apache-jmeter-2.11/lib/jorphan.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files (x86)/apache-jmeter-2.11/lib/logkit-2.0.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files (x86)/apache-jmeter-2.11/lib/ext/ApacheJMeter_core.jar"/>
+	<classpathentry kind="lib" path="C:/Program Files (x86)/apache-jmeter-2.11/lib/avalon-framework-4.1.4.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

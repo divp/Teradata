@@ -1,0 +1,19 @@
+connect datanode1:21000;
+
+SELECT
+        doc_txt_reg LIKE '%@empos%' as Positive,
+        doc_txt_reg LIKE '%@emneg%' as Negative,
+        doc_txt_reg LIKE '%@emhum%' as Humor,
+        count(*)
+FROM
+        activity_stream2
+GROUP BY
+        Positive,
+        Negative,
+        Humor
+HAVING
+        count(*) > 100
+ORDER BY
+        Positive, Negative, Humor
+LIMIT 10
+;

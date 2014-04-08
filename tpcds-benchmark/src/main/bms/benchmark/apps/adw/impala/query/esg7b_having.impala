@@ -1,0 +1,14 @@
+connect datanode1:21000;
+
+SELECT A.item_id, A.cnt FROM(
+   SELECT item_id, count(*) as cnt
+     FROM adw_sales_transaction_line2
+   GROUP BY item_id
+) A
+JOIN (
+  SELECT min(cnt) AS m FROM (
+     SELECT item_id, count(*) as cnt
+       FROM adw_sales_transaction_line2
+     GROUP BY item_id) TEMP ) B
+ON (A.cnt = B.m)
+;

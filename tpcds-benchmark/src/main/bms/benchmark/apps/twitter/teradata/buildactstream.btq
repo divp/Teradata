@@ -1,0 +1,27 @@
+.logon y/dbc,dbc
+database testing;
+rename table activity_stream as activity_stream_temp;
+CREATE MULTISET TABLE activity_stream (
+doc_id bigint ,
+posted_time timestamp ,
+doc_txt varchar(2000) ,
+doc_txt_reg varchar(2000) ,
+is_retweet varchar(30) ,
+user_id bigint ,
+user_name varchar(90) ,
+screen_name varchar(90) ,
+follower_count integer ,
+friends_count integer ,
+user_location varchar(500) ,
+in_reply_doc_id bigint ,
+languagex varchar(4) ,
+klout_score integer ,
+polarity character(1) ,
+topic varchar(500) )
+primary index(user_id) ;
+
+insert into activity_stream select * from activity_stream_temp;
+
+collect stats on activity_stream index(user_id);
+.quit
+

@@ -1,0 +1,9 @@
+connect datanode1:21000;
+
+select 
+   user_id,user_name,user_location, 
+   max(friends_count) as max_cnt 
+from activity_stream2
+where doc_txt like '%hadoop%' 
+group by user_id,user_name,user_location 
+order by max_cnt desc limit 25;

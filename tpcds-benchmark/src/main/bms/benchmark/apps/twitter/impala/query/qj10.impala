@@ -1,0 +1,9 @@
+connect datanode1:21000;
+
+select user_location, count(*) as total 
+from activity_stream2 
+where 
+      doc_txt like '%oscar%' 
+  and user_location <> '' 
+group by user_location 
+order by total desc limit 25;

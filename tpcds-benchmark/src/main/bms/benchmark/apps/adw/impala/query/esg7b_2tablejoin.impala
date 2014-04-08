@@ -1,0 +1,20 @@
+connect datanode1:21000;
+
+SELECT 
+   UPPER(I.ITEM_NAME),
+   A.PREV,
+   A.COST,
+   (A.PREV-A.COST) AS MARGIN
+FROM (
+  SELECT 
+     ITEM_ID,
+     SUM(UNIT_SELLING_PRICE_AMT)/90 AS PREV,
+     SUM(UNIT_COST_AMT)/90 AS COST
+  FROM adw_sales_transaction_line2
+  WHERE TRAN_DATE_P < '2005-06-30' 
+    AND TRAN_DATE_P >= '2005-04-01'
+  GROUP BY (ITEM_ID)
+) a
+INNER JOIN adw_item I
+ON A.ITEM_ID = I.ITEM_ID
+;

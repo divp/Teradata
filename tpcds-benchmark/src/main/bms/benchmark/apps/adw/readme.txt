@@ -1,0 +1,1 @@
+This is the retail application test suite, named after the concept of Active Data Warehouse (ADW)

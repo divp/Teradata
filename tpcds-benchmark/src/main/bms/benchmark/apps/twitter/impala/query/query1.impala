@@ -1,0 +1,9 @@
+connect datanode1:21000;
+
+SELECT topic, polarity, count(*) as tweet_count
+FROM activity_stream2
+WHERE posted_dt>='2012-03-10' 
+  AND posted_dt<='2012-03-13'
+GROUP BY topic, polarity
+ORDER BY tweet_count
+LIMIT 100;

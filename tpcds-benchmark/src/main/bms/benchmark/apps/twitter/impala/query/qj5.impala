@@ -1,0 +1,13 @@
+connect datanode1:21000;
+
+select 
+   user_id,
+   user_name, 
+   count(*) as total 
+from activity_stream2
+where 
+   klout_score>95 
+   and follower_count > 500 
+group by user_id,user_name 
+order by total desc limit 25;
+

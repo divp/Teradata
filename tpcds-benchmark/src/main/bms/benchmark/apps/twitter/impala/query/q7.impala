@@ -1,0 +1,13 @@
+connect datanode1:21000;
+
+SELECT tweet_bin, count(*) as user_count
+FROM (
+   SELECT 
+       user_id,
+       count(*) as tweet_count, 
+       cast(round(count(*)/10,0) * 10 as INT) as tweet_bin
+     FROM activity_stream2
+    GROUP BY user_id
+) t0
+GROUP BY tweet_bin
+ORDER BY tweet_bin LIMIT 100;

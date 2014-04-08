@@ -1,0 +1,11 @@
+connect datanode1:21000;
+
+select  
+   user_id, user_name, screen_name, 
+   follower_count,
+   user_location,
+   klout_score,
+   posted_ts 
+from activity_stream2
+where user_name ='BarackObama' 
+order by posted_ts desc limit 25;

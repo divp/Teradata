@@ -1,0 +1,7 @@
+connect datanode1:21000;
+
+select user_id,user_name, count(*) as total 
+from activity_stream2
+where is_retweet = true
+group by user_id,user_name 
+order by total desc limit 25;

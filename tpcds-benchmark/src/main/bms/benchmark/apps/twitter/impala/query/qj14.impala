@@ -1,0 +1,10 @@
+connect datanode1:21000;
+
+select user_id,user_name,user_location,count(*) as total 
+from activity_stream2 
+where posted_month =4 
+  and posted_day =1 
+  and posted_year=2012 
+group by user_id,user_name,user_location 
+order by total desc limit 25;
+

@@ -1,0 +1,6 @@
+connect datanode1:21000;
+
+SELECT count(*) 
+FROM adw_sales_transaction_line2
+WHERE sales_tran_id = 197246635
+;

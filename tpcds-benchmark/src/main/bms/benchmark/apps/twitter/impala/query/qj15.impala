@@ -1,0 +1,19 @@
+connect datanode1:21000;
+
+select 
+   t4.document_id, 
+   t4.user_name, 
+   t4.user_location, 
+   t4.doc_txt, 
+   t4.klout_score,
+   t3.total
+from 
+        (select t1.document_id as doc_id, count(*) as total 
+         from activity_stream2 t1 
+         JOIN activity_stream2 t2 
+	   ON t1.document_id=t2.in_reply_to_status_id 
+         group by t1.document_id 
+         order by total desc limit 25) t3
+JOIN activity_stream2 t4
+ON t4.document_id = t3.doc_id 
+order by t3.total desc limit 25;

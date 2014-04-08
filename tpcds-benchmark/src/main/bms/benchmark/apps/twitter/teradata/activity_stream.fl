@@ -1,0 +1,82 @@
+.SESSIONS 20;
+.SET RECORD VARTEXT "	" DISPLAY_ERRORS NOSTOP
+.LOGON 153.64.210.243/dbc,dbc;
+database testing;
+drop table activity_stream_err2;
+drop table activity_stream_err1;
+drop table activity_stream;
+CREATE MULTISET TABLE activity_stream ( 
+doc_id bigint , 
+posted_time timestamp , 
+doc_txt varchar(2000) , 
+doc_txt_reg varchar(2000) , 
+is_retweet varchar(30) , 
+user_id bigint , 
+user_name varchar(90) , 
+screen_name varchar(90) , 
+follower_count integer , 
+friends_count integer , 
+user_location varchar(500) , 
+in_reply_doc_id bigint , 
+languagex varchar(4) , 
+klout_score integer , 
+polarity character(1) , 
+topic varchar(500) )
+no primary index ;
+
+DEFINE
+doc_id(varchar(40)),
+posted_time(varchar(30)),
+doc_txt(varchar(2000)),
+doc_txt_reg(varchar(2000)),
+is_retweet(varchar(30)),
+user_id(varchar(40)),
+user_name(varchar(90)),
+screen_name(varchar(90)),
+follower_count(varchar(11)),
+friends_count(varchar(11)),
+user_location(varchar(500)),
+in_reply_doc_id(varchar(40)),
+languagex(varchar(4)),
+klout_score(varchar(11)),
+polarity(varchar(1)),
+topic(varchar(500))
+FILE=activity_stream.txt;
+BEGIN LOADING testing.activity_stream ERRORFILES
+testing.activity_stream_ERR1,testing.activity_stream_ERR2 CHECKPOINT 100000 ;
+INSERT INTO testing.activity_stream (
+doc_id,
+posted_time,
+doc_txt,
+doc_txt_reg,
+is_retweet,
+user_id,
+user_name,
+screen_name,
+follower_count,
+friends_count,
+user_location,
+in_reply_doc_id,
+languagex,
+klout_score,
+polarity,
+topic) VALUES (
+:doc_id,
+:posted_time,
+:doc_txt,
+:doc_txt_reg,
+:is_retweet,
+:user_id,
+:user_name,
+:screen_name,
+:follower_count,
+:friends_count,
+:user_location,
+:in_reply_doc_id,
+:languagex,
+:klout_score,
+:polarity,
+:topic);
+END LOADING;
+LOGOFF;
+

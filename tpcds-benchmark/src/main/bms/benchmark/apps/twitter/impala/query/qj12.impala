@@ -1,0 +1,8 @@
+connect datanode1:21000;
+
+select count(*) 
+from activity_stream2
+where is_retweet = false
+  and doc_txt like '%syria%' 
+  and user_location like '%syria%';
+

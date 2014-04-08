@@ -1,0 +1,19 @@
+connect datanode1:21000;
+
+SELECT
+    I.ITEM_NAME AS PRODUCT_NAME,
+    SUM(datediff(to_date(R.RETURN_TRAN_LINE_START_DTTM),S.TRAN_DATE_P))/COUNT(S.SALES_TRAN_ID) AS AVE_DAYS_FOR_RETURN
+FROM adw_item I
+JOIN adw_return_transaction_line R ON (
+                I.ITEM_ID = R.RETURNED_ITEM_ID
+        )
+        JOIN adw_sales_transaction_line2 S ON (
+                trim(R.RETURNED_ITEM_ID) = trim(S.ITEM_ID)
+                AND R.ORIGINAL_SALES_TRAN_ID = S.SALES_TRAN_ID
+        )
+WHERE I.ITEM_ID = '4119689102'
+  AND to_date(R.Return_Tran_Line_Start_Dttm) >= '2004-01-01'
+  AND trim(R.RETURNED_ITEM_ID) = '4119689102' 
+  AND trim(S.ITEM_ID) = '4119689102'
+GROUP BY I.ITEM_NAME
+;

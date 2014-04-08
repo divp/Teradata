@@ -1,0 +1,12 @@
+Teradata custom SSH Sampler for JMeter
+--------------------------------------
+
+This directory holds the source and compiled binary of the Teradata SSH sampler for JMeter, required for
+operation of the Benchmark Management System (BMS). 
+
+To enable the SSH sampler for use with JMeter:
+
+- Copy jsch-*.jar to $JMETER_HOME/lib
+- Copy jmeter-ssh-sampler-td-*.jar to $JMETER_HOME/lib/ext
+
+  

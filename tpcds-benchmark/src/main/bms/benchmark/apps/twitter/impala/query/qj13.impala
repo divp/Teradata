@@ -1,0 +1,8 @@
+connect datanode1:21000;
+
+select 
+   user_id,user_name,user_location,
+   max(follower_count) as max_cnt 
+from activity_stream2
+group by user_id,user_name,user_location 
+order by max_cnt desc limit 25;
