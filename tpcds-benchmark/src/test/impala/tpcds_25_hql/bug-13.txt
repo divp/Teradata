@@ -1,0 +1,2377 @@
+Starting Impala Shell without Kerberos authentication
+Connected to 10.25.12.43:21000
+Server version: impalad version cdh5-1.3.0 RELEASE (build 40e1b62cf0b97f666d084d9509bf9639c575068c)
+Query: use parquet_tpcds1000g
+Query: show tables
+[?1034h+------------------------+
+| name                   |
++------------------------+
+| call_center            |
+| catalog_page           |
+| catalog_returns        |
+| catalog_sales          |
+| customer               |
+| customer_address       |
+| customer_demographics  |
+| date_dim               |
+| household_demographics |
+| income_band            |
+| inventory              |
+| item                   |
+| promotion              |
+| reason                 |
+| ship_mode              |
+| store                  |
+| store_returns          |
+| store_sales            |
+| temp_year_total884     |
+| time_dim               |
+| warehouse              |
+| web_page               |
+| web_returns            |
+| web_sales              |
+| web_site               |
++------------------------+
+Returned 25 row(s) in 0.01s
+Query: select count(*) from customer
++----------+
+| count(*) |
++----------+
+| 12000000 |
++----------+
+Returned 1 row(s) in 0.31s
+Starting Impala Shell without Kerberos authentication
+Connected to 10.25.12.43:21000
+Server version: impalad version cdh5-1.3.0 RELEASE (build 40e1b62cf0b97f666d084d9509bf9639c575068c)
+Query: use parquet_tpcds1000g
+Query: select dt.d_year
+        ,i.i_brand_id brand_id
+        ,i.i_brand brand
+        ,sum(ss_ext_sales_price) as sum_agg
+from   date_dim dt
+        join store_sales ss on (dt.d_date_sk = ss.ss_sold_date_sk)
+        join item i on (ss.ss_item_sk = i.i_item_sk)
+where i.i_manufact_id = 436
+  and dt.d_moy=12
+group by       dt.d_year
+                ,i.i_brand
+                ,i.i_brand_id
+order by       d_year
+                ,sum_agg desc
+                ,brand_id
+limit 100
+
+ERRORS ENCOUNTERED DURING EXECUTION: 
+Backend 3:Couldn't open transport for hdp015-20:22000(connect() failed: Connection refused)
+Backend 4:Couldn't open transport for hdp015-20:22000(connect() failed: Connection refused)
+Backend 5:Couldn't open transport for hdp015-20:22000(connect() failed: Connection refused)
+Backend 6:Couldn't open transport for hdp015-20:22000(connect() failed: Connection refused)
+Backend 7:Couldn't open transport for hdp015-20:22000(connect() failed: Connection refused)
+Backend 8:Couldn't open transport for hdp015-20:22000(connect() failed: Connection refused)
+Backend 9:Couldn't open transport for hdp015-20:22000(connect() failed: Connection refused)
+Backend 11:Couldn't open transport for hdp015-20:22000(connect() failed: Connection refused)
+Backend 12:Couldn't open transport for hdp015-20:22000(connect() failed: Connection refused)
+Backend 13:Couldn't open transport for hdp015-20:22000(connect() failed: Connection refused)
+Backend 14:Couldn't open transport for hdp015-20:22000(connect() failed: Connection refused)
+Backend 15:Couldn't open transport for hdp015-20:22000(connect() failed: Connection refused)
+Backend 16:Couldn't open transport for hdp015-20:22000(connect() failed: Connection refused)
+Backend 17:Couldn't open transport for hdp015-20:22000(connect() failed: Connection refused)
+Backend 18:Couldn't open transport for hdp015-20:22000(connect() failed: Connection refused)
+Backend 19:Couldn't open transport for hdp015-20:22000(connect() failed: Connection refused)
+Backend 20:Couldn't open transport for hdp015-20:22000(connect() failed: Connection refused)
+Backend 21:Couldn't open transport for hdp015-20:22000(connect() failed: Connection refused)
+Backend 22:Couldn't open transport for hdp015-20:22000(connect() failed: Connection refused)
+Backend 23:Couldn't open transport for hdp015-20:22000(connect() failed: Connection refused)
+
+ERROR: Couldn't open transport for hdp015-20:22000(connect() failed: Connection refused)
+ERROR: Invalid query handle
+Could not execute command: select  dt.d_year
+        ,i.i_brand_id brand_id
+        ,i.i_brand brand
+        ,sum(ss_ext_sales_price) as sum_agg
+from   date_dim dt
+        join store_sales ss on (dt.d_date_sk = ss.ss_sold_date_sk)
+        join item i on (ss.ss_item_sk = i.i_item_sk)
+where i.i_manufact_id = 436
+  and dt.d_moy=12
+group by       dt.d_year
+                ,i.i_brand
+                ,i.i_brand_id
+order by       d_year
+                ,sum_agg desc
+                ,brand_id
+limit 100
+
+[?1034hStarting Impala Shell without Kerberos authentication
+Connected to 10.25.12.43:21000
+Server version: impalad version cdh5-1.3.0 RELEASE (build 40e1b62cf0b97f666d084d9509bf9639c575068c)
+Query: use parquet_tpcds1000g
+Query: drop table if exists temp_year_total884
+Query: create table temp_year_total884 as
+select * from
+(
+select c_customer_id customer_id
+       ,c_first_name customer_first_name
+       ,c_last_name customer_last_name
+       ,c_preferred_cust_flag customer_preferred_cust_flag
+       ,c_birth_country customer_birth_country
+       ,c_login customer_login
+       ,c_email_address customer_email_address
+       ,d_year dyear
+       ,sum(((ss_ext_list_price-ss_ext_wholesale_cost-ss_ext_discount_amt)+ss_ext_sales_price)/2) year_total
+       ,'s' sale_type
+from customer c
+       join store_sales ss on (c.c_customer_sk = ss.ss_customer_sk)
+       join date_dim d on (ss.ss_sold_date_sk = d.d_date_sk)
+group by c_customer_id
+         ,c_first_name
+         ,c_last_name
+         ,c_preferred_cust_flag
+         ,c_birth_country
+         ,c_login
+         ,c_email_address
+         ,d_year
+union all
+select c_customer_id customer_id
+       ,c_first_name customer_first_name
+       ,c_last_name customer_last_name
+       ,c_preferred_cust_flag customer_preferred_cust_flag
+       ,c_birth_country customer_birth_country
+       ,c_login customer_login
+       ,c_email_address customer_email_address
+       ,d_year dyear
+       ,sum((((cs_ext_list_price-cs_ext_wholesale_cost-cs_ext_discount_amt)+cs_ext_sales_price)/2) ) year_total
+       ,'c' sale_type
+from customer c
+       join catalog_sales cs on (c.c_customer_sk = cs.cs_bill_customer_sk)
+       join date_dim d on (cs.cs_sold_date_sk = d.d_date_sk)
+group by c_customer_id
+         ,c_first_name
+         ,c_last_name
+         ,c_preferred_cust_flag
+         ,c_birth_country
+         ,c_login
+         ,c_email_address
+         ,d_year
+union all
+select c_customer_id customer_id
+       ,c_first_name customer_first_name
+       ,c_last_name customer_last_name
+       ,c_preferred_cust_flag customer_preferred_cust_flag
+       ,c_birth_country customer_birth_country
+       ,c_login customer_login
+       ,c_email_address customer_email_address
+       ,d_year dyear
+       ,sum((((ws_ext_list_price-ws_ext_wholesale_cost-ws_ext_discount_amt)+ws_ext_sales_price)/2) ) year_total
+       ,'w' sale_type
+  from customer c
+       join web_sales ws on (c.c_customer_sk = ws.ws_bill_customer_sk)
+       join date_dim d on (ws.ws_sold_date_sk = d.d_date_sk)
+group by c_customer_id
+         ,c_first_name
+         ,c_last_name
+         ,c_preferred_cust_flag
+         ,c_birth_country
+         ,c_login
+         ,c_email_address
+         ,d_year
+) a
+ERROR: Couldn't open transport for hdp015-20:22000(connect() failed: Connection refused)
+Could not execute command: create table temp_year_total884 as
+select * from
+(
+select c_customer_id customer_id
+       ,c_first_name customer_first_name
+       ,c_last_name customer_last_name
+       ,c_preferred_cust_flag customer_preferred_cust_flag
+       ,c_birth_country customer_birth_country
+       ,c_login customer_login
+       ,c_email_address customer_email_address
+       ,d_year dyear
+       ,sum(((ss_ext_list_price-ss_ext_wholesale_cost-ss_ext_discount_amt)+ss_ext_sales_price)/2) year_total
+       ,'s' sale_type
+from customer c
+       join store_sales ss on (c.c_customer_sk = ss.ss_customer_sk)
+       join date_dim d on (ss.ss_sold_date_sk = d.d_date_sk)
+group by c_customer_id
+         ,c_first_name
+         ,c_last_name
+         ,c_preferred_cust_flag
+         ,c_birth_country
+         ,c_login
+         ,c_email_address
+         ,d_year
+union all
+select c_customer_id customer_id
+       ,c_first_name customer_first_name
+       ,c_last_name customer_last_name
+       ,c_preferred_cust_flag customer_preferred_cust_flag
+       ,c_birth_country customer_birth_country
+       ,c_login customer_login
+       ,c_email_address customer_email_address
+       ,d_year dyear
+       ,sum((((cs_ext_list_price-cs_ext_wholesale_cost-cs_ext_discount_amt)+cs_ext_sales_price)/2) ) year_total
+       ,'c' sale_type
+from customer c
+       join catalog_sales cs on (c.c_customer_sk = cs.cs_bill_customer_sk)
+       join date_dim d on (cs.cs_sold_date_sk = d.d_date_sk)
+group by c_customer_id
+         ,c_first_name
+         ,c_last_name
+         ,c_preferred_cust_flag
+         ,c_birth_country
+         ,c_login
+         ,c_email_address
+         ,d_year
+union all
+select c_customer_id customer_id
+       ,c_first_name customer_first_name
+       ,c_last_name customer_last_name
+       ,c_preferred_cust_flag customer_preferred_cust_flag
+       ,c_birth_country customer_birth_country
+       ,c_login customer_login
+       ,c_email_address customer_email_address
+       ,d_year dyear
+       ,sum((((ws_ext_list_price-ws_ext_wholesale_cost-ws_ext_discount_amt)+ws_ext_sales_price)/2) ) year_total
+       ,'w' sale_type
+  from customer c
+       join web_sales ws on (c.c_customer_sk = ws.ws_bill_customer_sk)
+       join date_dim d on (ws.ws_sold_date_sk = d.d_date_sk)
+group by c_customer_id
+         ,c_first_name
+         ,c_last_name
+         ,c_preferred_cust_flag
+         ,c_birth_country
+         ,c_login
+         ,c_email_address
+         ,d_year
+) a
+
+[?1034hStarting Impala Shell without Kerberos authentication
+Connected to 10.25.12.43:21000
+Server version: impalad version cdh5-1.3.0 RELEASE (build 40e1b62cf0b97f666d084d9509bf9639c575068c)
+Query: use parquet_tpcds1000g
+Query: select cd_gender,
+  cd_marital_status,
+  cd_education_status,
+  count(*) cnt1,
+  cd_purchase_estimate,
+  count(*) cnt2,
+  cd_credit_rating,
+  count(*) cnt3,
+  cd_dep_count,
+  count(*) cnt4,
+  cd_dep_employed_count,
+  count(*) cnt5,
+  cd_dep_college_count,
+  count(*) cnt6
+from
+  customer c
+  join customer_address ca on (c.c_current_addr_sk = ca.ca_address_sk)
+  join customer_demographics cd on (cd.cd_demo_sk = c.c_current_cdemo_sk)
+  left semi join (select ss.ss_customer_sk from store_sales ss join date_dim d on (ss.ss_sold_date_sk = d.d_date_sk) where d_year = 2002 and d_moy between 4 and 4+3 group by ss.ss_customer_sk) e1 on (c.c_customer_sk = e1.ss_customer_sk)
+  left join (select ws.ws_bill_customer_sk from web_sales ws join date_dim d on (ws.ws_sold_date_sk = d.d_date_sk) where d_year = 2002 and d_moy between 4 and 4+3 group by ws.ws_bill_customer_sk) e2 on (c.c_customer_sk = e2.ws_bill_customer_sk)
+  left join (select cs.cs_ship_customer_sk from catalog_sales cs join date_dim d on (cs.cs_sold_date_sk = d.d_date_sk) where d_year = 2002 and d_moy between 4 and 4+3 group by cs.cs_ship_customer_sk) e3 on (c.c_customer_sk = e3.cs_ship_customer_sk)
+where ca_county in ('Walker County','Richland County','Gaines County','Douglas County','Dona Ana County')
+  and (e2.ws_bill_customer_sk is not null or e3.cs_ship_customer_sk is not null)
+ group by cd_gender,
+          cd_marital_status,
+          cd_education_status,
+          cd_purchase_estimate,
+          cd_credit_rating,
+          cd_dep_count,
+          cd_dep_employed_count,
+          cd_dep_college_count
+order by cd_gender,
+          cd_marital_status,
+          cd_education_status,
+          cd_purchase_estimate,
+          cd_credit_rating,
+          cd_dep_count,
+          cd_dep_employed_count,
+          cd_dep_college_count
+limit 100
+ERROR: Couldn't open transport for hdp015-20:22000(connect() failed: Connection refused)
+Could not execute command: select
+  cd_gender,
+  cd_marital_status,
+  cd_education_status,
+  count(*) cnt1,
+  cd_purchase_estimate,
+  count(*) cnt2,
+  cd_credit_rating,
+  count(*) cnt3,
+  cd_dep_count,
+  count(*) cnt4,
+  cd_dep_employed_count,
+  count(*) cnt5,
+  cd_dep_college_count,
+  count(*) cnt6
+from
+  customer c
+  join customer_address ca on (c.c_current_addr_sk = ca.ca_address_sk)
+  join customer_demographics cd on (cd.cd_demo_sk = c.c_current_cdemo_sk)
+  left semi join (select ss.ss_customer_sk from store_sales ss join date_dim d on (ss.ss_sold_date_sk = d.d_date_sk) where d_year = 2002 and d_moy between 4 and 4+3 group by ss.ss_customer_sk) e1 on (c.c_customer_sk = e1.ss_customer_sk)
+  left join (select ws.ws_bill_customer_sk from web_sales ws join date_dim d on (ws.ws_sold_date_sk = d.d_date_sk) where d_year = 2002 and d_moy between 4 and 4+3 group by ws.ws_bill_customer_sk) e2 on (c.c_customer_sk = e2.ws_bill_customer_sk)
+  left join (select cs.cs_ship_customer_sk from catalog_sales cs join date_dim d on (cs.cs_sold_date_sk = d.d_date_sk) where d_year = 2002 and d_moy between 4 and 4+3 group by cs.cs_ship_customer_sk) e3 on (c.c_customer_sk = e3.cs_ship_customer_sk)
+where ca_county in ('Walker County','Richland County','Gaines County','Douglas County','Dona Ana County')
+  and (e2.ws_bill_customer_sk is not null or e3.cs_ship_customer_sk is not null)
+ group by cd_gender,
+          cd_marital_status,
+          cd_education_status,
+          cd_purchase_estimate,
+          cd_credit_rating,
+          cd_dep_count,
+          cd_dep_employed_count,
+          cd_dep_college_count
+order by cd_gender,
+          cd_marital_status,
+          cd_education_status,
+          cd_purchase_estimate,
+          cd_credit_rating,
+          cd_dep_count,
+          cd_dep_employed_count,
+          cd_dep_college_count
+limit 100
+
+[?1034hStarting Impala Shell without Kerberos authentication
+Connected to 10.25.12.43:21000
+Server version: impalad version cdh5-1.3.0 RELEASE (build 40e1b62cf0b97f666d084d9509bf9639c575068c)
+Query: use parquet_tpcds1000g
+Query: select count(distinct cs1.cs_order_number) as order_count
+  ,sum(cs1.cs_ext_ship_cost) as total_shipping_cost
+  ,sum(cs1.cs_net_profit) as total_net_profit from
+   catalog_sales cs1
+   join date_dim d on (cs1.cs_ship_date_sk = d.d_date_sk)
+   join customer_address e on (cs1.cs_ship_addr_sk = e.ca_address_sk)
+   join call_center f on (cs1.cs_call_center_sk = f.cc_call_center_sk)
+   left semi join (select csa.cs_order_number
+	from catalog_sales csa
+	inner join catalog_sales csb on (csa.cs_order_number = csb.cs_order_number) where csa.cs_warehouse_sk <> csb.cs_warehouse_sk group by csa.cs_order_number) cs2 on (cs1.cs_order_number = cs2.cs_order_number)
+   left join (select cr_order_number from catalog_returns group by cr_order_number) cr1 on (cs1.cs_order_number = cr1.cr_order_number)
+where
+    d.d_date >= '1999-02-01' and
+         d.d_date <= date_add('1999-02-01',60)
+and e.ca_state = 'MS'
+and f.cc_county in ('Williamson County','Williamson County','Williamson County','Williamson County', 'Williamson County')
+and cr1.cr_order_number is null
+order by order_count
+limit 100
+ERROR: Couldn't open transport for hdp015-20:22000(connect() failed: Connection refused)
+Could not execute command: select
+   count(distinct cs1.cs_order_number) as order_count
+  ,sum(cs1.cs_ext_ship_cost) as total_shipping_cost
+  ,sum(cs1.cs_net_profit) as total_net_profit from
+   catalog_sales cs1
+   join date_dim d on (cs1.cs_ship_date_sk = d.d_date_sk)
+   join customer_address e on (cs1.cs_ship_addr_sk = e.ca_address_sk)
+   join call_center f on (cs1.cs_call_center_sk = f.cc_call_center_sk)
+   left semi join (select csa.cs_order_number
+	from catalog_sales csa
+	inner join catalog_sales csb on (csa.cs_order_number = csb.cs_order_number) where csa.cs_warehouse_sk <> csb.cs_warehouse_sk group by csa.cs_order_number) cs2 on (cs1.cs_order_number = cs2.cs_order_number)
+   left join (select cr_order_number from catalog_returns group by cr_order_number) cr1 on (cs1.cs_order_number = cr1.cr_order_number)
+where
+    d.d_date >= '1999-02-01' and
+         d.d_date <= date_add('1999-02-01',60)
+and e.ca_state = 'MS'
+and f.cc_county in ('Williamson County','Williamson County','Williamson County','Williamson County', 'Williamson County')
+and cr1.cr_order_number is null
+order by order_count
+limit 100
+[?1034hStarting Impala Shell without Kerberos authentication
+Connected to 10.25.12.43:21000
+Server version: impalad version cdh5-1.3.0 RELEASE (build 40e1b62cf0b97f666d084d9509bf9639c575068c)
+Query: use parquet_tpcds1000g
+Query: drop table if exists temp_ssales3299
+Query: create table temp_ssales3299 as
+select c_last_name
+      ,c_first_name
+      ,s_store_name
+      ,ca_state
+      ,s_state
+      ,i_color
+      ,i_current_price
+      ,i_manager_id
+      ,i_units
+      ,i_size
+      ,sum(ss_sales_price) netpaid
+from store_sales ss
+     join store_returns sr on (ss.ss_ticket_number = sr.sr_ticket_number and ss.ss_item_sk = sr.sr_item_sk)
+     join store s on (ss.ss_store_sk = s.s_store_sk)
+     join item i on (ss.ss_item_sk = i.i_item_sk)
+     join customer c on (ss.ss_customer_sk = c.c_customer_sk)
+     join customer_address ca on (s.s_zip = ca.ca_zip and c.c_birth_country = upper(ca.ca_country))
+where s_market_id = 7
+group by c_last_name
+        ,c_first_name
+        ,s_store_name
+        ,ca_state
+        ,s_state
+        ,i_color
+        ,i_current_price
+        ,i_manager_id
+        ,i_units
+        ,i_size
+ERROR: Couldn't open transport for hdp015-20:22000(connect() failed: Connection refused)
+Could not execute command: create table temp_ssales3299 as
+select c_last_name
+      ,c_first_name
+      ,s_store_name
+      ,ca_state
+      ,s_state
+      ,i_color
+      ,i_current_price
+      ,i_manager_id
+      ,i_units
+      ,i_size
+      ,sum(ss_sales_price) netpaid
+from store_sales ss
+     join store_returns sr on (ss.ss_ticket_number = sr.sr_ticket_number and ss.ss_item_sk = sr.sr_item_sk)
+     join store s on (ss.ss_store_sk = s.s_store_sk)
+     join item i on (ss.ss_item_sk = i.i_item_sk)
+     join customer c on (ss.ss_customer_sk = c.c_customer_sk)
+     join customer_address ca on (s.s_zip = ca.ca_zip and c.c_birth_country = upper(ca.ca_country))
+where s_market_id = 7
+group by c_last_name
+        ,c_first_name
+        ,s_store_name
+        ,ca_state
+        ,s_state
+        ,i_color
+        ,i_current_price
+        ,i_manager_id
+        ,i_units
+        ,i_size
+
+[?1034hStarting Impala Shell without Kerberos authentication
+Connected to 10.25.12.43:21000
+Server version: impalad version cdh5-1.3.0 RELEASE (build 40e1b62cf0b97f666d084d9509bf9639c575068c)
+Query: use parquet_tpcds1000g
+Query: select i_item_id,
+        s_state,
+        GROUPING__ID,
+        avg(ss_quantity) agg1,
+        avg(ss_list_price) agg2,
+        avg(ss_coupon_amt) agg3,
+        avg(ss_sales_price) agg4
+from store_sales ss
+join customer_demographics cd on (ss.ss_cdemo_sk = cd.cd_demo_sk)
+join date_dim d on (ss.ss_sold_date_sk = d.d_date_sk)
+join store s on (ss.ss_store_sk = s.s_store_sk)
+join item i on (ss.ss_item_sk = i.i_item_sk)
+where cd_gender = 'F' and
+       cd_marital_status = 'W' and
+       cd_education_status = 'Primary' and
+       d_year = 1998 and
+       s_state in ('TN','TN', 'TN', 'TN', 'TN', 'TN')
+group by i_item_id, s_state with rollup
+order by i_item_id
+         ,s_state
+limit 100
+ERROR: AnalysisException: Syntax error in line 18:
+group by i_item_id, s_state with rollup
+                            ^
+Encountered: WITH
+Expected: AND, AS, ASC, BETWEEN, CROSS, DESC, DIV, ELSE, END, FROM, FULL, GROUP, HAVING, IN, INNER, IS, JOIN, LEFT, LIKE, LIMIT, NOT, NULLS, OFFSET, OR, ORDER, REGEXP, RIGHT, RLIKE, THEN, UNION, WHEN, WHERE, COMMA, IDENTIFIER
+
+CAUSED BY: Exception: Syntax error
+Could not execute command: select  i_item_id,
+        s_state,
+        GROUPING__ID,
+        avg(ss_quantity) agg1,
+        avg(ss_list_price) agg2,
+        avg(ss_coupon_amt) agg3,
+        avg(ss_sales_price) agg4
+from store_sales ss
+join customer_demographics cd on (ss.ss_cdemo_sk = cd.cd_demo_sk)
+join date_dim d on (ss.ss_sold_date_sk = d.d_date_sk)
+join store s on (ss.ss_store_sk = s.s_store_sk)
+join item i on (ss.ss_item_sk = i.i_item_sk)
+where cd_gender = 'F' and
+       cd_marital_status = 'W' and
+       cd_education_status = 'Primary' and
+       d_year = 1998 and
+       s_state in ('TN','TN', 'TN', 'TN', 'TN', 'TN')
+group by i_item_id, s_state with rollup
+order by i_item_id
+         ,s_state
+limit 100
+
+[?1034hStarting Impala Shell without Kerberos authentication
+Connected to 10.25.12.43:21000
+Server version: impalad version cdh5-1.3.0 RELEASE (build 40e1b62cf0b97f666d084d9509bf9639c575068c)
+Query: use parquet_tpcds1000g
+Query: select i_item_id
+    ,i_item_desc
+    ,s_store_id
+    ,s_store_name
+    ,sum(ss_quantity)        as store_sales_quantity
+    ,sum(sr_return_quantity) as store_returns_quantity
+    ,sum(cs_quantity)        as catalog_sales_quantity
+from
+    store_sales ss
+   join store_returns sr on (ss.ss_customer_sk = sr.sr_customer_sk and ss.ss_item_sk = sr.sr_item_sk and ss.ss_ticket_number = sr.sr_ticket_number)
+   join catalog_sales cs on (sr.sr_customer_sk = cs.cs_bill_customer_sk and sr.sr_item_sk = cs.cs_item_sk)
+   join date_dim d1 on (d1.d_date_sk = ss.ss_sold_date_sk)
+   join date_dim d2 on (sr.sr_returned_date_sk = d2.d_date_sk)
+   join date_dim d3 on (cs.cs_sold_date_sk = d3.d_date_sk)
+   join store s on (s.s_store_sk = ss.ss_store_sk)
+   join item i on (i.i_item_sk = ss.ss_item_sk)
+where
+     d1.d_moy               = 4
+and d1.d_year              = 1998
+and d2.d_moy               between 4 and  4 + 3
+and d2.d_year              = 1998
+and d3.d_year              between 1998 and 1998+2
+group by
+    i_item_id
+   ,i_item_desc
+   ,s_store_id
+   ,s_store_name
+order by
+    i_item_id
+   ,i_item_desc
+   ,s_store_id
+   ,s_store_name
+limit 100
+
+ERRORS ENCOUNTERED DURING EXECUTION: 
+Backend 45:Couldn't open transport for hdp017-7:22000(connect() failed: Connection refused)
+Backend 50:Couldn't open transport for hdp015-16:22000(connect() failed: Connection refused)
+Backend 52:Couldn't open transport for hdp015-6:22000(connect() failed: Connection refused)
+
+ERROR: Couldn't open transport for hdp015-16:22000(connect() failed: Connection refused)
+ERROR: Invalid query handle
+Could not execute command: select
+     i_item_id
+    ,i_item_desc
+    ,s_store_id
+    ,s_store_name
+    ,sum(ss_quantity)        as store_sales_quantity
+    ,sum(sr_return_quantity) as store_returns_quantity
+    ,sum(cs_quantity)        as catalog_sales_quantity
+from
+    store_sales ss
+   join store_returns sr on (ss.ss_customer_sk = sr.sr_customer_sk and ss.ss_item_sk = sr.sr_item_sk and ss.ss_ticket_number = sr.sr_ticket_number)
+   join catalog_sales cs on (sr.sr_customer_sk = cs.cs_bill_customer_sk and sr.sr_item_sk = cs.cs_item_sk)
+   join date_dim d1 on (d1.d_date_sk = ss.ss_sold_date_sk)
+   join date_dim d2 on (sr.sr_returned_date_sk = d2.d_date_sk)
+   join date_dim d3 on (cs.cs_sold_date_sk = d3.d_date_sk)
+   join store s on (s.s_store_sk = ss.ss_store_sk)
+   join item i on (i.i_item_sk = ss.ss_item_sk)
+where
+     d1.d_moy               = 4
+and d1.d_year              = 1998
+and d2.d_moy               between 4 and  4 + 3
+and d2.d_year              = 1998
+and d3.d_year              between 1998 and 1998+2
+group by
+    i_item_id
+   ,i_item_desc
+   ,s_store_id
+   ,s_store_name
+order by
+    i_item_id
+   ,i_item_desc
+   ,s_store_id
+   ,s_store_name
+limit 100
+
+[?1034hStarting Impala Shell without Kerberos authentication
+Connected to 10.25.12.43:21000
+Server version: impalad version cdh5-1.3.0 RELEASE (build 40e1b62cf0b97f666d084d9509bf9639c575068c)
+Query: use parquet_tpcds1000g
+Query: select sum(cs_ext_discount_amt)  as excess_discount_amount
+from
+    catalog_sales cs
+    join item i on (i.i_item_sk = cs.cs_item_sk)
+    join date_dim d on (d.d_date_sk = cs.cs_sold_date_sk)
+    cross join (
+         select avg(cs_ext_discount_amt) as adj_discount_amt
+         from catalog_sales cs2
+         join item i2 on (i2.i_item_sk = cs2.cs_item_sk)
+         join date_dim d2 on (d2.d_date_sk = cs2.cs_sold_date_sk)
+         where d_date between '1998-03-18' and date_add(cast('1998-03-18' as date),90)
+         and i2.i_manufact_id = 269
+     ) s
+where
+     i_manufact_id = 269
+ and d_date between '1998-03-18' and
+                    date_add(cast('1998-03-18' as date),90)
+and (cs.cs_ext_discount_amt / 1.3) > s.adj_discount_amt
+limit 100
+ERROR: AnalysisException: Invalid type cast of '1998-03-18' from STRING to DATE
+Could not execute command: select  sum(cs_ext_discount_amt)  as excess_discount_amount
+from
+    catalog_sales cs
+    join item i on (i.i_item_sk = cs.cs_item_sk)
+    join date_dim d on (d.d_date_sk = cs.cs_sold_date_sk)
+    cross join (
+         select avg(cs_ext_discount_amt) as adj_discount_amt
+         from catalog_sales cs2
+         join item i2 on (i2.i_item_sk = cs2.cs_item_sk)
+         join date_dim d2 on (d2.d_date_sk = cs2.cs_sold_date_sk)
+         where d_date between '1998-03-18' and date_add(cast('1998-03-18' as date),90)
+         and i2.i_manufact_id = 269
+     ) s
+where
+     i_manufact_id = 269
+ and d_date between '1998-03-18' and
+                    date_add(cast('1998-03-18' as date),90)
+and (cs.cs_ext_discount_amt / 1.3) > s.adj_discount_amt
+limit 100
+
+[?1034hStarting Impala Shell without Kerberos authentication
+Connected to 10.25.12.43:21000
+Server version: impalad version cdh5-1.3.0 RELEASE (build 40e1b62cf0b97f666d084d9509bf9639c575068c)
+Query: use parquet_tpcds1000g
+Query: select c_last_name
+       ,c_first_name
+       ,c_salutation
+       ,c_preferred_cust_flag
+       ,ss_ticket_number
+       ,cnt from
+   (select ss_ticket_number
+          ,ss_customer_sk
+          ,count(*) cnt
+    from store_sales ss
+    join date_dim d on (ss.ss_sold_date_sk = d.d_date_sk)
+    join store s on (ss.ss_store_sk = s.s_store_sk)
+    join household_demographics hd on (ss.ss_hdemo_sk = hd.hd_demo_sk)
+    where (d.d_dom between 1 and 3 or d.d_dom between 25 and 28)
+    and (hd.hd_buy_potential = '>10000' or
+         hd.hd_buy_potential = 'unknown')
+    and hd.hd_vehicle_count > 0
+    and (case when hd.hd_vehicle_count > 0
+        then hd.hd_dep_count/ hd.hd_vehicle_count
+        else null
+        end)  > 1.2
+    and d.d_year between 1998 and 1998+2
+    and s.s_county in ('Williamson County','Williamson County','Williamson County','Williamson County','Williamson County','Williamson County','Williamson Davis Parish','Williamson County')
+    group by ss_ticket_number,ss_customer_sk) dn
+    join customer c on (dn.ss_customer_sk = c.c_customer_sk)
+    where cnt between 15 and 20
+    order by c_last_name,c_first_name,c_salutation,c_preferred_cust_flag desc
+LIMIT 100
+ERROR: Couldn't open transport for hdp015-16:22000(connect() failed: Connection refused)
+Could not execute command: select c_last_name
+       ,c_first_name
+       ,c_salutation
+       ,c_preferred_cust_flag
+       ,ss_ticket_number
+       ,cnt from
+   (select ss_ticket_number
+          ,ss_customer_sk
+          ,count(*) cnt
+    from store_sales ss
+    join date_dim d on (ss.ss_sold_date_sk = d.d_date_sk)
+    join store s on (ss.ss_store_sk = s.s_store_sk)
+    join household_demographics hd on (ss.ss_hdemo_sk = hd.hd_demo_sk)
+    where (d.d_dom between 1 and 3 or d.d_dom between 25 and 28)
+    and (hd.hd_buy_potential = '>10000' or
+         hd.hd_buy_potential = 'unknown')
+    and hd.hd_vehicle_count > 0
+    and (case when hd.hd_vehicle_count > 0
+        then hd.hd_dep_count/ hd.hd_vehicle_count
+        else null
+        end)  > 1.2
+    and d.d_year between 1998 and 1998+2
+    and s.s_county in ('Williamson County','Williamson County','Williamson County','Williamson County','Williamson County','Williamson County','Williamson Davis Parish','Williamson County')
+    group by ss_ticket_number,ss_customer_sk) dn
+    join customer c on (dn.ss_customer_sk = c.c_customer_sk)
+    where cnt between 15 and 20
+    order by c_last_name,c_first_name,c_salutation,c_preferred_cust_flag desc
+LIMIT 100
+
+[?1034hStarting Impala Shell without Kerberos authentication
+Connected to 10.25.12.43:21000
+Server version: impalad version cdh5-1.3.0 RELEASE (build 40e1b62cf0b97f666d084d9509bf9639c575068c)
+Query: use parquet_tpcds1000g
+Query: drop table if exists temp_inv9205
+Query: create table temp_inv9205 as
+select w_warehouse_name,w_warehouse_sk,i_item_sk,d_moy,stdev,mean, case mean when 0.0 then null else stdev/mean end cov
+from(select w_warehouse_name,w_warehouse_sk,i_item_sk,d_moy
+            ,stddev_samp(inv_quantity_on_hand) stdev,avg(inv_quantity_on_hand) mean
+      from inventory i
+      join item im on (i.inv_item_sk = im.i_item_sk)
+      join warehouse w on (i.inv_warehouse_sk = w.w_warehouse_sk)
+      join date_dim d on (i.inv_date_sk = d.d_date_sk)
+      where d_year = 2000
+      group by w_warehouse_name,w_warehouse_sk,i_item_sk,d_moy) foo
+where case mean when 0.0 then 0.0 else stdev/mean end > 1.0
+ERROR: AnalysisException: parquet_tpcds1000g.stddev_samp() unknown
+Could not execute command: create table temp_inv9205 as
+select w_warehouse_name,w_warehouse_sk,i_item_sk,d_moy,stdev,mean, case mean when 0.0 then null else stdev/mean end cov
+from(select w_warehouse_name,w_warehouse_sk,i_item_sk,d_moy
+            ,stddev_samp(inv_quantity_on_hand) stdev,avg(inv_quantity_on_hand) mean
+      from inventory i
+      join item im on (i.inv_item_sk = im.i_item_sk)
+      join warehouse w on (i.inv_warehouse_sk = w.w_warehouse_sk)
+      join date_dim d on (i.inv_date_sk = d.d_date_sk)
+      where d_year = 2000
+      group by w_warehouse_name,w_warehouse_sk,i_item_sk,d_moy) foo
+where case mean when 0.0 then 0.0 else stdev/mean end > 1.0
+
+[?1034hStarting Impala Shell without Kerberos authentication
+Connected to 10.25.12.43:21000
+Server version: impalad version cdh5-1.3.0 RELEASE (build 40e1b62cf0b97f666d084d9509bf9639c575068c)
+Query: use parquet_tpcds1000g
+Query: select dt.d_year
+        ,i.i_category_id
+        ,i.i_category
+        ,sum(ss_ext_sales_price) as ext_p
+from   date_dim dt
+        join store_sales ss on (dt.d_date_sk = ss.ss_sold_date_sk)
+        join item i on (ss.ss_item_sk = i.i_item_sk)
+where i.i_manager_id = 1
+        and dt.d_moy=12
+        and dt.d_year=1998
+group by       dt.d_year
+                ,i.i_category_id
+                ,i.i_category
+order by       ext_p desc,d_year
+                ,i_category_id
+                ,i_category
+limit 100
+ERROR: Couldn't open transport for hdp015-9:22000(connect() failed: Connection refused)
+Could not execute command: select  dt.d_year
+        ,i.i_category_id
+        ,i.i_category
+        ,sum(ss_ext_sales_price) as ext_p
+from   date_dim dt
+        join store_sales ss on (dt.d_date_sk = ss.ss_sold_date_sk)
+        join item i on (ss.ss_item_sk = i.i_item_sk)
+where i.i_manager_id = 1
+        and dt.d_moy=12
+        and dt.d_year=1998
+group by       dt.d_year
+                ,i.i_category_id
+                ,i.i_category
+order by       ext_p desc,d_year
+                ,i_category_id
+                ,i_category
+limit 100
+
+[?1034hStarting Impala Shell without Kerberos authentication
+Connected to 10.25.12.43:21000
+Server version: impalad version cdh5-1.3.0 RELEASE (build 40e1b62cf0b97f666d084d9509bf9639c575068c)
+Query: use parquet_tpcds1000g
+Query: select ca_zip, ca_county, sum(ws_sales_price)
+from web_sales ws
+join customer c on (ws.ws_bill_customer_sk = c.c_customer_sk)
+join customer_address ca on (c.c_current_addr_sk = ca.ca_address_sk)
+join date_dim d  on (ws.ws_sold_date_sk = d.d_date_sk)
+join item i on (ws.ws_item_sk = i.i_item_sk)
+left outer join (select i_item_id from item where i_item_sk in (2, 3, 5, 7, 11, 13, 17, 19, 23, 29) group by i_item_id) i2 on (i.i_item_id = i2.i_item_id)
+where ( substr(ca_zip,1,5) in ('85669', '86197','88274','83405','86475', '85392', '85460', '80348', '81792')
+           or
+         i2.i_item_id is not null
+       )
+     and d_qoy = 2 and d_year = 2000
+group by ca_zip, ca_county
+order by ca_zip, ca_county
+limit 100
+ERROR: Couldn't open transport for hdp015-16:22000(connect() failed: Connection refused)
+Could not execute command: select  ca_zip, ca_county, sum(ws_sales_price)
+from web_sales ws
+join customer c on (ws.ws_bill_customer_sk = c.c_customer_sk)
+join customer_address ca on (c.c_current_addr_sk = ca.ca_address_sk)
+join date_dim d  on (ws.ws_sold_date_sk = d.d_date_sk)
+join item i on (ws.ws_item_sk = i.i_item_sk)
+left outer join (select i_item_id from item where i_item_sk in (2, 3, 5, 7, 11, 13, 17, 19, 23, 29) group by i_item_id) i2 on (i.i_item_id = i2.i_item_id)
+where ( substr(ca_zip,1,5) in ('85669', '86197','88274','83405','86475', '85392', '85460', '80348', '81792')
+           or
+         i2.i_item_id is not null
+       )
+     and d_qoy = 2 and d_year = 2000
+group by ca_zip, ca_county
+order by ca_zip, ca_county
+limit 100
+
+[?1034hStarting Impala Shell without Kerberos authentication
+Connected to 10.25.12.43:21000
+Server version: impalad version cdh5-1.3.0 RELEASE (build 40e1b62cf0b97f666d084d9509bf9639c575068c)
+Query: use parquet_tpcds1000g
+Query: select *
+from
+(
+select
+'web' as channel
+,web.item
+,web.return_ratio
+,web.return_rank
+,web.currency_rank
+from (
+        select
+         item
+        ,return_ratio
+        ,currency_ratio
+        ,rank() over (order by return_ratio) as return_rank
+        ,rank() over (order by currency_ratio) as currency_rank
+        from
+        (       select ws.ws_item_sk as item
+                ,(cast(sum(coalesce(wr.wr_return_quantity,0)) as decimal)/
+                cast(sum(coalesce(ws.ws_quantity,0)) as decimal )) as return_ratio
+                ,(cast(sum(coalesce(wr.wr_return_amt,0)) as decimal)/
+                cast(sum(coalesce(ws.ws_net_paid,0)) as decimal )) as currency_ratio
+                from
+                 web_sales ws
+                 join date_dim d on (ws.ws_sold_date_sk = d.d_date_sk)
+                 left outer join web_returns wr on (ws.ws_order_number = wr.wr_order_number and ws.ws_item_sk = wr.wr_item_sk)
+                where
+                        wr.wr_return_amt > 10000
+                        and ws.ws_net_profit > 1
+                         and ws.ws_net_paid > 0
+                         and ws.ws_quantity > 0
+                         and d_year = 2000
+                         and d_moy = 12
+                group by ws.ws_item_sk
+        ) in_web
+) web
+where
+(
+web.return_rank <= 10
+or
+web.currency_rank <= 10
+)
+union all
+select
+'catalog' as channel
+,catalog.item
+,catalog.return_ratio
+,catalog.return_rank
+,catalog.currency_rank
+from (
+        select
+         item
+        ,return_ratio
+        ,currency_ratio
+        ,rank() over (order by return_ratio) as return_rank
+        ,rank() over (order by currency_ratio) as currency_rank
+        from
+        (       select
+                cs.cs_item_sk as item
+                ,(cast(sum(coalesce(cr.cr_return_quantity,0)) as decimal)/
+                cast(sum(coalesce(cs.cs_quantity,0)) as decimal )) as return_ratio
+                ,(cast(sum(coalesce(cr.cr_return_amount,0)) as decimal)/
+                cast(sum(coalesce(cs.cs_net_paid,0)) as decimal )) as currency_ratio
+                from
+                catalog_sales cs
+                join date_dim d on (cs.cs_sold_date_sk = d.d_date_sk)
+                left outer join catalog_returns cr on (cs.cs_order_number = cr.cr_order_number and cs.cs_item_sk = cr.cr_item_sk)
+
+                where
+                        cr.cr_return_amount > 10000
+                        and cs.cs_net_profit > 1
+                         and cs.cs_net_paid > 0
+                         and cs.cs_quantity > 0
+                         and d_year = 2000
+                         and d_moy = 12
+                 group by cs.cs_item_sk
+        ) in_cat
+) catalog
+where
+(
+catalog.return_rank <= 10
+or
+catalog.currency_rank <=10
+)
+union all
+select
+'store' as channel
+,store.item
+,store.return_ratio
+,store.return_rank
+,store.currency_rank
+from (
+        select
+         item
+        ,return_ratio
+        ,currency_ratio
+        ,rank() over (order by return_ratio) as return_rank
+        ,rank() over (order by currency_ratio) as currency_rank
+        from
+        (       select sts.ss_item_sk as item
+                ,(cast(sum(coalesce(sr.sr_return_quantity,0)) as decimal)/cast(sum(coalesce(sts.ss_quantity,0)) as decimal )) as return_ratio
+                ,(cast(sum(coalesce(sr.sr_return_amt,0)) as decimal)/cast(sum(coalesce(sts.ss_net_paid,0)) as decimal )) as currency_ratio
+                from
+                store_sales sts
+                join date_dim d on (sts.ss_sold_date_sk = d.d_date_sk)
+                left outer join store_returns sr on (sts.ss_ticket_number = sr.sr_ticket_number and sts.ss_item_sk = sr.sr_item_sk)
+
+                where
+                        sr.sr_return_amt > 10000
+                        and sts.ss_net_profit > 1
+                         and sts.ss_net_paid > 0
+                         and sts.ss_quantity > 0
+                         and d_year = 2000
+                         and d_moy = 12
+                group by sts.ss_item_sk
+        ) in_store
+) store
+where  (
+store.return_rank <= 10
+or
+store.currency_rank <= 10
+)
+  ) z
+order by channel,return_rank,currency_rank
+limit 100
+ERROR: AnalysisException: Syntax error in line 15:
+        ,rank() over (order by return_ratio) as return_rank
+                     ^
+Encountered: (
+Expected: CROSS, FROM, FULL, GROUP, HAVING, INNER, JOIN, LEFT, LIMIT, ON, ORDER, RIGHT, UNION, USING, WHERE, COMMA
+
+CAUSED BY: Exception: Syntax error
+Could not execute command: select   *
+from
+(
+select
+'web' as channel
+,web.item
+,web.return_ratio
+,web.return_rank
+,web.currency_rank
+from (
+        select
+         item
+        ,return_ratio
+        ,currency_ratio
+        ,rank() over (order by return_ratio) as return_rank
+        ,rank() over (order by currency_ratio) as currency_rank
+        from
+        (       select ws.ws_item_sk as item
+                ,(cast(sum(coalesce(wr.wr_return_quantity,0)) as decimal)/
+                cast(sum(coalesce(ws.ws_quantity,0)) as decimal )) as return_ratio
+                ,(cast(sum(coalesce(wr.wr_return_amt,0)) as decimal)/
+                cast(sum(coalesce(ws.ws_net_paid,0)) as decimal )) as currency_ratio
+                from
+                 web_sales ws
+                 join date_dim d on (ws.ws_sold_date_sk = d.d_date_sk)
+                 left outer join web_returns wr on (ws.ws_order_number = wr.wr_order_number and ws.ws_item_sk = wr.wr_item_sk)
+                where
+                        wr.wr_return_amt > 10000
+                        and ws.ws_net_profit > 1
+                         and ws.ws_net_paid > 0
+                         and ws.ws_quantity > 0
+                         and d_year = 2000
+                         and d_moy = 12
+                group by ws.ws_item_sk
+        ) in_web
+) web
+where
+(
+web.return_rank <= 10
+or
+web.currency_rank <= 10
+)
+union all
+select
+'catalog' as channel
+,catalog.item
+,catalog.return_ratio
+,catalog.return_rank
+,catalog.currency_rank
+from (
+        select
+         item
+        ,return_ratio
+        ,currency_ratio
+        ,rank() over (order by return_ratio) as return_rank
+        ,rank() over (order by currency_ratio) as currency_rank
+        from
+        (       select
+                cs.cs_item_sk as item
+                ,(cast(sum(coalesce(cr.cr_return_quantity,0)) as decimal)/
+                cast(sum(coalesce(cs.cs_quantity,0)) as decimal )) as return_ratio
+                ,(cast(sum(coalesce(cr.cr_return_amount,0)) as decimal)/
+                cast(sum(coalesce(cs.cs_net_paid,0)) as decimal )) as currency_ratio
+                from
+                catalog_sales cs
+                join date_dim d on (cs.cs_sold_date_sk = d.d_date_sk)
+                left outer join catalog_returns cr on (cs.cs_order_number = cr.cr_order_number and cs.cs_item_sk = cr.cr_item_sk)
+
+                where
+                        cr.cr_return_amount > 10000
+                        and cs.cs_net_profit > 1
+                         and cs.cs_net_paid > 0
+                         and cs.cs_quantity > 0
+                         and d_year = 2000
+                         and d_moy = 12
+                 group by cs.cs_item_sk
+        ) in_cat
+) catalog
+where
+(
+catalog.return_rank <= 10
+or
+catalog.currency_rank <=10
+)
+union all
+select
+'store' as channel
+,store.item
+,store.return_ratio
+,store.return_rank
+,store.currency_rank
+from (
+        select
+         item
+        ,return_ratio
+        ,currency_ratio
+        ,rank() over (order by return_ratio) as return_rank
+        ,rank() over (order by currency_ratio) as currency_rank
+        from
+        (       select sts.ss_item_sk as item
+                ,(cast(sum(coalesce(sr.sr_return_quantity,0)) as decimal)/cast(sum(coalesce(sts.ss_quantity,0)) as decimal )) as return_ratio
+                ,(cast(sum(coalesce(sr.sr_return_amt,0)) as decimal)/cast(sum(coalesce(sts.ss_net_paid,0)) as decimal )) as currency_ratio
+                from
+                store_sales sts
+                join date_dim d on (sts.ss_sold_date_sk = d.d_date_sk)
+                left outer join store_returns sr on (sts.ss_ticket_number = sr.sr_ticket_number and sts.ss_item_sk = sr.sr_item_sk)
+
+                where
+                        sr.sr_return_amt > 10000
+                        and sts.ss_net_profit > 1
+                         and sts.ss_net_paid > 0
+                         and sts.ss_quantity > 0
+                         and d_year = 2000
+                         and d_moy = 12
+                group by sts.ss_item_sk
+        ) in_store
+) store
+where  (
+store.return_rank <= 10
+or
+store.currency_rank <= 10
+)
+  ) z
+order by channel,return_rank,currency_rank
+limit 100
+
+[?1034hStarting Impala Shell without Kerberos authentication
+Connected to 10.25.12.43:21000
+Server version: impalad version cdh5-1.3.0 RELEASE (build 40e1b62cf0b97f666d084d9509bf9639c575068c)
+Query: use parquet_tpcds1000g
+Query: select s_store_name
+  ,s_company_id
+  ,s_street_number
+  ,s_street_name
+  ,s_street_type
+  ,s_suite_number
+  ,s_city
+  ,s_county
+  ,s_state
+  ,s_zip
+  ,sum(case when (sr_returned_date_sk - ss_sold_date_sk <= 30 ) then 1 else 0 end)  as 30_
+  ,sum(case when (sr_returned_date_sk - ss_sold_date_sk > 30) and
+                 (sr_returned_date_sk - ss_sold_date_sk <= 60) then 1 else 0 end )  as 31_60_
+  ,sum(case when (sr_returned_date_sk - ss_sold_date_sk > 60) and
+                 (sr_returned_date_sk - ss_sold_date_sk <= 90) then 1 else 0 end)  as 61_90_
+  ,sum(case when (sr_returned_date_sk - ss_sold_date_sk > 90) and
+                 (sr_returned_date_sk - ss_sold_date_sk <= 120) then 1 else 0 end)  as 91_120_
+  ,sum(case when (sr_returned_date_sk - ss_sold_date_sk  > 120) then 1 else 0 end)  as GT_120_
+from
+  store_sales ss
+  join store_returns sr on (ss.ss_ticket_number = sr.sr_ticket_number and ss.ss_item_sk = sr.sr_item_sk and ss.ss_customer_sk = sr.sr_customer_sk)
+  join store s on (ss.ss_store_sk = s.s_store_sk)
+  join date_dim d1 on (ss.ss_sold_date_sk = d1.d_date_sk)
+  join date_dim d2 on (sr.sr_returned_date_sk = d2.d_date_sk)
+where
+    d2.d_year = 2000
+and d2.d_moy  = 9
+group by
+   s_store_name
+  ,s_company_id
+  ,s_street_number
+  ,s_street_name
+  ,s_street_type
+  ,s_suite_number
+  ,s_city
+  ,s_county
+  ,s_state
+  ,s_zip
+order by s_store_name
+        ,s_company_id
+        ,s_street_number
+        ,s_street_name
+        ,s_street_type
+        ,s_suite_number
+        ,s_city
+        ,s_county
+        ,s_state
+        ,s_zip
+limit 100
+ERROR: Couldn't open transport for hdp015-19:22000(connect() failed: Connection refused)
+Could not execute command: select
+   s_store_name
+  ,s_company_id
+  ,s_street_number
+  ,s_street_name
+  ,s_street_type
+  ,s_suite_number
+  ,s_city
+  ,s_county
+  ,s_state
+  ,s_zip
+  ,sum(case when (sr_returned_date_sk - ss_sold_date_sk <= 30 ) then 1 else 0 end)  as 30_
+  ,sum(case when (sr_returned_date_sk - ss_sold_date_sk > 30) and
+                 (sr_returned_date_sk - ss_sold_date_sk <= 60) then 1 else 0 end )  as 31_60_
+  ,sum(case when (sr_returned_date_sk - ss_sold_date_sk > 60) and
+                 (sr_returned_date_sk - ss_sold_date_sk <= 90) then 1 else 0 end)  as 61_90_
+  ,sum(case when (sr_returned_date_sk - ss_sold_date_sk > 90) and
+                 (sr_returned_date_sk - ss_sold_date_sk <= 120) then 1 else 0 end)  as 91_120_
+  ,sum(case when (sr_returned_date_sk - ss_sold_date_sk  > 120) then 1 else 0 end)  as GT_120_
+from
+  store_sales ss
+  join store_returns sr on (ss.ss_ticket_number = sr.sr_ticket_number and ss.ss_item_sk = sr.sr_item_sk and ss.ss_customer_sk = sr.sr_customer_sk)
+  join store s on (ss.ss_store_sk = s.s_store_sk)
+  join date_dim d1 on (ss.ss_sold_date_sk = d1.d_date_sk)
+  join date_dim d2 on (sr.sr_returned_date_sk = d2.d_date_sk)
+where
+    d2.d_year = 2000
+and d2.d_moy  = 9
+group by
+   s_store_name
+  ,s_company_id
+  ,s_street_number
+  ,s_street_name
+  ,s_street_type
+  ,s_suite_number
+  ,s_city
+  ,s_county
+  ,s_state
+  ,s_zip
+order by s_store_name
+        ,s_company_id
+        ,s_street_number
+        ,s_street_name
+        ,s_street_type
+        ,s_suite_number
+        ,s_city
+        ,s_county
+        ,s_state
+        ,s_zip
+limit 100
+
+[?1034hStarting Impala Shell without Kerberos authentication
+Connected to 10.25.12.43:21000
+Server version: impalad version cdh5-1.3.0 RELEASE (build 40e1b62cf0b97f666d084d9509bf9639c575068c)
+Query: use parquet_tpcds1000g
+Query: select *
+from (select item_sk
+     ,d_date
+     ,web_sales
+     ,store_sales
+     ,max(web_sales)
+         over (partition by item_sk order by d_date rows between unbounded preceding and current row) web_cumulative
+     ,max(store_sales)
+         over (partition by item_sk order by d_date rows between unbounded preceding and current row) store_cumulative
+     from (select case when web.item_sk is not null then web.item_sk else store.item_sk end item_sk
+                 ,case when web.d_date is not null then web.d_date else store.d_date end d_date
+                 ,web.cume_sales web_sales
+                 ,store.cume_sales store_sales
+           from (
+             select item_sk,d_date,sum(ws_sales_price) over (partition by item_sk order by d_date rows between unbounded preceding and current row) as cume_sales
+             from (
+             select ws_item_sk item_sk, d_date, sum(ws_sales_price) ws_sales_price
+             from web_sales ws
+             join date_dim d on (ws.ws_sold_date_sk=d.d_date_sk)
+             where d_month_seq between 1211 and 1211+11
+             and ws_item_sk is not NULL
+             group by ws_item_sk,d_date
+             ) x
+           ) web full outer join (
+             select item_sk,d_date,sum(ss_sales_price) over (partition by item_sk order by d_date rows between unbounded preceding and current row) cume_sales
+             from (
+             select ss_item_sk item_sk, d_date,sum(ss_sales_price) ss_sales_price
+             from store_sales ss
+             join date_dim d on (ss.ss_sold_date_sk=d.d_date_sk)
+             where d_month_seq between 1211 and 1211+11
+             and ss_item_sk is not NULL
+             group by ss_item_sk, d_date
+             ) x
+           ) store on (web.item_sk = store.item_sk and web.d_date = store.d_date)
+     )x
+)y
+where web_cumulative > store_cumulative
+order by item_sk
+        ,d_date
+limit 100
+ERROR: AnalysisException: Syntax error in line 7:
+         over (partition by item_sk order ...
+              ^
+Encountered: (
+Expected: CROSS, FROM, FULL, GROUP, HAVING, INNER, JOIN, LEFT, LIMIT, ON, ORDER, RIGHT, UNION, USING, WHERE, COMMA
+
+CAUSED BY: Exception: Syntax error
+Could not execute command: select  *
+from (select item_sk
+     ,d_date
+     ,web_sales
+     ,store_sales
+     ,max(web_sales)
+         over (partition by item_sk order by d_date rows between unbounded preceding and current row) web_cumulative
+     ,max(store_sales)
+         over (partition by item_sk order by d_date rows between unbounded preceding and current row) store_cumulative
+     from (select case when web.item_sk is not null then web.item_sk else store.item_sk end item_sk
+                 ,case when web.d_date is not null then web.d_date else store.d_date end d_date
+                 ,web.cume_sales web_sales
+                 ,store.cume_sales store_sales
+           from (
+             select item_sk,d_date,sum(ws_sales_price) over (partition by item_sk order by d_date rows between unbounded preceding and current row) as cume_sales
+             from (
+             select ws_item_sk item_sk, d_date, sum(ws_sales_price) ws_sales_price
+             from web_sales ws
+             join date_dim d on (ws.ws_sold_date_sk=d.d_date_sk)
+             where d_month_seq between 1211 and 1211+11
+             and ws_item_sk is not NULL
+             group by ws_item_sk,d_date
+             ) x
+           ) web full outer join (
+             select item_sk,d_date,sum(ss_sales_price) over (partition by item_sk order by d_date rows between unbounded preceding and current row) cume_sales
+             from (
+             select ss_item_sk item_sk, d_date,sum(ss_sales_price) ss_sales_price
+             from store_sales ss
+             join date_dim d on (ss.ss_sold_date_sk=d.d_date_sk)
+             where d_month_seq between 1211 and 1211+11
+             and ss_item_sk is not NULL
+             group by ss_item_sk, d_date
+             ) x
+           ) store on (web.item_sk = store.item_sk and web.d_date = store.d_date)
+     )x
+)y
+where web_cumulative > store_cumulative
+order by item_sk
+        ,d_date
+limit 100
+
+[?1034hStarting Impala Shell without Kerberos authentication
+Connected to 10.25.12.43:21000
+Server version: impalad version cdh5-1.3.0 RELEASE (build 40e1b62cf0b97f666d084d9509bf9639c575068c)
+Query: use parquet_tpcds1000g
+Query: select substr(w_warehouse_name,1,20) as thename
+  ,sm_type
+  ,web_name
+  ,sum(case when (ws_ship_date_sk - ws_sold_date_sk <= 30 ) then 1 else 0 end)  as 30_days
+  ,sum(case when (ws_ship_date_sk - ws_sold_date_sk > 30) and
+                 (ws_ship_date_sk - ws_sold_date_sk <= 60) then 1 else 0 end )  as 31_60_days
+  ,sum(case when (ws_ship_date_sk - ws_sold_date_sk > 60) and
+                 (ws_ship_date_sk - ws_sold_date_sk <= 90) then 1 else 0 end)  as 61_90_days
+  ,sum(case when (ws_ship_date_sk - ws_sold_date_sk > 90) and
+                 (ws_ship_date_sk - ws_sold_date_sk <= 120) then 1 else 0 end)  as 91_120_days
+  ,sum(case when (ws_ship_date_sk - ws_sold_date_sk  > 120) then 1 else 0 end)  as GT_120_days
+from
+   web_sales ws
+  join warehouse w on (ws.ws_warehouse_sk = w.w_warehouse_sk)
+  join ship_mode sm on (ws.ws_ship_mode_sk = sm.sm_ship_mode_sk)
+  join web_site web on (ws.ws_web_site_sk = web.web_site_sk)
+  join date_dim d on (ws.ws_ship_date_sk = d.d_date_sk)
+where d_month_seq between 1195 and 1195 + 11
+group by
+   substr(w_warehouse_name,1,20)
+  ,sm_type
+  ,web_name
+order by thename
+        ,sm_type
+       ,web_name
+limit 100
+ERROR: Couldn't open transport for hdp017-8:22000(connect() failed: Connection refused)
+Could not execute command: select
+   substr(w_warehouse_name,1,20) as thename
+  ,sm_type
+  ,web_name
+  ,sum(case when (ws_ship_date_sk - ws_sold_date_sk <= 30 ) then 1 else 0 end)  as 30_days
+  ,sum(case when (ws_ship_date_sk - ws_sold_date_sk > 30) and
+                 (ws_ship_date_sk - ws_sold_date_sk <= 60) then 1 else 0 end )  as 31_60_days
+  ,sum(case when (ws_ship_date_sk - ws_sold_date_sk > 60) and
+                 (ws_ship_date_sk - ws_sold_date_sk <= 90) then 1 else 0 end)  as 61_90_days
+  ,sum(case when (ws_ship_date_sk - ws_sold_date_sk > 90) and
+                 (ws_ship_date_sk - ws_sold_date_sk <= 120) then 1 else 0 end)  as 91_120_days
+  ,sum(case when (ws_ship_date_sk - ws_sold_date_sk  > 120) then 1 else 0 end)  as GT_120_days
+from
+   web_sales ws
+  join warehouse w on (ws.ws_warehouse_sk = w.w_warehouse_sk)
+  join ship_mode sm on (ws.ws_ship_mode_sk = sm.sm_ship_mode_sk)
+  join web_site web on (ws.ws_web_site_sk = web.web_site_sk)
+  join date_dim d on (ws.ws_ship_date_sk = d.d_date_sk)
+where d_month_seq between 1195 and 1195 + 11
+group by
+   substr(w_warehouse_name,1,20)
+  ,sm_type
+  ,web_name
+order by thename
+        ,sm_type
+       ,web_name
+limit 100
+
+[?1034hStarting Impala Shell without Kerberos authentication
+Connected to 10.25.12.43:21000
+Server version: impalad version cdh5-1.3.0 RELEASE (build 40e1b62cf0b97f666d084d9509bf9639c575068c)
+Query: use parquet_tpcds1000g
+Query: select w_warehouse_name
+        ,w_warehouse_sq_ft
+        ,w_city
+        ,w_county
+        ,w_state
+        ,w_country
+        ,ship_carriers
+        ,yearx
+        ,sum(jan_sales) as jan_sales
+        ,sum(feb_sales) as feb_sales
+        ,sum(mar_sales) as mar_sales
+        ,sum(apr_sales) as apr_sales
+        ,sum(may_sales) as may_sales
+        ,sum(jun_sales) as jun_sales
+        ,sum(jul_sales) as jul_sales
+        ,sum(aug_sales) as aug_sales
+        ,sum(sep_sales) as sep_sales
+        ,sum(oct_sales) as oct_sales
+        ,sum(nov_sales) as nov_sales
+        ,sum(dec_sales) as dec_sales
+        ,sum(jan_sales/w_warehouse_sq_ft) as jan_sales_per_sq_foot
+        ,sum(feb_sales/w_warehouse_sq_ft) as feb_sales_per_sq_foot
+        ,sum(mar_sales/w_warehouse_sq_ft) as mar_sales_per_sq_foot
+        ,sum(apr_sales/w_warehouse_sq_ft) as apr_sales_per_sq_foot
+        ,sum(may_sales/w_warehouse_sq_ft) as may_sales_per_sq_foot
+        ,sum(jun_sales/w_warehouse_sq_ft) as jun_sales_per_sq_foot
+        ,sum(jul_sales/w_warehouse_sq_ft) as jul_sales_per_sq_foot
+        ,sum(aug_sales/w_warehouse_sq_ft) as aug_sales_per_sq_foot
+        ,sum(sep_sales/w_warehouse_sq_ft) as sep_sales_per_sq_foot
+        ,sum(oct_sales/w_warehouse_sq_ft) as oct_sales_per_sq_foot
+        ,sum(nov_sales/w_warehouse_sq_ft) as nov_sales_per_sq_foot
+        ,sum(dec_sales/w_warehouse_sq_ft) as dec_sales_per_sq_foot
+        ,sum(jan_net) as jan_net
+        ,sum(feb_net) as feb_net
+        ,sum(mar_net) as mar_net
+        ,sum(apr_net) as apr_net
+        ,sum(may_net) as may_net
+        ,sum(jun_net) as jun_net
+        ,sum(jul_net) as jul_net
+        ,sum(aug_net) as aug_net
+        ,sum(sep_net) as sep_net
+        ,sum(oct_net) as oct_net
+        ,sum(nov_net) as nov_net
+        ,sum(dec_net) as dec_net
+from (
+    select *
+    from
+    (select
+        w_warehouse_name
+        ,w_warehouse_sq_ft
+        ,w_city
+        ,w_county
+        ,w_state
+        ,w_country
+        ,concat('DIAMOND',',','AIRBORNE') as ship_carriers
+        ,d_year as yearx
+        ,sum(case when d_moy = 1
+                then ws_sales_price *ws_quantity else cast(0 as decimal) end) as jan_sales
+        ,sum(case when d_moy = 2
+                then ws_sales_price *ws_quantity else cast(0 as decimal) end) as feb_sales
+        ,sum(case when d_moy = 3
+                then ws_sales_price *ws_quantity else cast(0 as decimal) end) as mar_sales
+        ,sum(case when d_moy = 4
+                then ws_sales_price *ws_quantity else cast(0 as decimal) end) as apr_sales
+        ,sum(case when d_moy = 5
+                then ws_sales_price *ws_quantity else cast(0 as decimal) end) as may_sales
+        ,sum(case when d_moy = 6
+                then ws_sales_price *ws_quantity else cast(0 as decimal) end) as jun_sales
+        ,sum(case when d_moy = 7
+                then ws_sales_price *ws_quantity else cast(0 as decimal) end) as jul_sales
+        ,sum(case when d_moy = 8
+                then ws_sales_price *ws_quantity else cast(0 as decimal) end) as aug_sales
+        ,sum(case when d_moy = 9
+                then ws_sales_price *ws_quantity else cast(0 as decimal) end) as sep_sales
+        ,sum(case when d_moy = 10
+                then ws_sales_price *ws_quantity else cast(0 as decimal) end) as oct_sales
+        ,sum(case when d_moy = 11
+                then ws_sales_price *ws_quantity else cast(0 as decimal) end) as nov_sales
+        ,sum(case when d_moy = 12
+                then ws_sales_price *ws_quantity else cast(0 as decimal) end) as dec_sales
+        ,sum(case when d_moy = 1
+                then ws_net_paid_inc_tax *ws_quantity else cast(0 as decimal) end) as jan_net
+        ,sum(case when d_moy = 2
+                then ws_net_paid_inc_tax *ws_quantity else cast(0 as decimal) end) as feb_net
+        ,sum(case when d_moy = 3
+                then ws_net_paid_inc_tax *ws_quantity else cast(0 as decimal) end) as mar_net
+        ,sum(case when d_moy = 4
+                then ws_net_paid_inc_tax *ws_quantity else cast(0 as decimal) end) as apr_net
+        ,sum(case when d_moy = 5
+                then ws_net_paid_inc_tax *ws_quantity else cast(0 as decimal) end) as may_net
+        ,sum(case when d_moy = 6
+                then ws_net_paid_inc_tax *ws_quantity else cast(0 as decimal) end) as jun_net
+        ,sum(case when d_moy = 7
+                then ws_net_paid_inc_tax *ws_quantity else cast(0 as decimal) end) as jul_net
+        ,sum(case when d_moy = 8
+                then ws_net_paid_inc_tax *ws_quantity else cast(0 as decimal) end) as aug_net
+        ,sum(case when d_moy = 9
+                then ws_net_paid_inc_tax *ws_quantity else cast(0 as decimal) end) as sep_net
+        ,sum(case when d_moy = 10
+                then ws_net_paid_inc_tax *ws_quantity else cast(0 as decimal) end) as oct_net
+        ,sum(case when d_moy = 11
+                then ws_net_paid_inc_tax *ws_quantity else cast(0 as decimal) end) as nov_net
+        ,sum(case when d_moy = 12
+                then ws_net_paid_inc_tax *ws_quantity else cast(0 as decimal) end) as dec_net
+     from
+          web_sales ws
+         join warehouse w on (ws.ws_warehouse_sk = w.w_warehouse_sk)
+         join date_dim d on (ws.ws_sold_date_sk = d.d_date_sk)
+         join time_dim t on (ws.ws_sold_time_sk = t.t_time_sk)
+         join ship_mode s on (ws.ws_ship_mode_sk = s.sm_ship_mode_sk)
+     where d_year = 2002
+     and t_time between 49530 and 49530+28800
+      and sm_carrier in ('DIAMOND','AIRBORNE')
+     group by
+        w_warehouse_name
+        ,w_warehouse_sq_ft
+        ,w_city
+        ,w_county
+        ,w_state
+        ,w_country
+       ,d_year
+union all
+    select
+        w_warehouse_name
+        ,w_warehouse_sq_ft
+        ,w_city
+        ,w_county
+        ,w_state
+        ,w_country
+        ,concat('BARIAN',',','AIRBORNE') as ship_carriers
+        ,d_year as yearx
+        ,sum(case when d_moy = 1
+                then cs_ext_sales_price *cs_quantity else cast(0 as decimal) end) as jan_sales
+        ,sum(case when d_moy = 2
+                then cs_ext_sales_price *cs_quantity else cast(0 as decimal) end) as feb_sales
+        ,sum(case when d_moy = 3
+                then cs_ext_sales_price *cs_quantity else cast(0 as decimal) end) as mar_sales
+        ,sum(case when d_moy = 4
+                then cs_ext_sales_price *cs_quantity else cast(0 as decimal) end) as apr_sales
+        ,sum(case when d_moy = 5
+                then cs_ext_sales_price *cs_quantity else cast(0 as decimal) end) as may_sales
+        ,sum(case when d_moy = 6
+                then cs_ext_sales_price *cs_quantity else cast(0 as decimal) end) as jun_sales
+        ,sum(case when d_moy = 7
+                then cs_ext_sales_price *cs_quantity else cast(0 as decimal) end) as jul_sales
+        ,sum(case when d_moy = 8
+                then cs_ext_sales_price *cs_quantity else cast(0 as decimal) end) as aug_sales
+        ,sum(case when d_moy = 9
+                then cs_ext_sales_price *cs_quantity else cast(0 as decimal) end) as sep_sales
+        ,sum(case when d_moy = 10
+                then cs_ext_sales_price *cs_quantity else cast(0 as decimal) end) as oct_sales
+        ,sum(case when d_moy = 11
+                then cs_ext_sales_price *cs_quantity else cast(0 as decimal) end) as nov_sales
+        ,sum(case when d_moy = 12
+                then cs_ext_sales_price *cs_quantity else cast(0 as decimal) end) as dec_sales
+        ,sum(case when d_moy = 1
+                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as decimal) end) as jan_net
+        ,sum(case when d_moy = 2
+                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as decimal) end) as feb_net
+        ,sum(case when d_moy = 3
+                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as decimal) end) as mar_net
+        ,sum(case when d_moy = 4
+                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as decimal) end) as apr_net
+        ,sum(case when d_moy = 5
+                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as decimal) end) as may_net
+        ,sum(case when d_moy = 6
+                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as decimal) end) as jun_net
+        ,sum(case when d_moy = 7
+                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as decimal) end) as jul_net
+        ,sum(case when d_moy = 8
+                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as decimal) end) as aug_net
+        ,sum(case when d_moy = 9
+                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as decimal) end) as sep_net
+        ,sum(case when d_moy = 10
+                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as decimal) end) as oct_net
+        ,sum(case when d_moy = 11
+                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as decimal) end) as nov_net
+        ,sum(case when d_moy = 12
+                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as decimal) end) as dec_net
+     from
+          catalog_sales cs
+         join warehouse w on (cs.cs_warehouse_sk = w.w_warehouse_sk)
+         join date_dim d on (cs.cs_sold_date_sk = d.d_date_sk)
+         join time_dim t on (cs.cs_sold_time_sk = t.t_time_sk)
+         join ship_mode s on (cs.cs_ship_mode_sk = s.sm_ship_mode_sk)
+     where d_year = 2002
+     and t_time between 49530 AND 49530+28800
+      and sm_carrier in ('DIAMOND','AIRBORNE')
+     group by
+        w_warehouse_name
+        ,w_warehouse_sq_ft
+        ,w_city
+        ,w_county
+        ,w_state
+        ,w_country
+       ,d_year
+   ) zunionall
+)dtable
+group by
+        w_warehouse_name
+        ,w_warehouse_sq_ft
+        ,w_city
+        ,w_county
+        ,w_state
+        ,w_country
+        ,ship_carriers
+       ,yearx
+order by w_warehouse_name
+limit 100
+ERROR: AnalysisException: Decimal is not yet implemented.
+Could not execute command: select
+         w_warehouse_name
+        ,w_warehouse_sq_ft
+        ,w_city
+        ,w_county
+        ,w_state
+        ,w_country
+        ,ship_carriers
+        ,yearx
+        ,sum(jan_sales) as jan_sales
+        ,sum(feb_sales) as feb_sales
+        ,sum(mar_sales) as mar_sales
+        ,sum(apr_sales) as apr_sales
+        ,sum(may_sales) as may_sales
+        ,sum(jun_sales) as jun_sales
+        ,sum(jul_sales) as jul_sales
+        ,sum(aug_sales) as aug_sales
+        ,sum(sep_sales) as sep_sales
+        ,sum(oct_sales) as oct_sales
+        ,sum(nov_sales) as nov_sales
+        ,sum(dec_sales) as dec_sales
+        ,sum(jan_sales/w_warehouse_sq_ft) as jan_sales_per_sq_foot
+        ,sum(feb_sales/w_warehouse_sq_ft) as feb_sales_per_sq_foot
+        ,sum(mar_sales/w_warehouse_sq_ft) as mar_sales_per_sq_foot
+        ,sum(apr_sales/w_warehouse_sq_ft) as apr_sales_per_sq_foot
+        ,sum(may_sales/w_warehouse_sq_ft) as may_sales_per_sq_foot
+        ,sum(jun_sales/w_warehouse_sq_ft) as jun_sales_per_sq_foot
+        ,sum(jul_sales/w_warehouse_sq_ft) as jul_sales_per_sq_foot
+        ,sum(aug_sales/w_warehouse_sq_ft) as aug_sales_per_sq_foot
+        ,sum(sep_sales/w_warehouse_sq_ft) as sep_sales_per_sq_foot
+        ,sum(oct_sales/w_warehouse_sq_ft) as oct_sales_per_sq_foot
+        ,sum(nov_sales/w_warehouse_sq_ft) as nov_sales_per_sq_foot
+        ,sum(dec_sales/w_warehouse_sq_ft) as dec_sales_per_sq_foot
+        ,sum(jan_net) as jan_net
+        ,sum(feb_net) as feb_net
+        ,sum(mar_net) as mar_net
+        ,sum(apr_net) as apr_net
+        ,sum(may_net) as may_net
+        ,sum(jun_net) as jun_net
+        ,sum(jul_net) as jul_net
+        ,sum(aug_net) as aug_net
+        ,sum(sep_net) as sep_net
+        ,sum(oct_net) as oct_net
+        ,sum(nov_net) as nov_net
+        ,sum(dec_net) as dec_net
+from (
+    select *
+    from
+    (select
+        w_warehouse_name
+        ,w_warehouse_sq_ft
+        ,w_city
+        ,w_county
+        ,w_state
+        ,w_country
+        ,concat('DIAMOND',',','AIRBORNE') as ship_carriers
+        ,d_year as yearx
+        ,sum(case when d_moy = 1
+                then ws_sales_price *ws_quantity else cast(0 as decimal) end) as jan_sales
+        ,sum(case when d_moy = 2
+                then ws_sales_price *ws_quantity else cast(0 as decimal) end) as feb_sales
+        ,sum(case when d_moy = 3
+                then ws_sales_price *ws_quantity else cast(0 as decimal) end) as mar_sales
+        ,sum(case when d_moy = 4
+                then ws_sales_price *ws_quantity else cast(0 as decimal) end) as apr_sales
+        ,sum(case when d_moy = 5
+                then ws_sales_price *ws_quantity else cast(0 as decimal) end) as may_sales
+        ,sum(case when d_moy = 6
+                then ws_sales_price *ws_quantity else cast(0 as decimal) end) as jun_sales
+        ,sum(case when d_moy = 7
+                then ws_sales_price *ws_quantity else cast(0 as decimal) end) as jul_sales
+        ,sum(case when d_moy = 8
+                then ws_sales_price *ws_quantity else cast(0 as decimal) end) as aug_sales
+        ,sum(case when d_moy = 9
+                then ws_sales_price *ws_quantity else cast(0 as decimal) end) as sep_sales
+        ,sum(case when d_moy = 10
+                then ws_sales_price *ws_quantity else cast(0 as decimal) end) as oct_sales
+        ,sum(case when d_moy = 11
+                then ws_sales_price *ws_quantity else cast(0 as decimal) end) as nov_sales
+        ,sum(case when d_moy = 12
+                then ws_sales_price *ws_quantity else cast(0 as decimal) end) as dec_sales
+        ,sum(case when d_moy = 1
+                then ws_net_paid_inc_tax *ws_quantity else cast(0 as decimal) end) as jan_net
+        ,sum(case when d_moy = 2
+                then ws_net_paid_inc_tax *ws_quantity else cast(0 as decimal) end) as feb_net
+        ,sum(case when d_moy = 3
+                then ws_net_paid_inc_tax *ws_quantity else cast(0 as decimal) end) as mar_net
+        ,sum(case when d_moy = 4
+                then ws_net_paid_inc_tax *ws_quantity else cast(0 as decimal) end) as apr_net
+        ,sum(case when d_moy = 5
+                then ws_net_paid_inc_tax *ws_quantity else cast(0 as decimal) end) as may_net
+        ,sum(case when d_moy = 6
+                then ws_net_paid_inc_tax *ws_quantity else cast(0 as decimal) end) as jun_net
+        ,sum(case when d_moy = 7
+                then ws_net_paid_inc_tax *ws_quantity else cast(0 as decimal) end) as jul_net
+        ,sum(case when d_moy = 8
+                then ws_net_paid_inc_tax *ws_quantity else cast(0 as decimal) end) as aug_net
+        ,sum(case when d_moy = 9
+                then ws_net_paid_inc_tax *ws_quantity else cast(0 as decimal) end) as sep_net
+        ,sum(case when d_moy = 10
+                then ws_net_paid_inc_tax *ws_quantity else cast(0 as decimal) end) as oct_net
+        ,sum(case when d_moy = 11
+                then ws_net_paid_inc_tax *ws_quantity else cast(0 as decimal) end) as nov_net
+        ,sum(case when d_moy = 12
+                then ws_net_paid_inc_tax *ws_quantity else cast(0 as decimal) end) as dec_net
+     from
+          web_sales ws
+         join warehouse w on (ws.ws_warehouse_sk = w.w_warehouse_sk)
+         join date_dim d on (ws.ws_sold_date_sk = d.d_date_sk)
+         join time_dim t on (ws.ws_sold_time_sk = t.t_time_sk)
+         join ship_mode s on (ws.ws_ship_mode_sk = s.sm_ship_mode_sk)
+     where d_year = 2002
+     and t_time between 49530 and 49530+28800
+      and sm_carrier in ('DIAMOND','AIRBORNE')
+     group by
+        w_warehouse_name
+        ,w_warehouse_sq_ft
+        ,w_city
+        ,w_county
+        ,w_state
+        ,w_country
+       ,d_year
+union all
+    select
+        w_warehouse_name
+        ,w_warehouse_sq_ft
+        ,w_city
+        ,w_county
+        ,w_state
+        ,w_country
+        ,concat('BARIAN',',','AIRBORNE') as ship_carriers
+        ,d_year as yearx
+        ,sum(case when d_moy = 1
+                then cs_ext_sales_price *cs_quantity else cast(0 as decimal) end) as jan_sales
+        ,sum(case when d_moy = 2
+                then cs_ext_sales_price *cs_quantity else cast(0 as decimal) end) as feb_sales
+        ,sum(case when d_moy = 3
+                then cs_ext_sales_price *cs_quantity else cast(0 as decimal) end) as mar_sales
+        ,sum(case when d_moy = 4
+                then cs_ext_sales_price *cs_quantity else cast(0 as decimal) end) as apr_sales
+        ,sum(case when d_moy = 5
+                then cs_ext_sales_price *cs_quantity else cast(0 as decimal) end) as may_sales
+        ,sum(case when d_moy = 6
+                then cs_ext_sales_price *cs_quantity else cast(0 as decimal) end) as jun_sales
+        ,sum(case when d_moy = 7
+                then cs_ext_sales_price *cs_quantity else cast(0 as decimal) end) as jul_sales
+        ,sum(case when d_moy = 8
+                then cs_ext_sales_price *cs_quantity else cast(0 as decimal) end) as aug_sales
+        ,sum(case when d_moy = 9
+                then cs_ext_sales_price *cs_quantity else cast(0 as decimal) end) as sep_sales
+        ,sum(case when d_moy = 10
+                then cs_ext_sales_price *cs_quantity else cast(0 as decimal) end) as oct_sales
+        ,sum(case when d_moy = 11
+                then cs_ext_sales_price *cs_quantity else cast(0 as decimal) end) as nov_sales
+        ,sum(case when d_moy = 12
+                then cs_ext_sales_price *cs_quantity else cast(0 as decimal) end) as dec_sales
+        ,sum(case when d_moy = 1
+                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as decimal) end) as jan_net
+        ,sum(case when d_moy = 2
+                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as decimal) end) as feb_net
+        ,sum(case when d_moy = 3
+                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as decimal) end) as mar_net
+        ,sum(case when d_moy = 4
+                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as decimal) end) as apr_net
+        ,sum(case when d_moy = 5
+                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as decimal) end) as may_net
+        ,sum(case when d_moy = 6
+                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as decimal) end) as jun_net
+        ,sum(case when d_moy = 7
+                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as decimal) end) as jul_net
+        ,sum(case when d_moy = 8
+                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as decimal) end) as aug_net
+        ,sum(case when d_moy = 9
+                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as decimal) end) as sep_net
+        ,sum(case when d_moy = 10
+                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as decimal) end) as oct_net
+        ,sum(case when d_moy = 11
+                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as decimal) end) as nov_net
+        ,sum(case when d_moy = 12
+                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as decimal) end) as dec_net
+     from
+          catalog_sales cs
+         join warehouse w on (cs.cs_warehouse_sk = w.w_warehouse_sk)
+         join date_dim d on (cs.cs_sold_date_sk = d.d_date_sk)
+         join time_dim t on (cs.cs_sold_time_sk = t.t_time_sk)
+         join ship_mode s on (cs.cs_ship_mode_sk = s.sm_ship_mode_sk)
+     where d_year = 2002
+     and t_time between 49530 AND 49530+28800
+      and sm_carrier in ('DIAMOND','AIRBORNE')
+     group by
+        w_warehouse_name
+        ,w_warehouse_sq_ft
+        ,w_city
+        ,w_county
+        ,w_state
+        ,w_country
+       ,d_year
+   ) zunionall
+)dtable
+group by
+        w_warehouse_name
+        ,w_warehouse_sq_ft
+        ,w_city
+        ,w_county
+        ,w_state
+        ,w_country
+        ,ship_carriers
+       ,yearx
+order by w_warehouse_name
+limit 100
+
+[?1034hStarting Impala Shell without Kerberos authentication
+Connected to 10.25.12.43:21000
+Server version: impalad version cdh5-1.3.0 RELEASE (build 40e1b62cf0b97f666d084d9509bf9639c575068c)
+Query: use parquet_tpcds1000g
+Query: select c_last_name
+       ,c_first_name
+       ,ca_city
+       ,bought_city
+       ,ss_ticket_number
+       ,extended_price
+       ,extended_tax
+       ,list_price
+from (select ss_ticket_number
+             ,ss_customer_sk
+             ,ca_city bought_city
+             ,sum(ss_ext_sales_price) extended_price
+             ,sum(ss_ext_list_price) list_price
+             ,sum(ss_ext_tax) extended_tax
+       from store_sales ss
+           join date_dim d on (ss.ss_sold_date_sk = d.d_date_sk)
+           join store s on (ss.ss_store_sk = s.s_store_sk)
+           join household_demographics hd on (ss.ss_hdemo_sk = hd.hd_demo_sk)
+           join customer_address ca on (ss.ss_addr_sk = ca.ca_address_sk)
+       where d.d_dom between 1 and 2
+        and (hd.hd_dep_count = 5 or
+             hd.hd_vehicle_count= 3)
+        and d.d_year between 1999 and 1999+2
+        and s.s_city in ('Midway','Fairview')
+       group by ss_ticket_number
+               ,ss_customer_sk
+               ,ss_addr_sk,ca_city) dn
+      join customer c on (dn.ss_customer_sk = c.c_customer_sk)
+      join customer_address current_addr on (c.c_current_addr_sk = current_addr.ca_address_sk)
+where current_addr.ca_city <> bought_city
+order by c_last_name
+         ,ss_ticket_number
+limit 100
+[?1034h+-------------+--------------+-----------------+-----------------+------------------+-------------------+-------------------+-------------------+
+| c_last_name | c_first_name | ca_city         | bought_city     | ss_ticket_number | extended_price    | extended_tax      | list_price        |
++-------------+--------------+-----------------+-----------------+------------------+-------------------+-------------------+-------------------+
+|             | James        | Lakeview        | Mount Olive     | 85343            | 15889.19          | 786.0299999999999 | 42216.16          |
+|             | Carl         | Hillcrest       | The Meadows     | 209708           | 4405.940000000001 | 132.79            | 13049.33          |
+|             |              | Fairfield       | Ashland         | 248310           | 36134.75          | 2233.38           | 57634.99          |
+|             |              | Kingston        | Walnut Grove    | 303976           | 9277.75           | 233.63            | 12889.66          |
+|             | Janet        | Edgewood        | Riverview       | 451936           | 27696.39          | 1456.6            | 42362.65          |
+|             |              | Florence        | Mount Pleasant  | 463069           | 38562.2           | 1348.1            | 55017.38999999999 |
+|             |              | Antioch         | Lakeside        | 488687           | 32159.78          | 1256.96           | 61205.58000000002 |
+|             |              | Hamilton        | Sulphur Springs | 520880           | 38254.37          | 2009.2            | 63287.08          |
+|             | James        | Frogtown        | Hopewell        | 527726           | 25085.9           | 643.9700000000001 | 72011.01999999999 |
+|             |              | Oakdale         |                 | 606176           | 12627.3           | 689.51            | 15233.3           |
+|             |              | New Hope        | Sunnyside       | 631171           | 26337.86          | 1548.19           | 57026.56999999999 |
+|             | Michael      | Five Points     | Shelby          | 737252           | 20854.48          | 631.87            | 50009.21          |
+|             | Pearl        | Edgewater       | Georgetown      | 827134           | 29547.69          | 816.9200000000001 | 43178.59          |
+|             | Rodney       | Crossroads      | Spring Valley   | 856835           | 15496.63          | 330.45            | 36335.62          |
+|             |              | Spring Hill     | Harmony         | 889545           | 10234.85          | 303.25            | 34484.13          |
+|             |              | Newport         | Lakeside        | 958894           | 28780             | 1121.37           | 65891.05000000002 |
+|             | David        | Cedar Grove     | Forestville     | 967464           | 10058.65          | 690.9200000000002 | 36944.34999999999 |
+|             | Scott        | Bethel          | Enterprise      | 977208           | 25843.95          | 628.0000000000001 | 42110.69          |
+|             |              | Greenfield      | Avoca           | 1012462          | 11676.84          | 321.64            | 33477.83          |
+|             | Tyler        | Wilson          | Oakdale         | 1017407          | 12986.94          | 448.11            | 36512.72          |
+|             | Kenny        | Newtown         | Five Forks      | 1046035          | 13246.13          | 464.53            | 23761.09          |
+|             | Joseph       | Deerfield       | Pleasant Hill   | 1073503          | 6119.21           | 287.65            | 15505.71          |
+|             |              | Spring Valley   | Riverdale       | 1139662          | 25600.12          | 903.17            | 51786.80999999999 |
+|             |              | Quincy          | Union Hill      | 1175478          | 20818.71          | 426.4899999999999 | 44832.28          |
+|             | Monica       | Glendale        | Woodlawn        | 1349334          | 30809.78          | 741.4400000000001 | 57140.99          |
+|             |              | Green Acres     | Edgewood        | 1413174          | 15234.69          | 691.45            | 40237.91          |
+|             |              | Silver Springs  | Liberty         | 1521766          | 18547.59          | 665.45            | 33351.42000000001 |
+|             |              | Springfield     | Clayton         | 1525006          | 46690.56          | 1588.78           | 64466.58          |
+|             |              | Mechanicsburg   | New Hope        | 1822463          | 7065.23           | 118.58            | 19867.28          |
+|             |              | Concord         | Friendship      | 1825140          | 15081.21          | 553.5400000000001 | 29890.36          |
+|             | Anna         | Marion          | Plainfield      | 2082392          | 29284.18          | 1256.16           | 45996.7           |
+|             | Kay          | Highland Park   | Red Hill        | 2089506          | 12995.92          | 859.0300000000001 | 34561.06          |
+|             |              | Cordova         | Pleasant Valley | 2226457          | 11346.34          | 425.74            | 52109.06          |
+|             |              | Liberty         | Westgate        | 2343327          | 26990.61          | 1091.33           | 43101.59          |
+|             | Katrina      | Woodlawn        | Red Bank        | 2347816          | 13982.48          | 367.61            | 30927.56          |
+|             |              | Shiloh          | Riverside       | 2362027          | 19619.75          | 431.72            | 50468.12          |
+|             | Stanton      | La Grange       | Riverdale       | 2465981          | 37939.48          | 1612.75           | 68075.60000000001 |
+|             | Keith        | Lakeview        | Roscoe          | 2486110          | 21559.67          | 1438.67           | 35817.59          |
+|             |              | Hillcrest       | New Hope        | 2518359          | 41333.13          | 972.1899999999998 | 64923.81          |
+|             | Kristen      | Pleasant Valley | Lebanon         | 2559069          | 11327.35          | 356.03            | 23832.16          |
+|             | Lonnie       | Buena Vista     | Oak Hill        | 2566888          | 15426.98          | 215.92            | 29339.46          |
+|             |              | Deerfield       | Jamestown       | 2597476          | 17519.62          | 353.16            | 28034.41          |
+|             |              | Oakdale         | Greenwood       | 2667959          | 11290.67          | 309.62            | 31076.36          |
+|             |              | Enterprise      | Georgetown      | 2674698          | 17251.87          | 696               | 21462.61          |
+|             | Billie       | Woodland        | Union           | 2895153          | 19877.17          | 1254.49           | 39276.94          |
+|             | Christina    | Shady Grove     | Green Acres     | 2961896          | 24469.36          | 912.3500000000001 | 42462.59          |
+|             |              | Lakeview        | Greenfield      | 3184477          | 12360.49          | 967.58            | 24514.55          |
+|             |              | Cedar Grove     | Kingston        | 3253559          | 25737.38          | 854.04            | 46558.87          |
+|             | Kathleen     | Greenville      |                 | 3277535          | 23584.95          | 1217.57           | 40598.45          |
+|             |              | Riverview       | Oakwood         | 3410915          | 25417.35          | 1001.66           | 46388.87          |
+|             |              | Ashland         | Midway          | 3433466          | 19141.82          | 819.3900000000001 | 49041.22          |
+|             | Albert       | Newtown         | Buena Vista     | 3578976          | 24309.33          | 605.7999999999998 | 51393.11          |
+|             | Johnnie      | Kingston        |                 | 3708772          | 18627.35          | 472.9299999999999 | 35517.02          |
+|             | Martha       | Edgewood        | Springfield     | 3726555          | 15478.92          | 456.64            | 39805.2           |
+|             |              | Shady Grove     | Shiloh          | 3735723          | 34518.12          | 1495.69           | 48235.42999999999 |
+|             | Charles      | Lebanon         | Highland        | 3990122          | 19841.3           | 955.4400000000001 | 38182.94          |
+|             | Ahmed        | Oak Hill        | Brownsville     | 4039375          | 36308.24          | 1921.45           | 58236.14          |
+|             | Wilbert      | Lakeside        | Woodbury        | 4050100          | 12625.93          | 320.67            | 23688.04          |
+|             | John         | Oak Ridge       | Maple Grove     | 4059518          | 18097.01          | 621.8200000000001 | 26157.63          |
+|             |              |                 | Lenox           | 4173108          | 16902.52          | 292.23            | 37766.39          |
+|             |              |                 | Greenville      | 4185768          | 20745.08          | 1024.18           | 35143.75          |
+|             |              | Pinhook         | Rosewood        | 4396084          | 23421.27          | 862.3100000000001 | 51436.47          |
+|             |              |                 | Plainview       | 4511019          | 22261.17          | 708.1600000000001 | 47369.94          |
+|             | Spencer      | Franklin        | Bay View        | 4646879          | 10542.43          | 482.16            | 31872.26          |
+|             |              | Hillcrest       | White Oak       | 4700613          | 11870.08          | 764.42            | 24496.14          |
+|             | Thomas       | Pleasant Grove  | Page            | 4702554          | 12472.47          | 872.21            | 37127.2           |
+|             |              | White Oak       | Buena Vista     | 4718995          | 15949.23          | 866.6400000000001 | 31017.75999999999 |
+|             | Steven       | Midway          | Bunker Hill     | 4767210          | 17215.3           | 309.73            | 25347.63          |
+|             |              | Belmont         | Summit          | 4771527          | 21747.11          | 1162.18           | 49322.98          |
+|             | Erin         | Woodlawn        | Macedonia       | 4786084          | 21897.97          | 498.68            | 33785.11          |
+|             |              |                 | Springfield     | 4798338          | 24003.62          | 430.6899999999999 | 38272.96          |
+|             | Jerome       | Georgetown      | Pleasant Valley | 4914003          | 18738.05          | 1142.17           | 33324.89          |
+|             |              | Arlington       | Glendale        | 4916749          | 32998.74          | 1533.75           | 62652.15          |
+|             |              | Riverview       | Stratford       | 4948942          | 22581.89          | 1199.74           | 32250.22          |
+|             | Walter       | Sunnyside       | Oak Hill        | 5018364          | 27447.59          | 1417.44           | 48477.06          |
+|             |              | Forest Hills    | Oakdale         | 5158960          | 30449.33000000001 | 904.7             | 41292.39          |
+|             | Gloria       | Spring Hill     | Greenfield      | 5233999          | 7614.74           | 313.89            | 22450.09          |
+|             | Joseph       | Rankin          | Forest Hills    | 5261101          | 11731.16          | 300.11            | 21987.03          |
+|             | Marcus       | Union           | Shelby          | 5311765          | 8852.92           | 225.53            | 30363.57          |
+|             |              | Hardy           | Oakdale         | 5388971          | 13175.78          | 189.7             | 25497.31          |
+|             | Margene      | Riverview       | Greenville      | 5393993          | 15271.84          | 502.86            | 33869.62          |
+|             |              | Arlington       | Centerville     | 5426606          | 10335.61          | 665.8600000000001 | 22382.97          |
+|             |              | Marion          | Pleasant Hill   | 5454681          | 16766.37          | 901.29            | 43825.09          |
+|             | Maud         | Wildwood        | Mount Olive     | 5473664          | 17622.68          | 939.1900000000002 | 32320.01          |
+|             |              | Friendship      | Shady Grove     | 5476214          | 20899.4           | 971.63            | 36527.83          |
+|             |              | Georgetown      | Stringtown      | 5511060          | 22939.8           | 942.53            | 47014.56          |
+|             | Angela       | Lincoln         | Bethesda        | 5662749          | 27078.61          | 796.4599999999999 | 66430.01000000001 |
+|             | James        | Macedonia       | Plainview       | 5763229          | 24776.83          | 797.1             | 39356.96          |
+|             |              | Maple Grove     | Red Hill        | 5774435          | 40848.48          | 1716.91           | 63004.87999999999 |
+|             | Michael      | Bunker Hill     | Florence        | 5788117          | 23732.34          | 1030.54           | 40697.81          |
+|             | Cordell      | Belmont         | Hamilton        | 5793492          | 25766.03          | 597.13            | 40046.86          |
+|             |              | Woodlawn        | Montpelier      | 5872528          | 12512.5           | 372.6799999999999 | 26290.61          |
+|             | Daniel       | Buckingham      | Fairview        | 5904474          | 22357.34          | 733.85            | 43782.50999999999 |
+|             | Berta        | Spring Hill     | Bethel          | 5929311          | 27538.53          | 1093.38           | 49602.38          |
+|             | John         | Lincoln         | Bath            | 6007039          | 38887.62          | 1921.22           | 58112.09          |
+|             |              | Kingston        | Oakland         | 6024492          | 11640.21          | 767.33            | 29493.01          |
+|             | Oren         | Harmony         | Crossroads      | 6092866          | 19274.66          | 763.05            | 49412.52          |
+|             | Denise       | Macedonia       | Johnsonville    | 6104339          | 17359.17          | 807.2             | 49964.98          |
+|             | Alyson       | Pomona          | Clifton         | 6107956          | 17213.83          | 752.04            | 44792.92999999999 |
+|             |              | Green Acres     | Burns           | 6141959          | 7550.46           | 330.49            | 20636.52          |
++-------------+--------------+-----------------+-----------------+------------------+-------------------+-------------------+-------------------+
+Returned 100 row(s) in 14.98s
+Starting Impala Shell without Kerberos authentication
+Connected to 10.25.12.43:21000
+Server version: impalad version cdh5-1.3.0 RELEASE (build 40e1b62cf0b97f666d084d9509bf9639c575068c)
+Query: use parquet_tpcds1000g
+Query: select ss.ss_sold_year, ss_item_sk, ss_customer_sk,
+round(ss.ss_qty/(coalesce(ws_qty+cs_qty,1)),2) ratio,
+ss.ss_qty store_qty, ss_wc store_wholesale_cost, ss_sp store_sales_price,
+coalesce(ws_qty,0)+coalesce(cs_qty,0) other_chan_qty,
+coalesce(ws_wc,0)+coalesce(cs_wc,0) other_chan_wholesale_cost,
+coalesce(ws_sp,0)+coalesce(cs_sp,0) other_chan_sales_price
+from (select d_year AS ss_sold_year, ss_item_sk, ss_customer_sk, sum(ss_quantity) ss_qty, sum(ss_wholesale_cost) ss_wc, sum(ss_sales_price) ss_sp from store_sales a left join store_returns b on (b.sr_ticket_number=a.ss_ticket_number and a.ss_item_sk=b.sr_item_sk) join date_dim c on a.ss_sold_date_sk = c.d_date_sk where b.sr_ticket_number is null group by d_year, ss_item_sk, ss_customer_sk) ss
+left join (select d_year AS ws_sold_year, ws_item_sk, ws_bill_customer_sk ws_customer_sk, sum(ws_quantity) ws_qty, sum(ws_wholesale_cost) ws_wc, sum(ws_sales_price) ws_sp from web_sales a left join web_returns b on (b.wr_order_number=a.ws_order_number and a.ws_item_sk=b.wr_item_sk) join date_dim c on (a.ws_sold_date_sk = c.d_date_sk) where b.wr_order_number is null group by d_year, ws_item_sk, ws_bill_customer_sk) ws on (ws.ws_sold_year=ss.ss_sold_year and ws.ws_item_sk=ss.ss_item_sk and ws.ws_customer_sk=ss.ss_customer_sk)
+left join (select d_year AS cs_sold_year, cs_item_sk, cs_bill_customer_sk cs_customer_sk, sum(cs_quantity) cs_qty, sum(cs_wholesale_cost) cs_wc, sum(cs_sales_price) cs_sp from catalog_sales a left join catalog_returns b on (b.cr_order_number=a.cs_order_number and a.cs_item_sk=b.cr_item_sk) join date_dim c on (a.cs_sold_date_sk = c.d_date_sk) where b.cr_order_number is null group by d_year, cs_item_sk, cs_bill_customer_sk) cs on (cs.cs_sold_year=ss.ss_sold_year and cs.cs_item_sk=cs.cs_item_sk and cs.cs_customer_sk=ss.ss_customer_sk)
+where coalesce(ws.ws_qty,0)>0 and coalesce(cs.cs_qty, 0)>0 and ss.ss_sold_year=1998
+order by
+  ss_sold_year, ss_item_sk, ss_customer_sk,
+  store_qty desc, store_wholesale_cost desc, store_sales_price desc,
+  other_chan_qty,
+  other_chan_wholesale_cost,
+  other_chan_sales_price,
+  ratio
+limit 100
+ERROR: ExecPlanRequest rpc query_id=b84606a7f0ab585c:b43c6a4e92ad01b1 instance_id=b84606a7f0ab585c:b43c6a4e92ad01f3 failed: No more data to read.
+Could not execute command: select
+ss.ss_sold_year, ss_item_sk, ss_customer_sk,
+round(ss.ss_qty/(coalesce(ws_qty+cs_qty,1)),2) ratio,
+ss.ss_qty store_qty, ss_wc store_wholesale_cost, ss_sp store_sales_price,
+coalesce(ws_qty,0)+coalesce(cs_qty,0) other_chan_qty,
+coalesce(ws_wc,0)+coalesce(cs_wc,0) other_chan_wholesale_cost,
+coalesce(ws_sp,0)+coalesce(cs_sp,0) other_chan_sales_price
+from (select d_year AS ss_sold_year, ss_item_sk, ss_customer_sk, sum(ss_quantity) ss_qty, sum(ss_wholesale_cost) ss_wc, sum(ss_sales_price) ss_sp from store_sales a left join store_returns b on (b.sr_ticket_number=a.ss_ticket_number and a.ss_item_sk=b.sr_item_sk) join date_dim c on a.ss_sold_date_sk = c.d_date_sk where b.sr_ticket_number is null group by d_year, ss_item_sk, ss_customer_sk) ss
+left join (select d_year AS ws_sold_year, ws_item_sk, ws_bill_customer_sk ws_customer_sk, sum(ws_quantity) ws_qty, sum(ws_wholesale_cost) ws_wc, sum(ws_sales_price) ws_sp from web_sales a left join web_returns b on (b.wr_order_number=a.ws_order_number and a.ws_item_sk=b.wr_item_sk) join date_dim c on (a.ws_sold_date_sk = c.d_date_sk) where b.wr_order_number is null group by d_year, ws_item_sk, ws_bill_customer_sk) ws on (ws.ws_sold_year=ss.ss_sold_year and ws.ws_item_sk=ss.ss_item_sk and ws.ws_customer_sk=ss.ss_customer_sk)
+left join (select d_year AS cs_sold_year, cs_item_sk, cs_bill_customer_sk cs_customer_sk, sum(cs_quantity) cs_qty, sum(cs_wholesale_cost) cs_wc, sum(cs_sales_price) cs_sp from catalog_sales a left join catalog_returns b on (b.cr_order_number=a.cs_order_number and a.cs_item_sk=b.cr_item_sk) join date_dim c on (a.cs_sold_date_sk = c.d_date_sk) where b.cr_order_number is null group by d_year, cs_item_sk, cs_bill_customer_sk) cs on (cs.cs_sold_year=ss.ss_sold_year and cs.cs_item_sk=cs.cs_item_sk and cs.cs_customer_sk=ss.ss_customer_sk)
+where coalesce(ws.ws_qty,0)>0 and coalesce(cs.cs_qty, 0)>0 and ss.ss_sold_year=1998
+order by
+  ss_sold_year, ss_item_sk, ss_customer_sk,
+  store_qty desc, store_wholesale_cost desc, store_sales_price desc,
+  other_chan_qty,
+  other_chan_wholesale_cost,
+  other_chan_sales_price,
+  ratio
+limit 100
+
+[?1034hStarting Impala Shell without Kerberos authentication
+Connected to 10.25.12.43:21000
+Server version: impalad version cdh5-1.3.0 RELEASE (build 40e1b62cf0b97f666d084d9509bf9639c575068c)
+Query: use parquet_tpcds1000g
+Query: select channel
+        , id
+        , sum(sales) as sales
+        , sum(return_amt) as return_amt
+        , sum(profit) as profit
+from
+  (select 'store channel' as channel
+        , substr(concat('store',store_id),1,21) as id
+        , sales
+        , return_amt
+        , profit
+from    (select  s_store_id as store_id,
+          sum(ss_ext_sales_price) as sales,
+          sum(coalesce(sr_return_amt, 0)) as return_amt,
+          sum(ss_net_profit - coalesce(sr_net_loss, 0)) as profit
+  from store_sales ss
+  join date_dim d on (ss.ss_sold_date_sk = d.d_date_sk)
+  join store s on (ss.ss_store_sk = s.s_store_sk)
+  join item i on (ss.ss_item_sk = i.i_item_sk)
+  join promotion p on (ss.ss_promo_sk = p.p_promo_sk)
+  left outer join store_return_amt sr on (ss.ss_item_sk = sr.sr_item_sk and ss.ss_ticket_number = sr.sr_ticket_number)
+where d_date between cast('1998-08-04' as date) and date_add(cast('1998-08-04' as date), 30 )
+   and i_current_price > 50
+   and p_channel_tv = 'N'
+group by s_store_id) ssr
+
+ union all
+select 'catalog channel' as channel
+        , substr(concat('catalog_page',catalog_page_id),1,21) as id
+        , sales
+        , return_amt
+        , profit
+from
+  (select  cp_catalog_page_id as catalog_page_id,
+          sum(cs_ext_sales_price) as sales,
+          sum(coalesce(cr_return_amount, 0)) as return_amt,
+          sum(cs_net_profit - coalesce(cr_net_loss, 0)) as profit
+  from catalog_sales cs
+  join date_dim d on (cs.cs_sold_date_sk = d.d_date_sk)
+  join catalog_page cp on (cs.cs_catalog_page_sk = cp.cp_catalog_page_sk)
+  join item i on (cs.cs_item_sk = i.i_item_sk)
+  join promotion p on (cs.cs_promo_sk = p.p_promo_sk)
+  left outer join catalog_return_amt cr on (cs.cs_item_sk = cr.cr_item_sk and cs.cs_order_number = cr.cr_order_number)
+where d_date between cast('1998-08-04' as date) and date_add(cast('1998-08-04' as date), 30 )
+   and i_current_price > 50
+   and p_channel_tv = 'N'
+group by cp_catalog_page_id) csr
+
+union all
+select 'web channel' as channel
+        , substr(concat('web_site',web_site_id),1,21) as id
+        , sales
+        , return_amt
+        , profit
+from
+(select  web_site_id,
+          sum(ws_ext_sales_price) as sales,
+          sum(coalesce(wr_return_amt, 0)) as return_amt,
+          sum(ws_net_profit - coalesce(wr_net_loss, 0)) as profit
+  from web_sales ws
+     join date_dim d on (ws.ws_sold_date_sk = d.d_date_sk)
+     join web_site w on (ws.ws_web_site_sk = w.web_site_sk)
+     join item i on (ws.ws_item_sk = i.i_item_sk)
+     join promotion p on (ws.ws_promo_sk = p.p_promo_sk)
+     left outer join web_return_amt wr on (ws.ws_item_sk = wr.wr_item_sk and ws.ws_order_number = wr.wr_order_number)
+where d_date between cast('1998-08-04' as date) and date_add(cast('1998-08-04' as date), 30 )
+   and i_current_price > 50
+   and p_channel_tv = 'N'
+group by web_site_id) wsr
+) x
+group by channel, id with rollup
+order by channel,id
+limit 100
+ERROR: AnalysisException: Syntax error in line 71:
+group by channel, id with rollup
+                     ^
+Encountered: WITH
+Expected: AND, AS, ASC, BETWEEN, CROSS, DESC, DIV, ELSE, END, FROM, FULL, GROUP, HAVING, IN, INNER, IS, JOIN, LEFT, LIKE, LIMIT, NOT, NULLS, OFFSET, OR, ORDER, REGEXP, RIGHT, RLIKE, THEN, UNION, WHEN, WHERE, COMMA, IDENTIFIER
+
+CAUSED BY: Exception: Syntax error
+Could not execute command: select  channel
+        , id
+        , sum(sales) as sales
+        , sum(return_amt) as return_amt
+        , sum(profit) as profit
+from
+  (select 'store channel' as channel
+        , substr(concat('store',store_id),1,21) as id
+        , sales
+        , return_amt
+        , profit
+from    (select  s_store_id as store_id,
+          sum(ss_ext_sales_price) as sales,
+          sum(coalesce(sr_return_amt, 0)) as return_amt,
+          sum(ss_net_profit - coalesce(sr_net_loss, 0)) as profit
+  from store_sales ss
+  join date_dim d on (ss.ss_sold_date_sk = d.d_date_sk)
+  join store s on (ss.ss_store_sk = s.s_store_sk)
+  join item i on (ss.ss_item_sk = i.i_item_sk)
+  join promotion p on (ss.ss_promo_sk = p.p_promo_sk)
+  left outer join store_return_amt sr on (ss.ss_item_sk = sr.sr_item_sk and ss.ss_ticket_number = sr.sr_ticket_number)
+where d_date between cast('1998-08-04' as date) and date_add(cast('1998-08-04' as date), 30 )
+   and i_current_price > 50
+   and p_channel_tv = 'N'
+group by s_store_id) ssr
+
+ union all
+select 'catalog channel' as channel
+        , substr(concat('catalog_page',catalog_page_id),1,21) as id
+        , sales
+        , return_amt
+        , profit
+from
+  (select  cp_catalog_page_id as catalog_page_id,
+          sum(cs_ext_sales_price) as sales,
+          sum(coalesce(cr_return_amount, 0)) as return_amt,
+          sum(cs_net_profit - coalesce(cr_net_loss, 0)) as profit
+  from catalog_sales cs
+  join date_dim d on (cs.cs_sold_date_sk = d.d_date_sk)
+  join catalog_page cp on (cs.cs_catalog_page_sk = cp.cp_catalog_page_sk)
+  join item i on (cs.cs_item_sk = i.i_item_sk)
+  join promotion p on (cs.cs_promo_sk = p.p_promo_sk)
+  left outer join catalog_return_amt cr on (cs.cs_item_sk = cr.cr_item_sk and cs.cs_order_number = cr.cr_order_number)
+where d_date between cast('1998-08-04' as date) and date_add(cast('1998-08-04' as date), 30 )
+   and i_current_price > 50
+   and p_channel_tv = 'N'
+group by cp_catalog_page_id) csr
+
+union all
+select 'web channel' as channel
+        , substr(concat('web_site',web_site_id),1,21) as id
+        , sales
+        , return_amt
+        , profit
+from
+(select  web_site_id,
+          sum(ws_ext_sales_price) as sales,
+          sum(coalesce(wr_return_amt, 0)) as return_amt,
+          sum(ws_net_profit - coalesce(wr_net_loss, 0)) as profit
+  from web_sales ws
+     join date_dim d on (ws.ws_sold_date_sk = d.d_date_sk)
+     join web_site w on (ws.ws_web_site_sk = w.web_site_sk)
+     join item i on (ws.ws_item_sk = i.i_item_sk)
+     join promotion p on (ws.ws_promo_sk = p.p_promo_sk)
+     left outer join web_return_amt wr on (ws.ws_item_sk = wr.wr_item_sk and ws.ws_order_number = wr.wr_order_number)
+where d_date between cast('1998-08-04' as date) and date_add(cast('1998-08-04' as date), 30 )
+   and i_current_price > 50
+   and p_channel_tv = 'N'
+group by web_site_id) wsr
+) x
+group by channel, id with rollup
+order by channel,id
+limit 100
+
+[?1034hStarting Impala Shell without Kerberos authentication
+Connected to 10.25.12.43:21000
+Server version: impalad version cdh5-1.3.0 RELEASE (build 40e1b62cf0b97f666d084d9509bf9639c575068c)
+Query: use parquet_tpcds1000g
+Query: select i_item_id
+       ,i_item_desc
+       ,i_current_price
+ from item im
+ join inventory i on ( i.inv_item_sk = im.i_item_sk)
+ join date_dim d on (d.d_date_sk=i.inv_date_sk)
+ join store_sales ss on (ss.ss_item_sk = im.i_item_sk)
+ where i_current_price between 30 and 30+30
+ and d_date between cast('2002-05-30' as date) and date_add(cast('2002-05-30' as date),60)
+ and i_manufact_id in (437,129,727,663)
+ and inv_quantity_on_hand between 100 and 500
+ group by i_item_id,i_item_desc,i_current_price
+ order by i_item_id
+ limit 100
+ERROR: AnalysisException: Invalid type cast of '2002-05-30' from STRING to DATE
+Could not execute command: select  i_item_id
+       ,i_item_desc
+       ,i_current_price
+ from item im
+ join inventory i on ( i.inv_item_sk = im.i_item_sk)
+ join date_dim d on (d.d_date_sk=i.inv_date_sk)
+ join store_sales ss on (ss.ss_item_sk = im.i_item_sk)
+ where i_current_price between 30 and 30+30
+ and d_date between cast('2002-05-30' as date) and date_add(cast('2002-05-30' as date),60)
+ and i_manufact_id in (437,129,727,663)
+ and inv_quantity_on_hand between 100 and 500
+ group by i_item_id,i_item_desc,i_current_price
+ order by i_item_id
+ limit 100
+[?1034hStarting Impala Shell without Kerberos authentication
+Connected to 10.25.12.43:21000
+Server version: impalad version cdh5-1.3.0 RELEASE (build 40e1b62cf0b97f666d084d9509bf9639c575068c)
+Query: use parquet_tpcds1000g
+Query: select *
+from
+ (select count(*) h8_30_to_9
+ from store_sales ss
+ join household_demographics hd on (ss.ss_hdemo_sk = hd.hd_demo_sk)
+ join time_dim t on (ss.ss_sold_time_sk = t.t_time_sk)
+ join store s on (ss.ss_store_sk = s.s_store_sk)
+ where t.t_hour = 8
+     and t.t_minute >= 30
+     and ((hd.hd_dep_count = 3 and hd.hd_vehicle_count<=3+2) or
+          (hd.hd_dep_count = 0 and hd.hd_vehicle_count<=0+2) or
+          (hd.hd_dep_count = 1 and hd.hd_vehicle_count<=1+2))
+     and s.s_store_name = 'ese') s1
+ cross join (select count(*) h9_to_9_30
+ from store_sales ss
+ join household_demographics hd on (ss.ss_hdemo_sk = hd.hd_demo_sk)
+ join time_dim t on (ss.ss_sold_time_sk = t.t_time_sk)
+ join store s on (ss.ss_store_sk = s.s_store_sk)
+ where t.t_hour = 9
+     and t.t_minute < 30
+     and ((hd.hd_dep_count = 3 and hd.hd_vehicle_count<=3+2) or
+          (hd.hd_dep_count = 0 and hd.hd_vehicle_count<=0+2) or
+          (hd.hd_dep_count = 1 and hd.hd_vehicle_count<=1+2))
+     and s.s_store_name = 'ese') s2
+ cross join (select count(*) h9_30_to_10
+ from store_sales ss
+ join household_demographics hd on (ss.ss_hdemo_sk = hd.hd_demo_sk)
+ join time_dim t on (ss.ss_sold_time_sk = t.t_time_sk)
+ join store s on (ss.ss_store_sk = s.s_store_sk)
+ where t.t_hour = 9
+     and t.t_minute >= 30
+     and ((hd.hd_dep_count = 3 and hd.hd_vehicle_count<=3+2) or
+          (hd.hd_dep_count = 0 and hd.hd_vehicle_count<=0+2) or
+          (hd.hd_dep_count = 1 and hd.hd_vehicle_count<=1+2))
+     and s.s_store_name = 'ese') s3
+ cross join (select count(*) h10_to_10_30
+ from store_sales ss
+ join household_demographics hd on (ss.ss_hdemo_sk = hd.hd_demo_sk)
+ join time_dim t on (ss.ss_sold_time_sk = t.t_time_sk)
+ join store s on (ss.ss_store_sk = s.s_store_sk)
+ where t.t_hour = 10
+     and t.t_minute < 30
+     and ((hd.hd_dep_count = 3 and hd.hd_vehicle_count<=3+2) or
+          (hd.hd_dep_count = 0 and hd.hd_vehicle_count<=0+2) or
+          (hd.hd_dep_count = 1 and hd.hd_vehicle_count<=1+2))
+     and s.s_store_name = 'ese') s4
+ cross join (select count(*) h10_30_to_11
+ from store_sales ss
+ join household_demographics hd on (ss.ss_hdemo_sk = hd.hd_demo_sk)
+ join time_dim t on (ss.ss_sold_time_sk = t.t_time_sk)
+ join store s on (ss.ss_store_sk = s.s_store_sk)
+ where t.t_hour = 10
+     and t.t_minute >= 30
+     and ((hd.hd_dep_count = 3 and hd.hd_vehicle_count<=3+2) or
+          (hd.hd_dep_count = 0 and hd.hd_vehicle_count<=0+2) or
+          (hd.hd_dep_count = 1 and hd.hd_vehicle_count<=1+2))
+     and s.s_store_name = 'ese') s5
+ cross join (select count(*) h11_to_11_30
+ from store_sales ss
+ join household_demographics hd on (ss.ss_hdemo_sk = hd.hd_demo_sk)
+ join time_dim t on (ss.ss_sold_time_sk = t.t_time_sk)
+ join store s on (ss.ss_store_sk = s.s_store_sk)
+ where t.t_hour = 11
+     and t.t_minute < 30
+     and ((hd.hd_dep_count = 3 and hd.hd_vehicle_count<=3+2) or
+          (hd.hd_dep_count = 0 and hd.hd_vehicle_count<=0+2) or
+          (hd.hd_dep_count = 1 and hd.hd_vehicle_count<=1+2))
+     and s.s_store_name = 'ese') s6
+ cross join (select count(*) h11_30_to_12
+ from store_sales ss
+ join household_demographics hd on (ss.ss_hdemo_sk = hd.hd_demo_sk)
+ join time_dim t on (ss.ss_sold_time_sk = t.t_time_sk)
+ join store s on (ss.ss_store_sk = s.s_store_sk)
+ where t.t_hour = 11
+     and t.t_minute >= 30
+     and ((hd.hd_dep_count = 3 and hd.hd_vehicle_count<=3+2) or
+          (hd.hd_dep_count = 0 and hd.hd_vehicle_count<=0+2) or
+          (hd.hd_dep_count = 1 and hd.hd_vehicle_count<=1+2))
+     and s.s_store_name = 'ese') s7
+ cross join (select count(*) h12_to_12_30
+ from store_sales ss
+ join household_demographics hd on (ss.ss_hdemo_sk = hd.hd_demo_sk)
+ join time_dim t on (ss.ss_sold_time_sk = t.t_time_sk)
+ join store s on (ss.ss_store_sk = s.s_store_sk)
+ where t.t_hour = 12
+     and t.t_minute < 30
+     and ((hd.hd_dep_count = 3 and hd.hd_vehicle_count<=3+2) or
+          (hd.hd_dep_count = 0 and hd.hd_vehicle_count<=0+2) or
+          (hd.hd_dep_count = 1 and hd.hd_vehicle_count<=1+2))
+     and s.s_store_name = 'ese') s8
+ERROR: Couldn't open transport for hdp017-6:22000(connect() failed: Connection refused)
+Could not execute command: select  *
+from
+ (select count(*) h8_30_to_9
+ from store_sales ss
+ join household_demographics hd on (ss.ss_hdemo_sk = hd.hd_demo_sk)
+ join time_dim t on (ss.ss_sold_time_sk = t.t_time_sk)
+ join store s on (ss.ss_store_sk = s.s_store_sk)
+ where t.t_hour = 8
+     and t.t_minute >= 30
+     and ((hd.hd_dep_count = 3 and hd.hd_vehicle_count<=3+2) or
+          (hd.hd_dep_count = 0 and hd.hd_vehicle_count<=0+2) or
+          (hd.hd_dep_count = 1 and hd.hd_vehicle_count<=1+2))
+     and s.s_store_name = 'ese') s1
+ cross join (select count(*) h9_to_9_30
+ from store_sales ss
+ join household_demographics hd on (ss.ss_hdemo_sk = hd.hd_demo_sk)
+ join time_dim t on (ss.ss_sold_time_sk = t.t_time_sk)
+ join store s on (ss.ss_store_sk = s.s_store_sk)
+ where t.t_hour = 9
+     and t.t_minute < 30
+     and ((hd.hd_dep_count = 3 and hd.hd_vehicle_count<=3+2) or
+          (hd.hd_dep_count = 0 and hd.hd_vehicle_count<=0+2) or
+          (hd.hd_dep_count = 1 and hd.hd_vehicle_count<=1+2))
+     and s.s_store_name = 'ese') s2
+ cross join (select count(*) h9_30_to_10
+ from store_sales ss
+ join household_demographics hd on (ss.ss_hdemo_sk = hd.hd_demo_sk)
+ join time_dim t on (ss.ss_sold_time_sk = t.t_time_sk)
+ join store s on (ss.ss_store_sk = s.s_store_sk)
+ where t.t_hour = 9
+     and t.t_minute >= 30
+     and ((hd.hd_dep_count = 3 and hd.hd_vehicle_count<=3+2) or
+          (hd.hd_dep_count = 0 and hd.hd_vehicle_count<=0+2) or
+          (hd.hd_dep_count = 1 and hd.hd_vehicle_count<=1+2))
+     and s.s_store_name = 'ese') s3
+ cross join (select count(*) h10_to_10_30
+ from store_sales ss
+ join household_demographics hd on (ss.ss_hdemo_sk = hd.hd_demo_sk)
+ join time_dim t on (ss.ss_sold_time_sk = t.t_time_sk)
+ join store s on (ss.ss_store_sk = s.s_store_sk)
+ where t.t_hour = 10
+     and t.t_minute < 30
+     and ((hd.hd_dep_count = 3 and hd.hd_vehicle_count<=3+2) or
+          (hd.hd_dep_count = 0 and hd.hd_vehicle_count<=0+2) or
+          (hd.hd_dep_count = 1 and hd.hd_vehicle_count<=1+2))
+     and s.s_store_name = 'ese') s4
+ cross join (select count(*) h10_30_to_11
+ from store_sales ss
+ join household_demographics hd on (ss.ss_hdemo_sk = hd.hd_demo_sk)
+ join time_dim t on (ss.ss_sold_time_sk = t.t_time_sk)
+ join store s on (ss.ss_store_sk = s.s_store_sk)
+ where t.t_hour = 10
+     and t.t_minute >= 30
+     and ((hd.hd_dep_count = 3 and hd.hd_vehicle_count<=3+2) or
+          (hd.hd_dep_count = 0 and hd.hd_vehicle_count<=0+2) or
+          (hd.hd_dep_count = 1 and hd.hd_vehicle_count<=1+2))
+     and s.s_store_name = 'ese') s5
+ cross join (select count(*) h11_to_11_30
+ from store_sales ss
+ join household_demographics hd on (ss.ss_hdemo_sk = hd.hd_demo_sk)
+ join time_dim t on (ss.ss_sold_time_sk = t.t_time_sk)
+ join store s on (ss.ss_store_sk = s.s_store_sk)
+ where t.t_hour = 11
+     and t.t_minute < 30
+     and ((hd.hd_dep_count = 3 and hd.hd_vehicle_count<=3+2) or
+          (hd.hd_dep_count = 0 and hd.hd_vehicle_count<=0+2) or
+          (hd.hd_dep_count = 1 and hd.hd_vehicle_count<=1+2))
+     and s.s_store_name = 'ese') s6
+ cross join (select count(*) h11_30_to_12
+ from store_sales ss
+ join household_demographics hd on (ss.ss_hdemo_sk = hd.hd_demo_sk)
+ join time_dim t on (ss.ss_sold_time_sk = t.t_time_sk)
+ join store s on (ss.ss_store_sk = s.s_store_sk)
+ where t.t_hour = 11
+     and t.t_minute >= 30
+     and ((hd.hd_dep_count = 3 and hd.hd_vehicle_count<=3+2) or
+          (hd.hd_dep_count = 0 and hd.hd_vehicle_count<=0+2) or
+          (hd.hd_dep_count = 1 and hd.hd_vehicle_count<=1+2))
+     and s.s_store_name = 'ese') s7
+ cross join (select count(*) h12_to_12_30
+ from store_sales ss
+ join household_demographics hd on (ss.ss_hdemo_sk = hd.hd_demo_sk)
+ join time_dim t on (ss.ss_sold_time_sk = t.t_time_sk)
+ join store s on (ss.ss_store_sk = s.s_store_sk)
+ where t.t_hour = 12
+     and t.t_minute < 30
+     and ((hd.hd_dep_count = 3 and hd.hd_vehicle_count<=3+2) or
+          (hd.hd_dep_count = 0 and hd.hd_vehicle_count<=0+2) or
+          (hd.hd_dep_count = 1 and hd.hd_vehicle_count<=1+2))
+     and s.s_store_name = 'ese') s8
+
+[?1034hStarting Impala Shell without Kerberos authentication
+Connected to 10.25.12.43:21000
+Server version: impalad version cdh5-1.3.0 RELEASE (build 40e1b62cf0b97f666d084d9509bf9639c575068c)
+Query: use parquet_tpcds1000g
+Query: select sum(ws_ext_discount_amt)  as Excess_Discount_Amount
+from
+    web_sales ws
+    join item i on (i.i_item_sk = ws.ws_item_sk)
+    join date_dim d on (d.d_date_sk = ws.ws_sold_date_sk)
+    cross join (SELECT avg(ws_ext_discount_amt) as adj_discount_amt FROM web_sales ws join date_dim d on (d.d_date_sk = ws.ws_sold_date_sk) join item i on (i.i_item_sk = ws.ws_item_sk) WHERE d_date between '1998-03-18' and date_add(cast('1998-03-18' as date), 90 ) and i_manufact_id = 269) iavg
+where i_manufact_id = 269
+and d_date between '1998-03-18' and date_add(cast('1998-03-18' as date), 90 )
+and (ws_ext_discount_amt/1.3) > adj_discount_amt
+order by Excess_Discount_Amount
+limit 100
+ERROR: AnalysisException: Invalid type cast of '1998-03-18' from STRING to DATE
+Could not execute command: select
+   sum(ws_ext_discount_amt)  as Excess_Discount_Amount
+from
+    web_sales ws
+    join item i on (i.i_item_sk = ws.ws_item_sk)
+    join date_dim d on (d.d_date_sk = ws.ws_sold_date_sk)
+    cross join (SELECT avg(ws_ext_discount_amt) as adj_discount_amt FROM web_sales ws join date_dim d on (d.d_date_sk = ws.ws_sold_date_sk) join item i on (i.i_item_sk = ws.ws_item_sk) WHERE d_date between '1998-03-18' and date_add(cast('1998-03-18' as date), 90 ) and i_manufact_id = 269) iavg
+where i_manufact_id = 269
+and d_date between '1998-03-18' and date_add(cast('1998-03-18' as date), 90 )
+and (ws_ext_discount_amt/1.3) > adj_discount_amt
+order by Excess_Discount_Amount
+limit 100
+
+[?1034hStarting Impala Shell without Kerberos authentication
+Connected to 10.25.12.43:21000
+Server version: impalad version cdh5-1.3.0 RELEASE (build 40e1b62cf0b97f666d084d9509bf9639c575068c)
+Query: use parquet_tpcds1000g
+Query: select count(distinct ws1.ws_order_number) as order_count
+  ,sum(ws_ext_ship_cost) as total_shipping_cost
+  ,sum(ws_net_profit) as total_net_profit
+from
+   web_sales ws1
+  join date_dim d on (ws1.ws_ship_date_sk = d.d_date_sk)
+  join customer_address ca on (ws1.ws_ship_addr_sk = ca.ca_address_sk)
+  join web_site w on (ws1.ws_web_site_sk = w.web_site_sk)
+  left semi join (select ws1.ws_order_number,ws1.ws_warehouse_sk wh1,ws2.ws_warehouse_sk wh2 from web_sales ws1 join web_sales ws2 on (ws1.ws_order_number = ws2.ws_order_number) where ws1.ws_warehouse_sk <> ws2.ws_warehouse_sk) ws_wh on (ws1.ws_order_number = ws_wh.ws_order_number)
+  left semi join (select wr.wr_order_number from (select ws1.ws_order_number,ws1.ws_warehouse_sk wh1,ws2.ws_warehouse_sk wh2 from web_sales ws1 join web_sales ws2 on (ws1.ws_order_number = ws2.ws_order_number) where ws1.ws_warehouse_sk <> ws2.ws_warehouse_sk) ws_wh join web_returns wr on (wr.wr_order_number = ws_wh.ws_order_number)) in2 on (ws1.ws_order_number = in2.wr_order_number)
+where d_date between '1999-05-01' and '1999-07-01'
+and ca_state = 'TX'
+and web_company_name = 'pri'
+order by order_count
+limit 100
+ERROR: Couldn't open transport for hdp017-6:22000(connect() failed: Connection refused)
+Could not execute command: select
+   count(distinct ws1.ws_order_number) as order_count
+  ,sum(ws_ext_ship_cost) as total_shipping_cost
+  ,sum(ws_net_profit) as total_net_profit
+from
+   web_sales ws1
+  join date_dim d on (ws1.ws_ship_date_sk = d.d_date_sk)
+  join customer_address ca on (ws1.ws_ship_addr_sk = ca.ca_address_sk)
+  join web_site w on (ws1.ws_web_site_sk = w.web_site_sk)
+  left semi join (select ws1.ws_order_number,ws1.ws_warehouse_sk wh1,ws2.ws_warehouse_sk wh2 from web_sales ws1 join web_sales ws2 on (ws1.ws_order_number = ws2.ws_order_number) where ws1.ws_warehouse_sk <> ws2.ws_warehouse_sk) ws_wh on (ws1.ws_order_number = ws_wh.ws_order_number)
+  left semi join (select wr.wr_order_number from (select ws1.ws_order_number,ws1.ws_warehouse_sk wh1,ws2.ws_warehouse_sk wh2 from web_sales ws1 join web_sales ws2 on (ws1.ws_order_number = ws2.ws_order_number) where ws1.ws_warehouse_sk <> ws2.ws_warehouse_sk) ws_wh join web_returns wr on (wr.wr_order_number = ws_wh.ws_order_number)) in2 on (ws1.ws_order_number = in2.wr_order_number)
+where d_date between '1999-05-01' and '1999-07-01'
+and ca_state = 'TX'
+and web_company_name = 'pri'
+order by order_count
+limit 100
+
+[?1034hStarting Impala Shell without Kerberos authentication
+Connected to 10.25.12.43:21000
+Server version: impalad version cdh5-1.3.0 RELEASE (build 40e1b62cf0b97f666d084d9509bf9639c575068c)
+Query: use parquet_tpcds1000g
+Query: select sum(case when ssci.customer_sk is not null and csci.customer_sk is null then 1 else 0 end) store_only
+       ,sum(case when ssci.customer_sk is null and csci.customer_sk is not null then 1 else 0 end) catalog_only
+       ,sum(case when ssci.customer_sk is not null and csci.customer_sk is not null then 1 else 0 end) store_and_catalog
+from (select ss_customer_sk customer_sk,ss_item_sk item_sk from store_sales aa inner join date_dim bb on (aa.ss_sold_date_sk = bb.d_date_sk) where d_month_seq between 1212 and 1212 + 11 group by ss_customer_sk,ss_item_sk) ssci full outer join (select cs_bill_customer_sk customer_sk,cs_item_sk item_sk from catalog_sales aaa inner join date_dim bbb on (aaa.cs_sold_date_sk = bbb.d_date_sk) where d_month_seq between 1212 and 1212 + 11 group by cs_bill_customer_sk, cs_item_sk) csci on (ssci.customer_sk = csci.customer_sk and ssci.item_sk = csci.item_sk)
+limit 100
+ERROR: Couldn't open transport for hdp017-6:22000(connect() failed: Connection refused)
+Could not execute command: select  sum(case when ssci.customer_sk is not null and csci.customer_sk is null then 1 else 0 end) store_only
+       ,sum(case when ssci.customer_sk is null and csci.customer_sk is not null then 1 else 0 end) catalog_only
+       ,sum(case when ssci.customer_sk is not null and csci.customer_sk is not null then 1 else 0 end) store_and_catalog
+from (select ss_customer_sk customer_sk,ss_item_sk item_sk from store_sales aa inner join date_dim bb on (aa.ss_sold_date_sk = bb.d_date_sk) where d_month_seq between 1212 and 1212 + 11 group by ss_customer_sk,ss_item_sk) ssci full outer join (select cs_bill_customer_sk customer_sk,cs_item_sk item_sk from catalog_sales aaa inner join date_dim bbb on (aaa.cs_sold_date_sk = bbb.d_date_sk) where d_month_seq between 1212 and 1212 + 11 group by cs_bill_customer_sk, cs_item_sk) csci on (ssci.customer_sk = csci.customer_sk and ssci.item_sk = csci.item_sk)
+limit 100
+[?1034h
