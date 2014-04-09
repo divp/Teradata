@@ -1,7 +1,0 @@
-Inserting in table date_dim got        -> "ERROR: IllegalStateException: null"
-
-Inserting in table item got            -> "ERROR: IllegalStateException: null"
-
-Inserting in table store got           -> "ERROR: IllegalStateException: null"
-
-Inserting in table store_sales got     -> "ERROR: Memory limit exceeded"

@@ -1,0 +1,28 @@
+[?1034h+------------+------------------------+
+| cnt        | tbl                    |
++------------+------------------------+
+| 20         | ship_mode              |
+| 20         | income_band            |
+| 20         | warehouse              |
+| 42         | call_center            |
+| 54         | web_site               |
+| 65         | reason                 |
+| 1002       | store                  |
+| 1500       | promotion              |
+| 3000       | web_page               |
+| 7200       | household_demographics |
+| 30000      | catalog_page           |
+| 73049      | date_dim               |
+| 86400      | time_dim               |
+| 300000     | item                   |
+| 1920800    | customer_demographics  |
+| 6000000    | customer_address       |
+| 12000000   | customer               |
+| 71997522   | web_returns            |
+| 143996756  | catalog_returns        |
+| 287999764  | store_returns          |
+| 720000376  | web_sales              |
+| 783000000  | inventory              |
+| 1439980416 | catalog_sales          |
+| 2879987999 | store_sales            |
++------------+------------------------+
