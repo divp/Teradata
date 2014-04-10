@@ -116,14 +116,26 @@ cat <<EOF >>$out_script
     INSERT INTO ${TABLE_NAME} VALUES (
 EOF
 
-#    :in_tstamp_epoch
-#    ,:in_x0
-#    ...
-#    );
-#
-#    END LOADING;
-#    LOGOFF;
-#EOF
+count=0
+column_count=$(cat $columns_list | wc -l)
+while read column
+do
+    count=$(( $count + 1 ))
+    echo -n "        :in_${column}"
+    if [ $count -lt $column_count ]
+    then
+        echo ','
+    else
+        echo
+    fi
+done < $columns_list >>$out_script
+
+cat <<EOF >>$out_script
+    );
+    
+    END LOADING;
+    LOGOFF;
+EOF
 
 rm $bteq_output
 rm $columns_list
