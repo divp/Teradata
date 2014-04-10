@@ -11,8 +11,8 @@ set -o errexit
 
 bteq_output=$(mktemp)
 
-INPUT_FILE=someinputfile.dat
-TABLE_NAME=item
+INPUT_FILE=${BMS_SOURCE_DATA_PATH}/tpcds/s_item_1.dat
+TABLE_NAME=s_item
 
 # Get column list from catalog
 bteq <<EOF > $bteq_output
@@ -27,7 +27,7 @@ EOF
 
 out_script=$(mktemp)
 
-cat <<EOF >>$out_script
+cat <<EOF >$out_script
     
     .LOGON ${BMS_TERADATA_DB_HOST}/${BMS_TERADATA_DB_UID},${BMS_TERADATA_DB_PWD};
     DATABASE ${BMS_TERADATA_DBNAME_ETL1};
@@ -35,27 +35,8 @@ cat <<EOF >>$out_script
     ERRLIMIT 1;
 
     SET RECORD VARTEXT '|';
-    DEFINE
+    DEFINE    
 EOF
-
-#        in_tstamp_epoch (VARCHAR(30))
-#        ,in_x0 (VARCHAR(30))
-#    ...
-#    FILE=$INPUT_FILE;
-#
-#    SHOW;
-#
-#    BEGIN LOADING benchmark.stage_vmstat ERRORFILES benchmark.ERR1, benchmark.ERR2;
-#
-#    INSERT INTO benchmark.stage_vmstat VALUES (
-#    :in_tstamp_epoch
-#    ,:in_x0
-#    ...
-#    );
-#
-#    END LOADING;
-#    LOGOFF;
-#EOF
 
 columns_list=$(mktemp)
 # Parse bteq output and extract column information
@@ -84,20 +65,12 @@ do
     fi
 done <$bteq_output >>$columns_list
 
-
-out_script=$(mktemp)
-
-cat <<EOF >>$out_script
-    SET RECORD VARTEXT '|';
-    DEFINE
-EOF
-
 count=0
 column_count=$(cat $columns_list | wc -l)
 while read column
 do
     count=$(( $count + 1 ))
-    echo -n "        $column (VARCHAR(200))"
+    echo -n "        in_${column} (VARCHAR(200))"
     if [ $count -lt $column_count ]
     then
         echo ','
@@ -141,3 +114,4 @@ rm $bteq_output
 rm $columns_list
 
 cat $out_script
+rm $out_script
