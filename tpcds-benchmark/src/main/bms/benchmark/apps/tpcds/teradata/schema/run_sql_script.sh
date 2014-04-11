@@ -9,17 +9,17 @@ set -o errexit
 
 if [ $# -ne 1 ]
 then
-    "ERROR: Expecting SQL query as single argument"
+    "ERROR: Expecting path to SQL script as single argument"
     exit 1
 fi    
 
-sql="$1"
+script_path="$1"
 
 bteq <<EOF
 .LOGON ${BMS_TERADATA_DB_HOST}/${BMS_TERADATA_DB_UID},${BMS_TERADATA_DB_PWD};
 DATABASE ${BMS_TERADATA_DBNAME_ETL1};
 
-${sql}
+$(cat "$script_path")
 
 .LOGOFF;
 .EXIT;
