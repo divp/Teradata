@@ -121,8 +121,7 @@ EOF
     rm $out_script
 }
 
-tables=(s_call_center s_catalog_order s_catalog_order_lineitem)
-#s_catalog_page s_catalog_returns s_customer s_customer_address s_inventory s_item s_promotion s_purchase s_purchase_lineitem s_store s_store_returns s_warehouse s_web_order s_web_order_lineitem s_web_page s_web_returns s_web_site s_zip_to_gmt
+tables=(s_call_center s_catalog_order s_catalog_order_lineitem s_catalog_page s_catalog_returns s_customer s_customer_address s_inventory s_item s_promotion s_purchase s_purchase_lineitem s_store s_store_returns s_warehouse s_web_order s_web_order_lineitem s_web_page s_web_returns s_web_site s_zip_to_gmt)
 for table in ${tables[@]}
 do
     log_info "Truncating table $table for fastload";
