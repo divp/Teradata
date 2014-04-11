@@ -1,5 +1,5 @@
 CREATE DATABASE IF NOT EXISTS raw_tpcds1000g;
-USE tpcds1000g;
+USE raw_tpcds1000g;
 
 drop table if exists customer_address;
 create external   table customer_address
