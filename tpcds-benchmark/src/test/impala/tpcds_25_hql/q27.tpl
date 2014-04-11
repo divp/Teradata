@@ -1,3 +1,4 @@
+-- q27
 select  i_item_id,
         s_state, 
         GROUPING__ID,

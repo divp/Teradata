@@ -1,3 +1,4 @@
+-- q42
 select  dt.d_year
         ,i.i_category_id
         ,i.i_category

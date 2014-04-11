@@ -1,3 +1,4 @@
+-- q24
 drop table if exists temp_ssales3299;
 create table temp_ssales3299 as
 select c_last_name

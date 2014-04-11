@@ -1,3 +1,4 @@
+-- q10
 select
   cd_gender,
   cd_marital_status,

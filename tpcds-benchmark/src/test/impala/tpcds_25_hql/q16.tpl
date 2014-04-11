@@ -1,3 +1,4 @@
+-- q16
 select
    count(distinct cs1.cs_order_number) as order_count
   ,sum(cs1.cs_ext_ship_cost) as total_shipping_cost

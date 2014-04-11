@@ -1,3 +1,4 @@
+-- q51
 select  *
 from (select item_sk
      ,d_date

@@ -1,3 +1,4 @@
+-- q80
 select  channel
         , id
         , sum(sales) as sales

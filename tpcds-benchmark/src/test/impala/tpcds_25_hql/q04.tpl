@@ -1,3 +1,4 @@
+-- q04
 drop table if exists temp_year_total884;
 create table temp_year_total884 as
 select * from

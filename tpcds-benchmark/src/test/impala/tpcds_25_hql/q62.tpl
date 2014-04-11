@@ -1,3 +1,4 @@
+-- q62
 select  
    substr(w_warehouse_name,1,20) as thename
   ,sm_type

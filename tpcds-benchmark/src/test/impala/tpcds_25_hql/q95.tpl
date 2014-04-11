@@ -1,3 +1,4 @@
+explain
 select 
    count(distinct ws1.ws_order_number) as order_count
   ,sum(ws_ext_ship_cost) as total_shipping_cost
@@ -7,11 +8,18 @@ from
   join date_dim d on (ws1.ws_ship_date_sk = d.d_date_sk)
   join customer_address ca on (ws1.ws_ship_addr_sk = ca.ca_address_sk)
   join web_site w on (ws1.ws_web_site_sk = w.web_site_sk)
-  left semi join (select ws1.ws_order_number,ws1.ws_warehouse_sk wh1,ws2.ws_warehouse_sk wh2 from web_sales ws1 join web_sales ws2 on (ws1.ws_order_number = ws2.ws_order_number) where ws1.ws_warehouse_sk <> ws2.ws_warehouse_sk) ws_wh on (ws1.ws_order_number = ws_wh.ws_order_number)
-  left semi join (select wr.wr_order_number from (select ws1.ws_order_number,ws1.ws_warehouse_sk wh1,ws2.ws_warehouse_sk wh2 from web_sales ws1 join web_sales ws2 on (ws1.ws_order_number = ws2.ws_order_number) where ws1.ws_warehouse_sk <> ws2.ws_warehouse_sk) ws_wh join web_returns wr on (wr.wr_order_number = ws_wh.ws_order_number)) in2 on (ws1.ws_order_number = in2.wr_order_number)
+  left semi join 
+	(select ws1.ws_order_number,ws1.ws_warehouse_sk wh1,ws2.ws_warehouse_sk wh2 
+	from web_sales ws1 join web_sales ws2 on (ws1.ws_order_number = ws2.ws_order_number) 
+	where ws1.ws_warehouse_sk <> ws2.ws_warehouse_sk
+        ) ws_wh 
+	  on (ws1.ws_order_number = ws_wh.ws_order_number)
+  left semi join (select wr.wr_order_number 
+	from (select ws1.ws_order_number,ws1.ws_warehouse_sk wh1,ws2.ws_warehouse_sk wh2 
+	     from web_sales ws1 join web_sales ws2 on (ws1.ws_order_number = ws2.ws_order_number) where ws1.ws_warehouse_sk <> ws2.ws_warehouse_sk) ws_wh 
+		join web_returns wr on (wr.wr_order_number = ws_wh.ws_order_number)) in2 on (ws1.ws_order_number = in2.wr_order_number)
 where d_date between '1999-05-01' and '1999-07-01'
 and ca_state = 'TX'
 and web_company_name = 'pri'
 order by order_count
-limit 100
-;
+limit 100;
