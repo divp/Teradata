@@ -1,8 +1,8 @@
-CREATE DATABASE IF NOT EXISTS raw_tpcds1000g;
-USE raw_tpcds1000g;
+CREATE DATABASE IF NOT EXISTS orc_tpcds1000g;
+use orc_tpcds1000g;
 
 drop table if exists customer_address;
-create external   table customer_address
+create  table customer_address
  (
     ca_address_sk             int               ,
     ca_address_id             varchar(16)              ,
@@ -15,15 +15,12 @@ create external   table customer_address
     ca_state                  varchar(2)                       ,
     ca_zip                    varchar(10)                      ,
     ca_country                varchar(20)                   ,
-    ca_gmt_offset             double                  ,
+    ca_gmt_offset             decimal(5,2)                  ,
     ca_location_type          varchar(20)                      
-) 
-row format delimited fields terminated by '|' lines terminated by '\n'
-stored as textfile
-location '/data/tpcds1000g/customer_address_raw/';
+) STORED AS orc  tblproperties ("orc.compress"="SNAPPY");
 
 drop table if exists customer_demographics;
-create external   table customer_demographics
+create  table customer_demographics
  (
     cd_demo_sk                int               ,
     cd_gender                 varchar(1)                       ,
@@ -34,13 +31,10 @@ create external   table customer_demographics
     cd_dep_count              int                       ,
     cd_dep_employed_count     int                       ,
     cd_dep_college_count      int                       
-) 
-row format delimited fields terminated by '|' lines terminated by '\n'
-stored as textfile
-location '/data/tpcds1000g/customer_demographics_raw/';
+)  STORED AS orc  tblproperties ("orc.compress"="SNAPPY");
 
 drop table if exists date_dim;
-create external   table date_dim
+create  table date_dim
  (
     d_date_sk                 int               ,
     d_date_id                 varchar(16)              ,
@@ -70,13 +64,10 @@ create external   table date_dim
     d_current_month           varchar(1)                       ,
     d_current_quarter         varchar(1)                       ,
     d_current_year            varchar(1)                       
-)  
-row format delimited fields terminated by '|' lines terminated by '\n'
-stored as textfile
-location '/data/tpcds1000g/date_dim_raw/';
+)  STORED AS orc  tblproperties ("orc.compress"="SNAPPY");
 
 drop table if exists warehouse;
-create external   table warehouse
+create  table warehouse
  (
     w_warehouse_sk            int               ,
     w_warehouse_id            varchar(16)              ,
@@ -91,14 +82,11 @@ create external   table warehouse
     w_state                   varchar(2)                       ,
     w_zip                     varchar(10)                      ,
     w_country                 varchar(20)                   ,
-    w_gmt_offset              double                  
-)  
-row format delimited fields terminated by '|' lines terminated by '\n'
-stored as textfile
-location '/data/tpcds1000g/warehouse_raw/';
+    w_gmt_offset              decimal(5,2)                  
+)  STORED AS orc  tblproperties ("orc.compress"="SNAPPY");
 
 drop table if exists ship_mode;
-create external   table ship_mode
+create  table ship_mode
  (
     sm_ship_mode_sk           int               ,
     sm_ship_mode_id           varchar(16)              ,
@@ -106,13 +94,10 @@ create external   table ship_mode
     sm_code                   varchar(10)                      ,
     sm_carrier                varchar(20)                      ,
     sm_contract               varchar(20)                      
-)  
-row format delimited fields terminated by '|' lines terminated by '\n'
-stored as textfile
-location '/data/tpcds1000g/ship_mode_raw/';
+)  STORED AS orc  tblproperties ("orc.compress"="SNAPPY");
 
 drop table if exists time_dim;
-create external   table time_dim
+create  table time_dim
  (
     t_time_sk                 int               ,
     t_time_id                 varchar(16)              ,
@@ -124,43 +109,34 @@ create external   table time_dim
     t_shift                   varchar(20)                      ,
     t_sub_shift               varchar(20)                      ,
     t_meal_time               varchar(20)                      
-)  
-row format delimited fields terminated by '|' lines terminated by '\n'
-stored as textfile
-location '/data/tpcds1000g/time_dim_raw/';
+)  STORED AS orc  tblproperties ("orc.compress"="SNAPPY");
 
 drop table if exists reason;
-create external   table reason
+create  table reason
  (
     r_reason_sk               int               ,
     r_reason_id               varchar(16)              ,
     r_reason_desc             varchar(100)                     
-)  
-row format delimited fields terminated by '|' lines terminated by '\n'
-stored as textfile
-location '/data/tpcds1000g/reason_raw/';
+)  STORED AS orc  tblproperties ("orc.compress"="SNAPPY");
 
 drop table if exists income_band;
-create external   table income_band
+create  table income_band
  (
     ib_income_band_sk         int               ,
     ib_lower_bound            int                       ,
     ib_upper_bound            int                       
-)  
-row format delimited fields terminated by '|' lines terminated by '\n'
-stored as textfile
-location '/data/tpcds1000g/income_band_raw/';
+)  STORED AS orc  tblproperties ("orc.compress"="SNAPPY");
 
 drop table if exists item;
-create external   table item
+create  table item
  (
     i_item_sk                 int               ,
     i_item_id                 varchar(16)              ,
     i_rec_start_date          date                          ,
     i_rec_end_date            date                          ,
     i_item_desc               varchar(200)                  ,
-    i_current_price           double                  ,
-    i_wholesale_cost          double                  ,
+    i_current_price           decimal(7,2)                  ,
+    i_wholesale_cost          decimal(7,2)                  ,
     i_brand_id                int                       ,
     i_brand                   varchar(50)                      ,
     i_class_id                int                       ,
@@ -176,13 +152,10 @@ create external   table item
     i_container               varchar(10)                      ,
     i_manager_id              int                       ,
     i_product_name            varchar(50)                      
-)
-row format delimited fields terminated by '|' lines terminated by '\n'
-stored as textfile
-location '/data/tpcds1000g/item_raw/';
+)  STORED AS orc  tblproperties ("orc.compress"="SNAPPY");
 
 drop table if exists store;
-create external   table store
+create  table store
  (
     s_store_sk                int               ,
     s_store_id                varchar(16)              ,
@@ -211,15 +184,12 @@ create external   table store
     s_state                   varchar(2)                       ,
     s_zip                     varchar(10)                      ,
     s_country                 varchar(20)                   ,
-    s_gmt_offset              double                  ,
-    s_tax_precentage          double                  
-) 
-row format delimited fields terminated by '|' lines terminated by '\n'
-stored as textfile
-location '/data/tpcds1000g/store_raw/';
+    s_gmt_offset              decimal(5,2)                  ,
+    s_tax_precentage          decimal(5,2)                  
+)  STORED AS orc  tblproperties ("orc.compress"="SNAPPY");
 
 drop table if exists call_center;
-create external   table call_center
+create  table call_center
  (
     cc_call_center_sk         int               ,
     cc_call_center_id         varchar(16)              ,
@@ -250,15 +220,12 @@ create external   table call_center
     cc_state                  varchar(2)                       ,
     cc_zip                    varchar(10)                      ,
     cc_country                varchar(20)                   ,
-    cc_gmt_offset             double                  ,
-    cc_tax_percentage         double                  
-)  
-row format delimited fields terminated by '|' lines terminated by '\n'
-stored as textfile
-location '/data/tpcds1000g/call_center_raw/';
+    cc_gmt_offset             decimal(5,2)                  ,
+    cc_tax_percentage         decimal(5,2)                  
+)  STORED AS orc  tblproperties ("orc.compress"="SNAPPY");
 
 drop table if exists customer;
-create external   table customer
+create  table customer
  (
     c_customer_sk             int               ,
     c_customer_id             varchar(16)              ,
@@ -278,13 +245,10 @@ create external   table customer
     c_login                   varchar(13)                      ,
     c_email_address           varchar(50)                      ,
     c_last_review_date        varchar(10)                      
-) 
-row format delimited fields terminated by '|' lines terminated by '\n'
-stored as textfile
-location '/data/tpcds1000g/customer_raw/';
+)  STORED AS orc  tblproperties ("orc.compress"="SNAPPY");
 
 drop table if exists web_site;
-create external   table web_site
+create  table web_site
  (
     web_site_sk               int               ,
     web_site_id               varchar(16)              ,
@@ -310,15 +274,12 @@ create external   table web_site
     web_state                 varchar(2)                       ,
     web_zip                   varchar(10)                      ,
     web_country               varchar(20)                   ,
-    web_gmt_offset            double                  ,
-    web_tax_percentage        double                  
-) 
-row format delimited fields terminated by '|' lines terminated by '\n'
-stored as textfile
-location '/data/tpcds1000g/web_site_raw/';
+    web_gmt_offset            decimal(5,2)                  ,
+    web_tax_percentage        decimal(5,2)                  
+)  STORED AS orc  tblproperties ("orc.compress"="SNAPPY");
 
 drop table if exists store_returns;
-create external   table store_returns
+create  table store_returns
  (
     sr_returned_date_sk       int                       ,
     sr_return_time_sk         int                       ,
@@ -331,35 +292,29 @@ create external   table store_returns
     sr_reason_sk              int                       ,
     sr_ticket_number          int               ,
     sr_return_quantity        int                       ,
-    sr_return_amt             double                  ,
-    sr_return_tax             double                  ,
-    sr_return_amt_inc_tax     double                  ,
-    sr_fee                    double                  ,
-    sr_return_ship_cost       double                  ,
-    sr_refunded_cash          double                  ,
-    sr_reversed_charge        double                  ,
-    sr_store_credit           double                  ,
-    sr_net_loss               double                  
-)
-row format delimited fields terminated by '|' lines terminated by '\n'
-stored as textfile
-location '/data/tpcds1000g/store_returns_raw/';
+    sr_return_amt             decimal(7,2)                  ,
+    sr_return_tax             decimal(7,2)                  ,
+    sr_return_amt_inc_tax     decimal(7,2)                  ,
+    sr_fee                    decimal(7,2)                  ,
+    sr_return_ship_cost       decimal(7,2)                  ,
+    sr_refunded_cash          decimal(7,2)                  ,
+    sr_reversed_charge        decimal(7,2)                  ,
+    sr_store_credit           decimal(7,2)                  ,
+    sr_net_loss               decimal(7,2)                  
+)  STORED AS orc  tblproperties ("orc.compress"="SNAPPY");
 
 drop table if exists household_demographics;
-create external   table household_demographics
+create  table household_demographics
  (
     hd_demo_sk                int               ,
     hd_income_band_sk         int                       ,
     hd_buy_potential          varchar(15)                      ,
     hd_dep_count              int                       ,
     hd_vehicle_count          int                       
-) 
-row format delimited fields terminated by '|' lines terminated by '\n'
-stored as textfile
-location '/data/tpcds1000g/household_demographics_raw/';
+)  STORED AS orc  tblproperties ("orc.compress"="SNAPPY");
 
 drop table if exists web_page;
-create external   table web_page
+create  table web_page
  (
     wp_web_page_sk            int               ,
     wp_web_page_id            varchar(16)              ,
@@ -375,20 +330,17 @@ create external   table web_page
     wp_link_count             int                       ,
     wp_image_count            int                       ,
     wp_max_ad_count           int                       
-)  
-row format delimited fields terminated by '|' lines terminated by '\n'
-stored as textfile
-location '/data/tpcds1000g/web_page_raw/';
+)  STORED AS orc  tblproperties ("orc.compress"="SNAPPY");
 
 drop table if exists promotion;
-create external   table promotion
+create  table promotion
  (
     p_promo_sk                int               ,
     p_promo_id                varchar(16)              ,
     p_start_date_sk           int                       ,
     p_end_date_sk             int                       ,
     p_item_sk                 int                       ,
-    p_cost                    double                 ,
+    p_cost                    decimal(15,2)                 ,
     p_response_target         int                       ,
     p_promo_name              varchar(50)                      ,
     p_channel_dmail           varchar(1)                       ,
@@ -402,13 +354,10 @@ create external   table promotion
     p_channel_details         varchar(100)                  ,
     p_purpose                 varchar(15)                      ,
     p_discount_active         varchar(1)                       
-)
-row format delimited fields terminated by '|' lines terminated by '\n'
-stored as textfile
-location '/data/tpcds1000g/promotion_raw/';
+)  STORED AS orc  tblproperties ("orc.compress"="SNAPPY");
 
 drop table if exists catalog_page;
-create external   table catalog_page
+create  table catalog_page
  (
     cp_catalog_page_sk        int               ,
     cp_catalog_page_id        varchar(16)              ,
@@ -419,25 +368,19 @@ create external   table catalog_page
     cp_catalog_page_number    int                       ,
     cp_description            varchar(100)                  ,
     cp_type                   varchar(100)                  
-)
-row format delimited fields terminated by '|' lines terminated by '\n'
-stored as textfile
-location '/data/tpcds1000g/catalog_page_raw/';
+)  STORED AS orc  tblproperties ("orc.compress"="SNAPPY");
 
 drop table if exists inventory;
-create external   table inventory
+create  table inventory
  (
     inv_date_sk               int               ,
     inv_item_sk               int               ,
     inv_warehouse_sk          int               ,
     inv_quantity_on_hand      int                       
-)  
-row format delimited fields terminated by '|' lines terminated by '\n'
-stored as textfile
-location '/data/tpcds1000g/inventory_raw/';
+)  STORED AS orc  tblproperties ("orc.compress"="SNAPPY");
 
 drop table if exists catalog_returns;
-create external   table catalog_returns
+create  table catalog_returns
  (
     cr_returned_date_sk       int                       ,
     cr_returned_time_sk       int                       ,
@@ -457,22 +400,19 @@ create external   table catalog_returns
     cr_reason_sk              int                       ,
     cr_order_number           int               ,
     cr_return_quantity        int                       ,
-    cr_return_amount          double                  ,
-    cr_return_tax             double                  ,
-    cr_return_amt_inc_tax     double                  ,
-    cr_fee                    double                  ,
-    cr_return_ship_cost       double                  ,
-    cr_refunded_cash          double                  ,
-    cr_reversed_charge        double                  ,
-    cr_store_credit           double                  ,
-    cr_net_loss               double                  
-)  
-row format delimited fields terminated by '|' lines terminated by '\n'
-stored as textfile
-location '/data/tpcds1000g/catalog_returns_raw/';
+    cr_return_amount          decimal(7,2)                  ,
+    cr_return_tax             decimal(7,2)                  ,
+    cr_return_amt_inc_tax     decimal(7,2)                  ,
+    cr_fee                    decimal(7,2)                  ,
+    cr_return_ship_cost       decimal(7,2)                  ,
+    cr_refunded_cash          decimal(7,2)                  ,
+    cr_reversed_charge        decimal(7,2)                  ,
+    cr_store_credit           decimal(7,2)                  ,
+    cr_net_loss               decimal(7,2)                  
+)  STORED AS orc  tblproperties ("orc.compress"="SNAPPY");
 
 drop table if exists web_returns;
-create external   table web_returns
+create  table web_returns
  (
     wr_returned_date_sk       int                       ,
     wr_returned_time_sk       int                       ,
@@ -489,22 +429,19 @@ create external   table web_returns
     wr_reason_sk              int                       ,
     wr_order_number           int               ,
     wr_return_quantity        int                       ,
-    wr_return_amt             double                  ,
-    wr_return_tax             double                  ,
-    wr_return_amt_inc_tax     double                  ,
-    wr_fee                    double                  ,
-    wr_return_ship_cost       double                  ,
-    wr_refunded_cash          double                  ,
-    wr_reversed_charge        double                  ,
-    wr_account_credit         double                  ,
-    wr_net_loss               double                  
-)  
-row format delimited fields terminated by '|' lines terminated by '\n'
-stored as textfile
-location '/data/tpcds1000g/web_returns_raw/';
+    wr_return_amt             decimal(7,2)                  ,
+    wr_return_tax             decimal(7,2)                  ,
+    wr_return_amt_inc_tax     decimal(7,2)                  ,
+    wr_fee                    decimal(7,2)                  ,
+    wr_return_ship_cost       decimal(7,2)                  ,
+    wr_refunded_cash          decimal(7,2)                  ,
+    wr_reversed_charge        decimal(7,2)                  ,
+    wr_account_credit         decimal(7,2)                  ,
+    wr_net_loss               decimal(7,2)                  
+)  STORED AS orc  tblproperties ("orc.compress"="SNAPPY");
 
 drop table if exists web_sales;
-create external   table web_sales
+create  table web_sales
  (
     ws_sold_date_sk           int                       ,
     ws_sold_time_sk           int                       ,
@@ -525,28 +462,25 @@ create external   table web_sales
     ws_promo_sk               int                       ,
     ws_order_number           int               ,
     ws_quantity               int                       ,
-    ws_wholesale_cost         double                  ,
-    ws_list_price             double                  ,
-    ws_sales_price            double                  ,
-    ws_ext_discount_amt       double                  ,
-    ws_ext_sales_price        double                  ,
-    ws_ext_wholesale_cost     double                  ,
-    ws_ext_list_price         double                  ,
-    ws_ext_tax                double                  ,
-    ws_coupon_amt             double                  ,
-    ws_ext_ship_cost          double                  ,
-    ws_net_paid               double                  ,
-    ws_net_paid_inc_tax       double                  ,
-    ws_net_paid_inc_ship      double                  ,
-    ws_net_paid_inc_ship_tax  double                  ,
-    ws_net_profit             double                  
-)  
-row format delimited fields terminated by '|' lines terminated by '\n'
-stored as textfile
-location '/data/tpcds1000g/web_sales_raw/';
+    ws_wholesale_cost         decimal(7,2)                  ,
+    ws_list_price             decimal(7,2)                  ,
+    ws_sales_price            decimal(7,2)                  ,
+    ws_ext_discount_amt       decimal(7,2)                  ,
+    ws_ext_sales_price        decimal(7,2)                  ,
+    ws_ext_wholesale_cost     decimal(7,2)                  ,
+    ws_ext_list_price         decimal(7,2)                  ,
+    ws_ext_tax                decimal(7,2)                  ,
+    ws_coupon_amt             decimal(7,2)                  ,
+    ws_ext_ship_cost          decimal(7,2)                  ,
+    ws_net_paid               decimal(7,2)                  ,
+    ws_net_paid_inc_tax       decimal(7,2)                  ,
+    ws_net_paid_inc_ship      decimal(7,2)                  ,
+    ws_net_paid_inc_ship_tax  decimal(7,2)                  ,
+    ws_net_profit             decimal(7,2)                  
+)  STORED AS orc  tblproperties ("orc.compress"="SNAPPY");
 
 drop table if exists catalog_sales;
-create external   table catalog_sales
+create  table catalog_sales
  (
     cs_sold_date_sk           int                       ,
     cs_sold_time_sk           int                       ,
@@ -567,28 +501,25 @@ create external   table catalog_sales
     cs_promo_sk               int                       ,
     cs_order_number           int               ,
     cs_quantity               int                       ,
-    cs_wholesale_cost         double                  ,
-    cs_list_price             double                  ,
-    cs_sales_price            double                  ,
-    cs_ext_discount_amt       double                  ,
-    cs_ext_sales_price        double                  ,
-    cs_ext_wholesale_cost     double                  ,
-    cs_ext_list_price         double                  ,
-    cs_ext_tax                double                  ,
-    cs_coupon_amt             double                  ,
-    cs_ext_ship_cost          double                  ,
-    cs_net_paid               double                  ,
-    cs_net_paid_inc_tax       double                  ,
-    cs_net_paid_inc_ship      double                  ,
-    cs_net_paid_inc_ship_tax  double                  ,
-    cs_net_profit             double                  
-)  
-row format delimited fields terminated by '|' lines terminated by '\n'
-stored as textfile
-location '/data/tpcds1000g/catalog_sales_raw/';
+    cs_wholesale_cost         decimal(7,2)                  ,
+    cs_list_price             decimal(7,2)                  ,
+    cs_sales_price            decimal(7,2)                  ,
+    cs_ext_discount_amt       decimal(7,2)                  ,
+    cs_ext_sales_price        decimal(7,2)                  ,
+    cs_ext_wholesale_cost     decimal(7,2)                  ,
+    cs_ext_list_price         decimal(7,2)                  ,
+    cs_ext_tax                decimal(7,2)                  ,
+    cs_coupon_amt             decimal(7,2)                  ,
+    cs_ext_ship_cost          decimal(7,2)                  ,
+    cs_net_paid               decimal(7,2)                  ,
+    cs_net_paid_inc_tax       decimal(7,2)                  ,
+    cs_net_paid_inc_ship      decimal(7,2)                  ,
+    cs_net_paid_inc_ship_tax  decimal(7,2)                  ,
+    cs_net_profit             decimal(7,2)                  
+)  STORED AS orc  tblproperties ("orc.compress"="SNAPPY");
 
 drop table if exists store_sales;
-create external   table store_sales
+create  table store_sales
  (
     ss_sold_date_sk           int                       ,
     ss_sold_time_sk           int                       ,
@@ -601,20 +532,16 @@ create external   table store_sales
     ss_promo_sk               int                       ,
     ss_ticket_number          int               ,
     ss_quantity               int                       ,
-    ss_wholesale_cost         double                  ,
-    ss_list_price             double                  ,
-    ss_sales_price            double                  ,
-    ss_ext_discount_amt       double                  ,
-    ss_ext_sales_price        double                  ,
-    ss_ext_wholesale_cost     double                  ,
-    ss_ext_list_price         double                  ,
-    ss_ext_tax                double                  ,
-    ss_coupon_amt             double                  ,
-    ss_net_paid               double                  ,
-    ss_net_paid_inc_tax       double                  ,
-    ss_net_profit             double                  
-)  
-row format delimited fields terminated by '|' lines terminated by '\n'
-stored as textfile
-location '/data/tpcds1000g/store_sales_raw/';
-
+    ss_wholesale_cost         decimal(7,2)                  ,
+    ss_list_price             decimal(7,2)                  ,
+    ss_sales_price            decimal(7,2)                  ,
+    ss_ext_discount_amt       decimal(7,2)                  ,
+    ss_ext_sales_price        decimal(7,2)                  ,
+    ss_ext_wholesale_cost     decimal(7,2)                  ,
+    ss_ext_list_price         decimal(7,2)                  ,
+    ss_ext_tax                decimal(7,2)                  ,
+    ss_coupon_amt             decimal(7,2)                  ,
+    ss_net_paid               decimal(7,2)                  ,
+    ss_net_paid_inc_tax       decimal(7,2)                  ,
+    ss_net_profit             decimal(7,2)                  
+)  STORED AS orc  tblproperties ("orc.compress"="SNAPPY");

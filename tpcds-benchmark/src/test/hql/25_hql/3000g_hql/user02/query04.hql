@@ -70,7 +70,7 @@ group by c_customer_id
          ,d_year
 ) a      
 ;
-select  t_s_secyear.customer_id,t_s_secyear.customer_first_name,t_s_secyear.customer_last_name,t_s_secyear.c_preferred_cust_flag,t_s_secyear.c_birth_country,t_s_secyear.c_login,t_s_secyear.c_email_address
+select  t_s_secyear.customer_id,t_s_secyear.customer_first_name,t_s_secyear.customer_last_name,t_s_secyear.customer_preferred_cust_flag,t_s_secyear.customer_birth_country,t_s_secyear.customer_login,t_s_secyear.customer_email_address
 from temp_year_total884 t_s_firstyear
 join temp_year_total884 t_s_secyear on (t_s_secyear.customer_id = t_s_firstyear.customer_id)
 join temp_year_total884 t_c_firstyear on (t_s_firstyear.customer_id = t_c_firstyear.customer_id)
@@ -96,7 +96,7 @@ where t_s_firstyear.sale_type = 's'
            > case when t_s_firstyear.year_total > 0 then cast(t_s_secyear.year_total / t_s_firstyear.year_total as decimal(15,2)) else null end
    and case when t_c_firstyear.year_total > 0 then cast(t_c_secyear.year_total / t_c_firstyear.year_total as decimal(15,2)) else null end
            > case when t_w_firstyear.year_total > 0 then cast(t_w_secyear.year_total / t_w_firstyear.year_total as decimal(15,2)) else null end
-order by t_s_secyear.customer_id,t_s_secyear.customer_first_name,t_s_secyear.customer_last_name,t_s_secyear.c_preferred_cust_flag,t_s_secyear.c_birth_country,t_s_secyear.c_login,t_s_secyear.c_email_address
+order by t_s_secyear.customer_id,t_s_secyear.customer_first_name,t_s_secyear.customer_last_name,t_s_secyear.customer_preferred_cust_flag,t_s_secyear.customer_birth_country,t_s_secyear.customer_login,t_s_secyear.customer_email_address
 limit 100
 ;
 drop table if exists temp_year_total884;
