@@ -7,7 +7,7 @@ q27.tpl - Will not run on Impala because use of 'with rollup'
 q29.tpl - Memory limit
 q32.tpl - date cast, decimal cast - will need to change query
 q34.tpl - Needed Limit command after ORDER by. Memory limit
-q39.tpl - stddev_samp() not defined
+q39.tpl - stddev_samp() not defined with Impala.
 q42.tpl - Memory limit exceeded.
 q45.tpl - Memory limit exceeded.
 q49.tpl - Will not run on Impala because use of rank/over/partion window functions. Decimal cast
