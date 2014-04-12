@@ -3,7 +3,6 @@
 # Get fastload error data
 
 set -o nounset
-set -o errexit
 
 # Must source exports.sh in order to export global parameters defined in test properties
 . $BENCHMARK_PATH/exports.sh
@@ -15,8 +14,7 @@ bteq <<EOF
     .EXPORT DATA FILE=/tmp/fastload_error_data.out
     
     LOCKING ROW FOR ACCESS
-    SELECT DataParcel
-    FROM ${BMS_TERADATA_DBNAME_ETL1}.FASTLOAD_ERR1
+    SELECT trim(DataParcel) FROM ${BMS_TERADATA_DBNAME_ETL1}.FASTLOAD_ERR1
     ;
 
     .EXPORT RESET;
