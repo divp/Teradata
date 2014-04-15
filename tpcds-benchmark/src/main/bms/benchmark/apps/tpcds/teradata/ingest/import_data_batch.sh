@@ -138,12 +138,6 @@ tables=(s_call_center s_catalog_order s_catalog_order_lineitem s_catalog_page s_
 for table in ${tables[@]}
 do
     log_info "Processing table $table"
-    if [[ $table =~ 's_customer' ]]
-    then
-        echo "################### SKIPPING $table !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
-        continue
-    fi
-
     input_file=${BMS_SOURCE_DATA_PATH}/tpcds/${table}_1.dat
     script=$(mktemp /tmp/$(basename $0).fastload.script.XXXXXXXXXX)
     log_info "Generating fastload script" | tee -a $log
