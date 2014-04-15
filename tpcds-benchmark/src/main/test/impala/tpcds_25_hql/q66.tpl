@@ -57,53 +57,53 @@ from (
         ,concat('DIAMOND',',','AIRBORNE') as ship_carriers
         ,d_year as yearx
         ,sum(case when d_moy = 1
-                then ws_sales_price *ws_quantity else cast(0 as decimal) end) as jan_sales
+                then ws_sales_price *ws_quantity else cast(0 as double) end) as jan_sales
         ,sum(case when d_moy = 2
-                then ws_sales_price *ws_quantity else cast(0 as decimal) end) as feb_sales
+                then ws_sales_price *ws_quantity else cast(0 as double) end) as feb_sales
         ,sum(case when d_moy = 3
-                then ws_sales_price *ws_quantity else cast(0 as decimal) end) as mar_sales
+                then ws_sales_price *ws_quantity else cast(0 as double) end) as mar_sales
         ,sum(case when d_moy = 4
-                then ws_sales_price *ws_quantity else cast(0 as decimal) end) as apr_sales
+                then ws_sales_price *ws_quantity else cast(0 as double) end) as apr_sales
         ,sum(case when d_moy = 5
-                then ws_sales_price *ws_quantity else cast(0 as decimal) end) as may_sales
+                then ws_sales_price *ws_quantity else cast(0 as double) end) as may_sales
         ,sum(case when d_moy = 6
-                then ws_sales_price *ws_quantity else cast(0 as decimal) end) as jun_sales
+                then ws_sales_price *ws_quantity else cast(0 as double) end) as jun_sales
         ,sum(case when d_moy = 7
-                then ws_sales_price *ws_quantity else cast(0 as decimal) end) as jul_sales
+                then ws_sales_price *ws_quantity else cast(0 as double) end) as jul_sales
         ,sum(case when d_moy = 8
-                then ws_sales_price *ws_quantity else cast(0 as decimal) end) as aug_sales
+                then ws_sales_price *ws_quantity else cast(0 as double) end) as aug_sales
         ,sum(case when d_moy = 9
-                then ws_sales_price *ws_quantity else cast(0 as decimal) end) as sep_sales
+                then ws_sales_price *ws_quantity else cast(0 as double) end) as sep_sales
         ,sum(case when d_moy = 10
-                then ws_sales_price *ws_quantity else cast(0 as decimal) end) as oct_sales
+                then ws_sales_price *ws_quantity else cast(0 as double) end) as oct_sales
         ,sum(case when d_moy = 11
-                then ws_sales_price *ws_quantity else cast(0 as decimal) end) as nov_sales
+                then ws_sales_price *ws_quantity else cast(0 as double) end) as nov_sales
         ,sum(case when d_moy = 12
-                then ws_sales_price *ws_quantity else cast(0 as decimal) end) as dec_sales
+                then ws_sales_price *ws_quantity else cast(0 as double) end) as dec_sales
         ,sum(case when d_moy = 1
-                then ws_net_paid_inc_tax *ws_quantity else cast(0 as decimal) end) as jan_net
+                then ws_net_paid_inc_tax *ws_quantity else cast(0 as double) end) as jan_net
         ,sum(case when d_moy = 2
-                then ws_net_paid_inc_tax *ws_quantity else cast(0 as decimal) end) as feb_net
+                then ws_net_paid_inc_tax *ws_quantity else cast(0 as double) end) as feb_net
         ,sum(case when d_moy = 3
-                then ws_net_paid_inc_tax *ws_quantity else cast(0 as decimal) end) as mar_net
+                then ws_net_paid_inc_tax *ws_quantity else cast(0 as double) end) as mar_net
         ,sum(case when d_moy = 4
-                then ws_net_paid_inc_tax *ws_quantity else cast(0 as decimal) end) as apr_net
+                then ws_net_paid_inc_tax *ws_quantity else cast(0 as double) end) as apr_net
         ,sum(case when d_moy = 5
-                then ws_net_paid_inc_tax *ws_quantity else cast(0 as decimal) end) as may_net
+                then ws_net_paid_inc_tax *ws_quantity else cast(0 as double) end) as may_net
         ,sum(case when d_moy = 6
-                then ws_net_paid_inc_tax *ws_quantity else cast(0 as decimal) end) as jun_net
+                then ws_net_paid_inc_tax *ws_quantity else cast(0 as double) end) as jun_net
         ,sum(case when d_moy = 7
-                then ws_net_paid_inc_tax *ws_quantity else cast(0 as decimal) end) as jul_net
+                then ws_net_paid_inc_tax *ws_quantity else cast(0 as double) end) as jul_net
         ,sum(case when d_moy = 8
-                then ws_net_paid_inc_tax *ws_quantity else cast(0 as decimal) end) as aug_net
+                then ws_net_paid_inc_tax *ws_quantity else cast(0 as double) end) as aug_net
         ,sum(case when d_moy = 9
-                then ws_net_paid_inc_tax *ws_quantity else cast(0 as decimal) end) as sep_net
+                then ws_net_paid_inc_tax *ws_quantity else cast(0 as double) end) as sep_net
         ,sum(case when d_moy = 10
-                then ws_net_paid_inc_tax *ws_quantity else cast(0 as decimal) end) as oct_net
+                then ws_net_paid_inc_tax *ws_quantity else cast(0 as double) end) as oct_net
         ,sum(case when d_moy = 11
-                then ws_net_paid_inc_tax *ws_quantity else cast(0 as decimal) end) as nov_net
+                then ws_net_paid_inc_tax *ws_quantity else cast(0 as double) end) as nov_net
         ,sum(case when d_moy = 12
-                then ws_net_paid_inc_tax *ws_quantity else cast(0 as decimal) end) as dec_net
+                then ws_net_paid_inc_tax *ws_quantity else cast(0 as double) end) as dec_net
      from
           web_sales ws
          join warehouse w on (ws.ws_warehouse_sk = w.w_warehouse_sk)
@@ -132,53 +132,53 @@ union all
         ,concat('BARIAN',',','AIRBORNE') as ship_carriers
         ,d_year as yearx
         ,sum(case when d_moy = 1
-                then cs_ext_sales_price *cs_quantity else cast(0 as decimal) end) as jan_sales
+                then cs_ext_sales_price *cs_quantity else cast(0 as double) end) as jan_sales
         ,sum(case when d_moy = 2
-                then cs_ext_sales_price *cs_quantity else cast(0 as decimal) end) as feb_sales
+                then cs_ext_sales_price *cs_quantity else cast(0 as double) end) as feb_sales
         ,sum(case when d_moy = 3
-                then cs_ext_sales_price *cs_quantity else cast(0 as decimal) end) as mar_sales
+                then cs_ext_sales_price *cs_quantity else cast(0 as double) end) as mar_sales
         ,sum(case when d_moy = 4
-                then cs_ext_sales_price *cs_quantity else cast(0 as decimal) end) as apr_sales
+                then cs_ext_sales_price *cs_quantity else cast(0 as double) end) as apr_sales
         ,sum(case when d_moy = 5
-                then cs_ext_sales_price *cs_quantity else cast(0 as decimal) end) as may_sales
+                then cs_ext_sales_price *cs_quantity else cast(0 as double) end) as may_sales
         ,sum(case when d_moy = 6
-                then cs_ext_sales_price *cs_quantity else cast(0 as decimal) end) as jun_sales
+                then cs_ext_sales_price *cs_quantity else cast(0 as double) end) as jun_sales
         ,sum(case when d_moy = 7
-                then cs_ext_sales_price *cs_quantity else cast(0 as decimal) end) as jul_sales
+                then cs_ext_sales_price *cs_quantity else cast(0 as double) end) as jul_sales
         ,sum(case when d_moy = 8
-                then cs_ext_sales_price *cs_quantity else cast(0 as decimal) end) as aug_sales
+                then cs_ext_sales_price *cs_quantity else cast(0 as double) end) as aug_sales
         ,sum(case when d_moy = 9
-                then cs_ext_sales_price *cs_quantity else cast(0 as decimal) end) as sep_sales
+                then cs_ext_sales_price *cs_quantity else cast(0 as double) end) as sep_sales
         ,sum(case when d_moy = 10
-                then cs_ext_sales_price *cs_quantity else cast(0 as decimal) end) as oct_sales
+                then cs_ext_sales_price *cs_quantity else cast(0 as double) end) as oct_sales
         ,sum(case when d_moy = 11
-                then cs_ext_sales_price *cs_quantity else cast(0 as decimal) end) as nov_sales
+                then cs_ext_sales_price *cs_quantity else cast(0 as double) end) as nov_sales
         ,sum(case when d_moy = 12
-                then cs_ext_sales_price *cs_quantity else cast(0 as decimal) end) as dec_sales
+                then cs_ext_sales_price *cs_quantity else cast(0 as double) end) as dec_sales
         ,sum(case when d_moy = 1
-                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as decimal) end) as jan_net
+                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as double) end) as jan_net
         ,sum(case when d_moy = 2
-                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as decimal) end) as feb_net
+                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as double) end) as feb_net
         ,sum(case when d_moy = 3
-                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as decimal) end) as mar_net
+                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as double) end) as mar_net
         ,sum(case when d_moy = 4
-                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as decimal) end) as apr_net
+                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as double) end) as apr_net
         ,sum(case when d_moy = 5
-                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as decimal) end) as may_net
+                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as double) end) as may_net
         ,sum(case when d_moy = 6
-                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as decimal) end) as jun_net
+                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as double) end) as jun_net
         ,sum(case when d_moy = 7
-                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as decimal) end) as jul_net
+                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as double) end) as jul_net
         ,sum(case when d_moy = 8
-                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as decimal) end) as aug_net
+                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as double) end) as aug_net
         ,sum(case when d_moy = 9
-                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as decimal) end) as sep_net
+                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as double) end) as sep_net
         ,sum(case when d_moy = 10
-                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as decimal) end) as oct_net
+                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as double) end) as oct_net
         ,sum(case when d_moy = 11
-                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as decimal) end) as nov_net
+                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as double) end) as nov_net
         ,sum(case when d_moy = 12
-                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as decimal) end) as dec_net
+                then cs_net_paid_inc_ship_tax *cs_quantity else cast(0 as double) end) as dec_net
      from
           catalog_sales cs
          join warehouse w on (cs.cs_warehouse_sk = w.w_warehouse_sk)

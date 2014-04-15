@@ -1,0 +1,469 @@
+
+6:19:14.493 AM 	INFO 	impala-beeswax-server.cc:167 	
+
+query(): query=use parquet_tpcds1000g
+
+6:19:14.493 AM 	INFO 	impala-beeswax-server.cc:476 	
+
+query: Query {
+  01: query (string) = "use parquet_tpcds1000g",
+  03: configuration (list) = list<string>[0] {
+  },
+  04: hadoop_user (string) = "xxxxxxxxxxxx",
+}
+
+6:19:14.493 AM 	INFO 	impala-beeswax-server.cc:496 	
+
+TClientRequest.queryOptions: TQueryOptions {
+  01: abort_on_error (bool) = false,
+  02: max_errors (i32) = 0,
+  03: disable_codegen (bool) = false,
+  04: batch_size (i32) = 0,
+  05: num_nodes (i32) = 0,
+  06: max_scan_range_length (i64) = 0,
+  07: num_scanner_threads (i32) = 0,
+  08: max_io_buffers (i32) = 0,
+  09: allow_unsupported_formats (bool) = false,
+  10: default_order_by_limit (i64) = -1,
+  11: debug_action (string) = "",
+  12: mem_limit (i64) = 0,
+  13: abort_on_default_limit_exceeded (bool) = false,
+  14: parquet_compression_codec (i32) = 5,
+  15: hbase_caching (i32) = 0,
+  16: hbase_cache_blocks (bool) = false,
+  17: parquet_file_size (i64) = 0,
+  19: sync_ddl (bool) = false,
+  23: disable_cached_reads (bool) = false,
+}
+
+6:19:14.499 AM 	INFO 	Frontend.java:535 	
+
+analyze query use parquet_tpcds1000g
+I0414 06:19:14.499387 31284 JniFrontend.java:122] 
+
+6:19:14.501 AM 	INFO 	impala-beeswax-server.cc:325 	
+
+close(): query_id=b549d5976c8acd8a:799f90a47606adae
+
+6:19:14.501 AM 	INFO 	impala-server.cc:629 	
+
+UnregisterQuery(): query_id=b549d5976c8acd8a:799f90a47606adae
+
+6:19:14.501 AM 	INFO 	impala-server.cc:715 	
+
+Cancel(): query_id=b549d5976c8acd8a:799f90a47606adae
+
+6:19:14.501 AM 	INFO 	impala-beeswax-server.cc:167 	
+
+query(): query=select sum(case when ssci.customer_sk is not null and csci.customer_sk is null then 1 else 0 end) store_only
+       ,sum(case when ssci.customer_sk is null and csci.customer_sk is not null then 1 else 0 end) catalog_only
+       ,sum(case when ssci.customer_sk is not null and csci.customer_sk is not null then 1 else 0 end) store_and_catalog
+from (select ss_customer_sk customer_sk,ss_item_sk item_sk from store_sales aa inner join date_dim bb on (aa.ss_sold_date_sk = bb.d_date_sk) where d_month_seq between 1212 and 1212 + 11 group by ss_customer_sk,ss_item_sk) ssci full outer join (select cs_bill_customer_sk customer_sk,cs_item_sk item_sk from catalog_sales aaa inner join date_dim bbb on (aaa.cs_sold_date_sk = bbb.d_date_sk) where d_month_seq between 1212 and 1212 + 11 group by cs_bill_customer_sk, cs_item_sk) csci on (ssci.customer_sk = csci.customer_sk and ssci.item_sk = csci.item_sk)
+limit 100
+
+6:19:14.501 AM 	INFO 	impala-beeswax-server.cc:476 	
+
+query: Query {
+  01: query (string) = "select sum(case [...](906)",
+  03: configuration (list) = list<string>[0] {
+  },
+  04: hadoop_user (string) = "xxxxxxxxxxxx",
+}
+
+6:19:14.501 AM 	INFO 	impala-beeswax-server.cc:496 	
+
+TClientRequest.queryOptions: TQueryOptions {
+  01: abort_on_error (bool) = false,
+  02: max_errors (i32) = 0,
+  03: disable_codegen (bool) = false,
+  04: batch_size (i32) = 0,
+  05: num_nodes (i32) = 0,
+  06: max_scan_range_length (i64) = 0,
+  07: num_scanner_threads (i32) = 0,
+  08: max_io_buffers (i32) = 0,
+  09: allow_unsupported_formats (bool) = false,
+  10: default_order_by_limit (i64) = -1,
+  11: debug_action (string) = "",
+  12: mem_limit (i64) = 0,
+  13: abort_on_default_limit_exceeded (bool) = false,
+  14: parquet_compression_codec (i32) = 5,
+  15: hbase_caching (i32) = 0,
+  16: hbase_cache_blocks (bool) = false,
+  17: parquet_file_size (i64) = 0,
+  19: sync_ddl (bool) = false,
+  23: disable_cached_reads (bool) = false,
+}
+
+6:19:14.507 AM 	INFO 	Frontend.java:535 	
+
+analyze query select sum(case when ssci.customer_sk is not null and csci.customer_sk is null then 1 else 0 end) store_only
+       ,sum(case when ssci.customer_sk is null and csci.customer_sk is not null then 1 else 0 end) catalog_only
+       ,sum(case when ssci.customer_sk is not null and csci.customer_sk is not null then 1 else 0 end) store_and_catalog
+from (select ss_customer_sk customer_sk,ss_item_sk item_sk from store_sales aa inner join date_dim bb on (aa.ss_sold_date_sk = bb.d_date_sk) where d_month_seq between 1212 and 1212 + 11 group by ss_customer_sk,ss_item_sk) ssci full outer join (select cs_bill_customer_sk customer_sk,cs_item_sk item_sk from catalog_sales aaa inner join date_dim bbb on (aaa.cs_sold_date_sk = bbb.d_date_sk) where d_month_seq between 1212 and 1212 + 11 group by cs_bill_customer_sk, cs_item_sk) csci on (ssci.customer_sk = csci.customer_sk and ssci.item_sk = csci.item_sk)
+limit 100
+
+6:19:14.508 AM 	INFO 	SelectStmt.java:539 	
+
+avg smap: smap()
+
+6:19:14.509 AM 	INFO 	AggregateInfo.java:159 	
+
+agg info:
+AggregateInfo{merging=false, grouping_exprs=(SlotRef{tblName=null, col=ss_customer_sk, id=2} SlotRef{tblName=null, col=ss_item_sk, id=3}), aggregate_exprs=, agg_tuple=TupleDescriptor{id=2, tbl=null, byte_size=0, is_materialized=true, slots=[SlotDescriptor{id=5, col=null, type=INT, materialized=false, byteSize=0, byteOffset=-1, nullIndicatorByte=0, nullIndicatorBit=0, slotIdx=0, stats=ColumnStats{avgSerializedSize_=4.0, maxSize_=4, numDistinct_=15014811, numNulls_=129590766}}, SlotDescriptor{id=6, col=null, type=INT, materialized=false, byteSize=0, byteOffset=-1, nullIndicatorByte=0, nullIndicatorBit=0, slotIdx=0, stats=ColumnStats{avgSerializedSize_=4.0, maxSize_=4, numDistinct_=404281, numNulls_=0}}]}, smap=smap(ss_customer_sk:ss_customer_sk (SlotRef{tblName=null, col=ss_customer_sk, id=2}:SlotRef{tblName=null, col=null, id=5}) ss_item_sk:ss_item_sk (SlotRef{tblName=null, col=ss_item_sk, id=3}:SlotRef{tblName=null, col=null, id=6}))}
+mergeAggInfo:
+AggregateInfo{merging=true, grouping_exprs=(SlotRef{tblName=null, col=null, id=5} SlotRef{tblName=null, col=null, id=6}), aggregate_exprs=, agg_tuple=TupleDescriptor{id=2, tbl=null, byte_size=0, is_materialized=true, slots=[SlotDescriptor{id=5, col=null, type=INT, materialized=false, byteSize=0, byteOffset=-1, nullIndicatorByte=0, nullIndicatorBit=0, slotIdx=0, stats=ColumnStats{avgSerializedSize_=4.0, maxSize_=4, numDistinct_=15014811, numNulls_=129590766}}, SlotDescriptor{id=6, col=null, type=INT, materialized=false, byteSize=0, byteOffset=-1, nullIndicatorByte=0, nullIndicatorBit=0, slotIdx=0, stats=ColumnStats{avgSerializedSize_=4.0, maxSize_=4, numDistinct_=404281, numNulls_=0}}]}, smap=smap(ss_customer_sk:ss_customer_sk (SlotRef{tblName=null, col=ss_customer_sk, id=2}:SlotRef{tblName=null, col=null, id=5}) ss_item_sk:ss_item_sk (SlotRef{tblName=null, col=ss_item_sk, id=3}:SlotRef{tblName=null, col=null, id=6}))}
+
+6:19:14.509 AM 	INFO 	SelectStmt.java:456 	
+
+combined smap: smap(ss_customer_sk:ss_customer_sk (SlotRef{tblName=null, col=ss_customer_sk, id=2}:SlotRef{tblName=null, col=null, id=5}) ss_item_sk:ss_item_sk (SlotRef{tblName=null, col=ss_item_sk, id=3}:SlotRef{tblName=null, col=null, id=6}))
+
+6:19:14.509 AM 	INFO 	SelectStmt.java:460 	
+
+post-agg selectListExprs: (SlotRef{tblName=null, col=null, id=5} SlotRef{tblName=null, col=null, id=6})
+
+6:19:14.509 AM 	INFO 	SelectStmt.java:467 	
+
+post-agg orderingExprs: 
+
+6:19:14.509 AM 	INFO 	SelectStmt.java:185 	
+
+post-analysis AggregateInfo{merging=false, grouping_exprs=(SlotRef{tblName=null, col=ss_customer_sk, id=2} SlotRef{tblName=null, col=ss_item_sk, id=3}), aggregate_exprs=, agg_tuple=TupleDescriptor{id=2, tbl=null, byte_size=0, is_materialized=true, slots=[SlotDescriptor{id=5, col=null, type=INT, materialized=false, byteSize=0, byteOffset=-1, nullIndicatorByte=0, nullIndicatorBit=0, slotIdx=0, stats=ColumnStats{avgSerializedSize_=4.0, maxSize_=4, numDistinct_=15014811, numNulls_=129590766}}, SlotDescriptor{id=6, col=null, type=INT, materialized=false, byteSize=0, byteOffset=-1, nullIndicatorByte=0, nullIndicatorBit=0, slotIdx=0, stats=ColumnStats{avgSerializedSize_=4.0, maxSize_=4, numDistinct_=404281, numNulls_=0}}]}, smap=smap(ss_customer_sk:ss_customer_sk (SlotRef{tblName=null, col=ss_customer_sk, id=2}:SlotRef{tblName=null, col=null, id=5}) ss_item_sk:ss_item_sk (SlotRef{tblName=null, col=ss_item_sk, id=3}:SlotRef{tblName=null, col=null, id=6}))}
+mergeAggInfo:
+AggregateInfo{merging=true, grouping_exprs=(SlotRef{tblName=null, col=null, id=5} SlotRef{tblName=null, col=null, id=6}), aggregate_exprs=, agg_tuple=TupleDescriptor{id=2, tbl=null, byte_size=0, is_materialized=true, slots=[SlotDescriptor{id=5, col=null, type=INT, materialized=false, byteSize=0, byteOffset=-1, nullIndicatorByte=0, nullIndicatorBit=0, slotIdx=0, stats=ColumnStats{avgSerializedSize_=4.0, maxSize_=4, numDistinct_=15014811, numNulls_=129590766}}, SlotDescriptor{id=6, col=null, type=INT, materialized=false, byteSize=0, byteOffset=-1, nullIndicatorByte=0, nullIndicatorBit=0, slotIdx=0, stats=ColumnStats{avgSerializedSize_=4.0, maxSize_=4, numDistinct_=404281, numNulls_=0}}]}, smap=smap(ss_customer_sk:ss_customer_sk (SlotRef{tblName=null, col=ss_customer_sk, id=2}:SlotRef{tblName=null, col=null, id=5}) ss_item_sk:ss_item_sk (SlotRef{tblName=null, col=ss_item_sk, id=3}:SlotRef{tblName=null, col=null, id=6}))}
+
+6:19:14.509 AM 	INFO 	InlineViewRef.java:130 	
+
+inline view ssci smap: smap(ssci.customer_sk:ss_customer_sk (SlotRef{tblName=null, col=customer_sk, id=7}:SlotRef{tblName=null, col=null, id=5}) ssci.item_sk:ss_item_sk (SlotRef{tblName=null, col=item_sk, id=8}:SlotRef{tblName=null, col=null, id=6}))
+
+6:19:14.509 AM 	INFO 	InlineViewRef.java:131 	
+
+inline view ssci baseTblSmap: smap(ssci.customer_sk:ss_customer_sk (SlotRef{tblName=null, col=customer_sk, id=7}:SlotRef{tblName=null, col=null, id=5}) ssci.item_sk:ss_item_sk (SlotRef{tblName=null, col=item_sk, id=8}:SlotRef{tblName=null, col=null, id=6}))
+
+6:19:14.510 AM 	INFO 	SelectStmt.java:539 	
+
+avg smap: smap()
+
+6:19:14.510 AM 	INFO 	AggregateInfo.java:159 	
+
+agg info:
+AggregateInfo{merging=false, grouping_exprs=(SlotRef{tblName=null, col=cs_bill_customer_sk, id=11} SlotRef{tblName=null, col=cs_item_sk, id=12}), aggregate_exprs=, agg_tuple=TupleDescriptor{id=6, tbl=null, byte_size=0, is_materialized=true, slots=[SlotDescriptor{id=14, col=null, type=INT, materialized=false, byteSize=0, byteOffset=-1, nullIndicatorByte=0, nullIndicatorBit=0, slotIdx=0, stats=ColumnStats{avgSerializedSize_=4.0, maxSize_=4, numDistinct_=15014811, numNulls_=7201919}}, SlotDescriptor{id=15, col=null, type=INT, materialized=false, byteSize=0, byteOffset=-1, nullIndicatorByte=0, nullIndicatorBit=0, slotIdx=0, stats=ColumnStats{avgSerializedSize_=4.0, maxSize_=4, numDistinct_=404281, numNulls_=0}}]}, smap=smap(cs_bill_customer_sk:cs_bill_customer_sk (SlotRef{tblName=null, col=cs_bill_customer_sk, id=11}:SlotRef{tblName=null, col=null, id=14}) cs_item_sk:cs_item_sk (SlotRef{tblName=null, col=cs_item_sk, id=12}:SlotRef{tblName=null, col=null, id=15}))}
+mergeAggInfo:
+AggregateInfo{merging=true, grouping_exprs=(SlotRef{tblName=null, col=null, id=14} SlotRef{tblName=null, col=null, id=15}), aggregate_exprs=, agg_tuple=TupleDescriptor{id=6, tbl=null, byte_size=0, is_materialized=true, slots=[SlotDescriptor{id=14, col=null, type=INT, materialized=false, byteSize=0, byteOffset=-1, nullIndicatorByte=0, nullIndicatorBit=0, slotIdx=0, stats=ColumnStats{avgSerializedSize_=4.0, maxSize_=4, numDistinct_=15014811, numNulls_=7201919}}, SlotDescriptor{id=15, col=null, type=INT, materialized=false, byteSize=0, byteOffset=-1, nullIndicatorByte=0, nullIndicatorBit=0, slotIdx=0, stats=ColumnStats{avgSerializedSize_=4.0, maxSize_=4, numDistinct_=404281, numNulls_=0}}]}, smap=smap(cs_bill_customer_sk:cs_bill_customer_sk (SlotRef{tblName=null, col=cs_bill_customer_sk, id=11}:SlotRef{tblName=null, col=null, id=14}) cs_item_sk:cs_item_sk (SlotRef{tblName=null, col=cs_item_sk, id=12}:SlotRef{tblName=null, col=null, id=15}))}
+
+6:19:14.510 AM 	INFO 	SelectStmt.java:456 	
+
+combined smap: smap(cs_bill_customer_sk:cs_bill_customer_sk (SlotRef{tblName=null, col=cs_bill_customer_sk, id=11}:SlotRef{tblName=null, col=null, id=14}) cs_item_sk:cs_item_sk (SlotRef{tblName=null, col=cs_item_sk, id=12}:SlotRef{tblName=null, col=null, id=15}))
+
+6:19:14.511 AM 	INFO 	SelectStmt.java:460 	
+
+post-agg selectListExprs: (SlotRef{tblName=null, col=null, id=14} SlotRef{tblName=null, col=null, id=15})
+
+6:19:14.511 AM 	INFO 	SelectStmt.java:467 	
+
+post-agg orderingExprs: 
+
+6:19:14.511 AM 	INFO 	SelectStmt.java:185 	
+
+post-analysis AggregateInfo{merging=false, grouping_exprs=(SlotRef{tblName=null, col=cs_bill_customer_sk, id=11} SlotRef{tblName=null, col=cs_item_sk, id=12}), aggregate_exprs=, agg_tuple=TupleDescriptor{id=6, tbl=null, byte_size=0, is_materialized=true, slots=[SlotDescriptor{id=14, col=null, type=INT, materialized=false, byteSize=0, byteOffset=-1, nullIndicatorByte=0, nullIndicatorBit=0, slotIdx=0, stats=ColumnStats{avgSerializedSize_=4.0, maxSize_=4, numDistinct_=15014811, numNulls_=7201919}}, SlotDescriptor{id=15, col=null, type=INT, materialized=false, byteSize=0, byteOffset=-1, nullIndicatorByte=0, nullIndicatorBit=0, slotIdx=0, stats=ColumnStats{avgSerializedSize_=4.0, maxSize_=4, numDistinct_=404281, numNulls_=0}}]}, smap=smap(cs_bill_customer_sk:cs_bill_customer_sk (SlotRef{tblName=null, col=cs_bill_customer_sk, id=11}:SlotRef{tblName=null, col=null, id=14}) cs_item_sk:cs_item_sk (SlotRef{tblName=null, col=cs_item_sk, id=12}:SlotRef{tblName=null, col=null, id=15}))}
+mergeAggInfo:
+AggregateInfo{merging=true, grouping_exprs=(SlotRef{tblName=null, col=null, id=14} SlotRef{tblName=null, col=null, id=15}), aggregate_exprs=, agg_tuple=TupleDescriptor{id=6, tbl=null, byte_size=0, is_materialized=true, slots=[SlotDescriptor{id=14, col=null, type=INT, materialized=false, byteSize=0, byteOffset=-1, nullIndicatorByte=0, nullIndicatorBit=0, slotIdx=0, stats=ColumnStats{avgSerializedSize_=4.0, maxSize_=4, numDistinct_=15014811, numNulls_=7201919}}, SlotDescriptor{id=15, col=null, type=INT, materialized=false, byteSize=0, byteOffset=-1, nullIndicatorByte=0, nullIndicatorBit=0, slotIdx=0, stats=ColumnStats{avgSerializedSize_=4.0, maxSize_=4, numDistinct_=404281, numNulls_=0}}]}, smap=smap(cs_bill_customer_sk:cs_bill_customer_sk (SlotRef{tblName=null, col=cs_bill_customer_sk, id=11}:SlotRef{tblName=null, col=null, id=14}) cs_item_sk:cs_item_sk (SlotRef{tblName=null, col=cs_item_sk, id=12}:SlotRef{tblName=null, col=null, id=15}))}
+
+6:19:14.511 AM 	INFO 	InlineViewRef.java:130 	
+
+inline view csci smap: smap(csci.customer_sk:cs_bill_customer_sk (SlotRef{tblName=null, col=customer_sk, id=16}:SlotRef{tblName=null, col=null, id=14}) csci.item_sk:cs_item_sk (SlotRef{tblName=null, col=item_sk, id=17}:SlotRef{tblName=null, col=null, id=15}))
+
+6:19:14.511 AM 	INFO 	InlineViewRef.java:131 	
+
+inline view csci baseTblSmap: smap(csci.customer_sk:cs_bill_customer_sk (SlotRef{tblName=null, col=customer_sk, id=16}:SlotRef{tblName=null, col=null, id=14}) csci.item_sk:cs_item_sk (SlotRef{tblName=null, col=item_sk, id=17}:SlotRef{tblName=null, col=null, id=15}))
+
+6:19:14.513 AM 	INFO 	SelectStmt.java:539 	
+
+avg smap: smap()
+
+6:19:14.514 AM 	INFO 	AggregateInfo.java:159 	
+
+agg info:
+AggregateInfo{merging=false, grouping_exprs=, aggregate_exprs=(FunctionCallExpr{name=sum, isStar=false, isDistinct=false, (CastExpr{isImplicit=true, target=BIGINT, ((((SlotRef{tblName=ssci, col=customer_sk, id=7}) (SlotRef{tblName=csci, col=customer_sk, id=16})) IntLiteral{value=1} IntLiteral{value=0}))})} FunctionCallExpr{name=sum, isStar=false, isDistinct=false, (CastExpr{isImplicit=true, target=BIGINT, ((((SlotRef{tblName=ssci, col=customer_sk, id=7}) (SlotRef{tblName=csci, col=customer_sk, id=16})) IntLiteral{value=1} IntLiteral{value=0}))})} FunctionCallExpr{name=sum, isStar=false, isDistinct=false, (CastExpr{isImplicit=true, target=BIGINT, ((((SlotRef{tblName=ssci, col=customer_sk, id=7}) (SlotRef{tblName=csci, col=customer_sk, id=16})) IntLiteral{value=1} IntLiteral{value=0}))})}), agg_tuple=TupleDescriptor{id=8, tbl=null, byte_size=0, is_materialized=true, slots=[SlotDescriptor{id=18, col=null, type=BIGINT, materialized=false, byteSize=0, byteOffset=-1, nullIndicatorByte=0, nullIndicatorBit=0, slotIdx=0, stats=ColumnStats{avgSerializedSize_=8.0, maxSize_=8, numDistinct_=15014811, numNulls_=-1}}, SlotDescriptor{id=19, col=null, type=BIGINT, materialized=false, byteSize=0, byteOffset=-1, nullIndicatorByte=0, nullIndicatorBit=0, slotIdx=0, stats=ColumnStats{avgSerializedSize_=8.0, maxSize_=8, numDistinct_=15014811, numNulls_=-1}}, SlotDescriptor{id=20, col=null, type=BIGINT, materialized=false, byteSize=0, byteOffset=-1, nullIndicatorByte=0, nullIndicatorBit=0, slotIdx=0, stats=ColumnStats{avgSerializedSize_=8.0, maxSize_=8, numDistinct_=15014811, numNulls_=-1}}]}, smap=smap(sum(CASE WHEN ssci.customer_sk IS NOT NULL AND csci.customer_sk IS NULL THEN 1 ELSE 0 END):sum(CASE WHEN ssci.customer_sk IS NOT NULL AND csci.customer_sk IS NULL THEN 1 ELSE 0 END) (FunctionCallExpr{name=sum, isStar=false, isDistinct=false, (CastExpr{isImplicit=true, target=BIGINT, ((((SlotRef{tblName=ssci, col=customer_sk, id=7}) (SlotRef{tblName=csci, col=customer_sk, id=16})) IntLiteral{value=1} IntLiteral{value=0}))})}:SlotRef{tblName=null, col=null, id=18}) sum(CASE WHEN ssci.customer_sk IS NULL AND csci.customer_sk IS NOT NULL THEN 1 ELSE 0 END):sum(CASE WHEN ssci.customer_sk IS NULL AND csci.customer_sk IS NOT NULL THEN 1 ELSE 0 END) (FunctionCallExpr{name=sum, isStar=false, isDistinct=false, (CastExpr{isImplicit=true, target=BIGINT, ((((SlotRef{tblName=ssci, col=customer_sk, id=7}) (SlotRef{tblName=csci, col=customer_sk, id=16})) IntLiteral{value=1} IntLiteral{value=0}))})}:SlotRef{tblName=null, col=null, id=19}) sum(CASE WHEN ssci.customer_sk IS NOT NULL AND csci.customer_sk IS NOT NULL THEN 1 ELSE 0 END):sum(CASE WHEN ssci.customer_sk IS NOT NULL AND csci.customer_sk IS NOT NULL THEN 1 ELSE 0 END) (FunctionCallExpr{name=sum, isStar=false, isDistinct=false, (CastExpr{isImplicit=true, target=BIGINT, ((((SlotRef{tblName=ssci, col=customer_sk, id=7}) (SlotRef{tblName=csci, col=customer_sk, id=16})) IntLiteral{value=1} IntLiteral{value=0}))})}:SlotRef{tblName=null, col=null, id=20}))}
+mergeAggInfo:
+AggregateInfo{merging=true, grouping_exprs=, aggregate_exprs=(FunctionCallExpr{name=sum, isStar=false, isDistinct=false, (SlotRef{tblName=null, col=null, id=18})} FunctionCallExpr{name=sum, isStar=false, isDistinct=false, (SlotRef{tblName=null, col=null, id=19})} FunctionCallExpr{name=sum, isStar=false, isDistinct=false, (SlotRef{tblName=null, col=null, id=20})}), agg_tuple=TupleDescriptor{id=8, tbl=null, byte_size=0, is_materialized=true, slots=[SlotDescriptor{id=18, col=null, type=BIGINT, materialized=false, byteSize=0, byteOffset=-1, nullIndicatorByte=0, nullIndicatorBit=0, slotIdx=0, stats=ColumnStats{avgSerializedSize_=8.0, maxSize_=8, numDistinct_=15014811, numNulls_=-1}}, SlotDescriptor{id=19, col=null, type=BIGINT, materialized=false, byteSize=0, byteOffset=-1, nullIndicatorByte=0, nullIndicatorBit=0, slotIdx=0, stats=ColumnStats{avgSerializedSize_=8.0, maxSize_=8, numDistinct_=15014811, numNulls_=-1}}, SlotDescriptor{id=20, col=null, type=BIGINT, materialized=false, byteSize=0, byteOffset=-1, nullIndicatorByte=0, nullIndicatorBit=0, slotIdx=0, stats=ColumnStats{avgSerializedSize_=8.0, maxSize_=8, numDistinct_=15014811, numNulls_=-1}}]}, smap=smap(sum(CASE WHEN ssci.customer_sk IS NOT NULL AND csci.customer_sk IS NULL THEN 1 ELSE 0 END):sum(CASE WHEN ssci.customer_sk IS NOT NULL AND csci.customer_sk IS NULL THEN 1 ELSE 0 END) (FunctionCallExpr{name=sum, isStar=false, isDistinct=false, (CastExpr{isImplicit=true, target=BIGINT, ((((SlotRef{tblName=ssci, col=customer_sk, id=7}) (SlotRef{tblName=csci, col=customer_sk, id=16})) IntLiteral{value=1} IntLiteral{value=0}))})}:SlotRef{tblName=null, col=null, id=18}) sum(CASE WHEN ssci.customer_sk IS NULL AND csci.customer_sk IS NOT NULL THEN 1 ELSE 0 END):sum(CASE WHEN ssci.customer_sk IS NULL AND csci.customer_sk IS NOT NULL THEN 1 ELSE 0 END) (FunctionCallExpr{name=sum, isStar=false, isDistinct=false, (CastExpr{isImplicit=true, target=BIGINT, ((((SlotRef{tblName=ssci, col=customer_sk, id=7}) (SlotRef{tblName=csci, col=customer_sk, id=16})) IntLiteral{value=1} IntLiteral{value=0}))})}:SlotRef{tblName=null, col=null, id=19}) sum(CASE WHEN ssci.customer_sk IS NOT NULL AND csci.customer_sk IS NOT NULL THEN 1 ELSE 0 END):sum(CASE WHEN ssci.customer_sk IS NOT NULL AND csci.customer_sk IS NOT NULL THEN 1 ELSE 0 END) (FunctionCallExpr{name=sum, isStar=false, isDistinct=false, (CastExpr{isImplicit=true, target=BIGINT, ((((SlotRef{tblName=ssci, col=customer_sk, id=7}) (SlotRef{tblName=csci, col=customer_sk, id=16})) IntLiteral{value=1} IntLiteral{value=0}))})}:SlotRef{tblName=null, col=null, id=20}))}
+
+6:19:14.514 AM 	INFO 	SelectStmt.java:456 	
+
+combined smap: smap(sum(CASE WHEN ssci.customer_sk IS NOT NULL AND csci.customer_sk IS NULL THEN 1 ELSE 0 END):sum(CASE WHEN ssci.customer_sk IS NOT NULL AND csci.customer_sk IS NULL THEN 1 ELSE 0 END) (FunctionCallExpr{name=sum, isStar=false, isDistinct=false, (CastExpr{isImplicit=true, target=BIGINT, ((((SlotRef{tblName=ssci, col=customer_sk, id=7}) (SlotRef{tblName=csci, col=customer_sk, id=16})) IntLiteral{value=1} IntLiteral{value=0}))})}:SlotRef{tblName=null, col=null, id=18}) sum(CASE WHEN ssci.customer_sk IS NULL AND csci.customer_sk IS NOT NULL THEN 1 ELSE 0 END):sum(CASE WHEN ssci.customer_sk IS NULL AND csci.customer_sk IS NOT NULL THEN 1 ELSE 0 END) (FunctionCallExpr{name=sum, isStar=false, isDistinct=false, (CastExpr{isImplicit=true, target=BIGINT, ((((SlotRef{tblName=ssci, col=customer_sk, id=7}) (SlotRef{tblName=csci, col=customer_sk, id=16})) IntLiteral{value=1} IntLiteral{value=0}))})}:SlotRef{tblName=null, col=null, id=19}) sum(CASE WHEN ssci.customer_sk IS NOT NULL AND csci.customer_sk IS NOT NULL THEN 1 ELSE 0 END):sum(CASE WHEN ssci.customer_sk IS NOT NULL AND csci.customer_sk IS NOT NULL THEN 1 ELSE 0 END) (FunctionCallExpr{name=sum, isStar=false, isDistinct=false, (CastExpr{isImplicit=true, target=BIGINT, ((((SlotRef{tblName=ssci, col=customer_sk, id=7}) (SlotRef{tblName=csci, col=customer_sk, id=16})) IntLiteral{value=1} IntLiteral{value=0}))})}:SlotRef{tblName=null, col=null, id=20}))
+
+6:19:14.514 AM 	INFO 	SelectStmt.java:460 	
+
+post-agg selectListExprs: (SlotRef{tblName=null, col=null, id=18} SlotRef{tblName=null, col=null, id=19} SlotRef{tblName=null, col=null, id=20})
+
+6:19:14.514 AM 	INFO 	SelectStmt.java:467 	
+
+post-agg orderingExprs: 
+
+6:19:14.515 AM 	INFO 	SelectStmt.java:185 	
+
+post-analysis AggregateInfo{merging=false, grouping_exprs=, aggregate_exprs=(FunctionCallExpr{name=sum, isStar=false, isDistinct=false, (CastExpr{isImplicit=true, target=BIGINT, ((((SlotRef{tblName=ssci, col=customer_sk, id=7}) (SlotRef{tblName=csci, col=customer_sk, id=16})) IntLiteral{value=1} IntLiteral{value=0}))})} FunctionCallExpr{name=sum, isStar=false, isDistinct=false, (CastExpr{isImplicit=true, target=BIGINT, ((((SlotRef{tblName=ssci, col=customer_sk, id=7}) (SlotRef{tblName=csci, col=customer_sk, id=16})) IntLiteral{value=1} IntLiteral{value=0}))})} FunctionCallExpr{name=sum, isStar=false, isDistinct=false, (CastExpr{isImplicit=true, target=BIGINT, ((((SlotRef{tblName=ssci, col=customer_sk, id=7}) (SlotRef{tblName=csci, col=customer_sk, id=16})) IntLiteral{value=1} IntLiteral{value=0}))})}), agg_tuple=TupleDescriptor{id=8, tbl=null, byte_size=0, is_materialized=true, slots=[SlotDescriptor{id=18, col=null, type=BIGINT, materialized=false, byteSize=0, byteOffset=-1, nullIndicatorByte=0, nullIndicatorBit=0, slotIdx=0, stats=ColumnStats{avgSerializedSize_=8.0, maxSize_=8, numDistinct_=15014811, numNulls_=-1}}, SlotDescriptor{id=19, col=null, type=BIGINT, materialized=false, byteSize=0, byteOffset=-1, nullIndicatorByte=0, nullIndicatorBit=0, slotIdx=0, stats=ColumnStats{avgSerializedSize_=8.0, maxSize_=8, numDistinct_=15014811, numNulls_=-1}}, SlotDescriptor{id=20, col=null, type=BIGINT, materialized=false, byteSize=0, byteOffset=-1, nullIndicatorByte=0, nullIndicatorBit=0, slotIdx=0, stats=ColumnStats{avgSerializedSize_=8.0, maxSize_=8, numDistinct_=15014811, numNulls_=-1}}]}, smap=smap(sum(CASE WHEN ssci.customer_sk IS NOT NULL AND csci.customer_sk IS NULL THEN 1 ELSE 0 END):sum(CASE WHEN ssci.customer_sk IS NOT NULL AND csci.customer_sk IS NULL THEN 1 ELSE 0 END) (FunctionCallExpr{name=sum, isStar=false, isDistinct=false, (CastExpr{isImplicit=true, target=BIGINT, ((((SlotRef{tblName=ssci, col=customer_sk, id=7}) (SlotRef{tblName=csci, col=customer_sk, id=16})) IntLiteral{value=1} IntLiteral{value=0}))})}:SlotRef{tblName=null, col=null, id=18}) sum(CASE WHEN ssci.customer_sk IS NULL AND csci.customer_sk IS NOT NULL THEN 1 ELSE 0 END):sum(CASE WHEN ssci.customer_sk IS NULL AND csci.customer_sk IS NOT NULL THEN 1 ELSE 0 END) (FunctionCallExpr{name=sum, isStar=false, isDistinct=false, (CastExpr{isImplicit=true, target=BIGINT, ((((SlotRef{tblName=ssci, col=customer_sk, id=7}) (SlotRef{tblName=csci, col=customer_sk, id=16})) IntLiteral{value=1} IntLiteral{value=0}))})}:SlotRef{tblName=null, col=null, id=19}) sum(CASE WHEN ssci.customer_sk IS NOT NULL AND csci.customer_sk IS NOT NULL THEN 1 ELSE 0 END):sum(CASE WHEN ssci.customer_sk IS NOT NULL AND csci.customer_sk IS NOT NULL THEN 1 ELSE 0 END) (FunctionCallExpr{name=sum, isStar=false, isDistinct=false, (CastExpr{isImplicit=true, target=BIGINT, ((((SlotRef{tblName=ssci, col=customer_sk, id=7}) (SlotRef{tblName=csci, col=customer_sk, id=16})) IntLiteral{value=1} IntLiteral{value=0}))})}:SlotRef{tblName=null, col=null, id=20}))}
+mergeAggInfo:
+AggregateInfo{merging=true, grouping_exprs=, aggregate_exprs=(FunctionCallExpr{name=sum, isStar=false, isDistinct=false, (SlotRef{tblName=null, col=null, id=18})} FunctionCallExpr{name=sum, isStar=false, isDistinct=false, (SlotRef{tblName=null, col=null, id=19})} FunctionCallExpr{name=sum, isStar=false, isDistinct=false, (SlotRef{tblName=null, col=null, id=20})}), agg_tuple=TupleDescriptor{id=8, tbl=null, byte_size=0, is_materialized=true, slots=[SlotDescriptor{id=18, col=null, type=BIGINT, materialized=false, byteSize=0, byteOffset=-1, nullIndicatorByte=0, nullIndicatorBit=0, slotIdx=0, stats=ColumnStats{avgSerializedSize_=8.0, maxSize_=8, numDistinct_=15014811, numNulls_=-1}}, SlotDescriptor{id=19, col=null, type=BIGINT, materialized=false, byteSize=0, byteOffset=-1, nullIndicatorByte=0, nullIndicatorBit=0, slotIdx=0, stats=ColumnStats{avgSerializedSize_=8.0, maxSize_=8, numDistinct_=15014811, numNulls_=-1}}, SlotDescriptor{id=20, col=null, type=BIGINT, materialized=false, byteSize=0, byteOffset=-1, nullIndicatorByte=0, nullIndicatorBit=0, slotIdx=0, stats=ColumnStats{avgSerializedSize_=8.0, maxSize_=8, numDistinct_=15014811, numNulls_=-1}}]}, smap=smap(sum(CASE WHEN ssci.customer_sk IS NOT NULL AND csci.customer_sk IS NULL THEN 1 ELSE 0 END):sum(CASE WHEN ssci.customer_sk IS NOT NULL AND csci.customer_sk IS NULL THEN 1 ELSE 0 END) (FunctionCallExpr{name=sum, isStar=false, isDistinct=false, (CastExpr{isImplicit=true, target=BIGINT, ((((SlotRef{tblName=ssci, col=customer_sk, id=7}) (SlotRef{tblName=csci, col=customer_sk, id=16})) IntLiteral{value=1} IntLiteral{value=0}))})}:SlotRef{tblName=null, col=null, id=18}) sum(CASE WHEN ssci.customer_sk IS NULL AND csci.customer_sk IS NOT NULL THEN 1 ELSE 0 END):sum(CASE WHEN ssci.customer_sk IS NULL AND csci.customer_sk IS NOT NULL THEN 1 ELSE 0 END) (FunctionCallExpr{name=sum, isStar=false, isDistinct=false, (CastExpr{isImplicit=true, target=BIGINT, ((((SlotRef{tblName=ssci, col=customer_sk, id=7}) (SlotRef{tblName=csci, col=customer_sk, id=16})) IntLiteral{value=1} IntLiteral{value=0}))})}:SlotRef{tblName=null, col=null, id=19}) sum(CASE WHEN ssci.customer_sk IS NOT NULL AND csci.customer_sk IS NOT NULL THEN 1 ELSE 0 END):sum(CASE WHEN ssci.customer_sk IS NOT NULL AND csci.customer_sk IS NOT NULL THEN 1 ELSE 0 END) (FunctionCallExpr{name=sum, isStar=false, isDistinct=false, (CastExpr{isImplicit=true, target=BIGINT, ((((SlotRef{tblName=ssci, col=customer_sk, id=7}) (SlotRef{tblName=csci, col=customer_sk, id=16})) IntLiteral{value=1} IntLiteral{value=0}))})}:SlotRef{tblName=null, col=null, id=20}))}
+
+6:19:14.515 AM 	INFO 	Frontend.java:593 	
+
+create plan
+
+6:19:14.516 AM 	INFO 	HdfsScanNode.java:184 	
+
+collecting partitions for table store_sales
+
+6:19:14.516 AM 	INFO 	HdfsScanNode.java:207 	
+
+cardinality_=2750387156 sel=1.0
+
+6:19:14.516 AM 	INFO 	HdfsScanNode.java:212 	
+
+computeStats HdfsScan: cardinality_=2750387156
+
+6:19:14.516 AM 	INFO 	HdfsScanNode.java:216 	
+
+computeStats HdfsScan: #nodes=21
+
+6:19:14.517 AM 	INFO 	HdfsScanNode.java:184 	
+
+collecting partitions for table date_dim
+
+6:19:14.517 AM 	INFO 	HdfsScanNode.java:207 	
+
+cardinality_=73049 sel=0.010000000000000002
+
+6:19:14.517 AM 	INFO 	HdfsScanNode.java:212 	
+
+computeStats HdfsScan: cardinality_=730
+
+6:19:14.517 AM 	INFO 	HdfsScanNode.java:216 	
+
+computeStats HdfsScan: #nodes=3
+
+6:19:14.517 AM 	INFO 	HashJoinNode.java:181 	
+
+#distinct=113690 #rows=73049
+
+6:19:14.517 AM 	INFO 	HashJoinNode.java:191 	
+
+min slotref=bb.d_date_sk #distinct=730
+
+6:19:14.517 AM 	INFO 	HashJoinNode.java:236 	
+
+stats HashJoin: cardinality=2750387156
+
+6:19:14.517 AM 	INFO 	Planner.java:1170 	
+
+0 chose bb #lhs=2750387156 #rhs=730 #ops=2750387886
+
+6:19:14.518 AM 	INFO 	HdfsScanNode.java:184 	
+
+collecting partitions for table catalog_sales
+
+6:19:14.518 AM 	INFO 	HdfsScanNode.java:207 	
+
+cardinality_=1439980416 sel=1.0
+
+6:19:14.518 AM 	INFO 	HdfsScanNode.java:212 	
+
+computeStats HdfsScan: cardinality_=1439980416
+
+6:19:14.518 AM 	INFO 	HdfsScanNode.java:216 	
+
+computeStats HdfsScan: #nodes=21
+
+6:19:14.518 AM 	INFO 	HdfsScanNode.java:184 	
+
+collecting partitions for table date_dim
+
+6:19:14.518 AM 	INFO 	HdfsScanNode.java:207 	
+
+cardinality_=73049 sel=0.010000000000000002
+
+6:19:14.518 AM 	INFO 	HdfsScanNode.java:212 	
+
+computeStats HdfsScan: cardinality_=730
+
+6:19:14.518 AM 	INFO 	HdfsScanNode.java:216 	
+
+computeStats HdfsScan: #nodes=3
+
+6:19:14.518 AM 	INFO 	HashJoinNode.java:181 	
+
+#distinct=113690 #rows=73049
+
+6:19:14.518 AM 	INFO 	HashJoinNode.java:191 	
+
+min slotref=bbb.d_date_sk #distinct=730
+
+6:19:14.519 AM 	INFO 	HashJoinNode.java:236 	
+
+stats HashJoin: cardinality=1439980416
+
+6:19:14.519 AM 	INFO 	Planner.java:1170 	
+
+0 chose bbb #lhs=1439980416 #rhs=730 #ops=1439981146
+
+6:19:14.519 AM 	INFO 	HashJoinNode.java:191 	
+
+min slotref=csci.customer_sk #distinct=15014811
+
+6:19:14.519 AM 	INFO 	HashJoinNode.java:191 	
+
+min slotref=csci.item_sk #distinct=404281
+
+6:19:14.519 AM 	INFO 	HashJoinNode.java:236 	
+
+stats HashJoin: cardinality=263773126485
+
+6:19:14.519 AM 	INFO 	Planner.java:1170 	
+
+0 chose csci #lhs=2750387156 #rhs=1439980416 #ops=4190367572
+
+6:19:14.520 AM 	INFO 	Planner.java:142 	
+
+create plan fragments
+
+6:19:14.520 AM 	INFO 	Planner.java:144 	
+
+memlimit=0
+
+6:19:14.520 AM 	INFO 	Planner.java:437 	
+
+broadcast: cost=122640
+
+6:19:14.520 AM 	INFO 	Planner.java:438 	
+
+card=730 row_size=8.0 #nodes=21
+
+6:19:14.520 AM 	INFO 	Planner.java:467 	
+
+partition: cost=33004651712
+
+6:19:14.520 AM 	INFO 	Planner.java:468 	
+
+lhs card=2750387156 row_size=12.0
+
+6:19:14.520 AM 	INFO 	Planner.java:470 	
+
+rhs card=730 row_size=8.0
+
+6:19:14.520 AM 	INFO 	Planner.java:472 	
+
+01:SCAN HDFS [parquet_tpcds1000g.date_dim bb, PARTITION=RANDOM]
+   partitions=1/1 size=2.41MB compact
+   predicates: d_month_seq >= 1212, d_month_seq <= 1212 + 11
+   table stats: 73049 rows total
+   column stats: all
+   hosts=3 per-host-mem=unavailable
+   tuple-ids=1 row-size=8B cardinality=730
+
+6:19:14.521 AM 	INFO 	Planner.java:437 	
+
+broadcast: cost=122640
+
+6:19:14.521 AM 	INFO 	Planner.java:438 	
+
+card=730 row_size=8.0 #nodes=21
+
+6:19:14.521 AM 	INFO 	Planner.java:467 	
+
+partition: cost=17279770832
+
+6:19:14.521 AM 	INFO 	Planner.java:468 	
+
+lhs card=1439980416 row_size=12.0
+
+6:19:14.521 AM 	INFO 	Planner.java:470 	
+
+rhs card=730 row_size=8.0
+
+6:19:14.521 AM 	INFO 	Planner.java:472 	
+
+05:SCAN HDFS [parquet_tpcds1000g.date_dim bbb, PARTITION=RANDOM]
+   partitions=1/1 size=2.41MB compact
+   predicates: d_month_seq >= 1212, d_month_seq <= 1212 + 11
+   table stats: 73049 rows total
+   column stats: all
+   hosts=3 per-host-mem=unavailable
+   tuple-ids=5 row-size=8B cardinality=730
+
+6:19:14.521 AM 	INFO 	Planner.java:437 	
+
+broadcast: cost=241916709888
+
+6:19:14.521 AM 	INFO 	Planner.java:438 	
+
+card=1439980416 row_size=8.0 #nodes=21
+
+6:19:14.521 AM 	INFO 	Planner.java:467 	
+
+partition: cost=0
+
+6:19:14.522 AM 	INFO 	Planner.java:468 	
+
+lhs card=2750387156 row_size=8.0
+
+6:19:14.522 AM 	INFO 	Planner.java:470 	
+
+rhs card=1439980416 row_size=8.0
+
+6:19:14.522 AM 	INFO 	Planner.java:472 	
+
+15:AGGREGATE [MERGE FINALIZE]
+|  group by: cs_bill_customer_sk, cs_item_sk
+|  hosts=21 per-host-mem=unavailable
+|  tuple-ids=6 row-size=8B cardinality=1439980416
+|
+14:EXCHANGE []
+   hosts=21 per-host-mem=unavailable
+   tuple-ids=6 row-size=8B cardinality=1439980416
+
+6:19:14.522 AM 	INFO 	jni-util.cc:177 	
+
+java.lang.NullPointerException
+	at com.cloudera.impala.planner.PlanFragment.getDestFragment(PlanFragment.java:253)
+	at com.cloudera.impala.planner.Planner.createHashJoinFragment(Planner.java:521)
+	at com.cloudera.impala.planner.Planner.createPlanFragments(Planner.java:247)
+	at com.cloudera.impala.planner.Planner.createPlanFragments(Planner.java:236)
+	at com.cloudera.impala.planner.Planner.createPlanFragments(Planner.java:145)
+	at com.cloudera.impala.service.Frontend.createExecRequest(Frontend.java:595)
+	at com.cloudera.impala.service.JniFrontend.createExecRequest(JniFrontend.java:121)
+
+6:19:14.525 AM 	INFO 	status.cc:44 	
+
+NullPointerException: null
+    @           0x72fe70  (unknown)
+    @           0xa84202  (unknown)
+    @           0x9df6a3  (unknown)
+    @           0x9d6c2a  (unknown)
+    @           0x953c63  (unknown)
+    @           0x95493a  (unknown)
+    @           0x9ab58d  (unknown)
+    @           0xb42108  (unknown)
+    @           0xb41759  (unknown)
+    @           0x969ddb  (unknown)
+    @          0x15bcf2a  (unknown)
+    @          0x15a4ddf  (unknown)
+    @          0x15a7f1b  (unknown)
+    @           0x8ba23b  (unknown)
+    @           0x8bb7b3  (unknown)
+    @           0xa9d3f1  (unknown)
+    @           0xaa1550  (unknown)
+    @           0xceb2f4  (unknown)
+    @     0x7fab024736a6  start_thread
+    @     0x7fab0181840d  clone
+
+6:19:14.525 AM 	INFO 	impala-server.cc:629 	
+
+UnregisterQuery(): query_id=ee45ee2c36caa9ca:424b807f624c1b9f
+
+6:19:14.525 AM 	INFO 	impala-server.cc:715 	
+
+Cancel(): query_id=ee45ee2c36caa9ca:424b807f624c1b9f
+
+6:19:14.526 AM 	INFO 	impala-server.cc:1641 	
+
+Connection from client ::ffff:10.25.12.249:35746 closed, closing 1 associated session(s)
+

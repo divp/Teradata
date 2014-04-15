@@ -1,26 +1,26 @@
-q3.tpl - Memory limit
+q3.tpl - 
 q4.tpl - No results
-q10.tpl - Memory error
-q16.tpl - date_add - will need to change query
-q24.tpl - Memory limit AND ERROR: NotImplementedException: Join with 'b' requires at least one conjunctive equality predicate. To perform a Cartesian product between two tables, use a CROSS JOIN.
+q10.tpl - 
+q16.tpl - FIXED: date_add - will need to change query
+q24.tpl - FIXED: ERROR: NotImplementedException: Join with 'b' requires at least one conjunctive equality predicate. To perform a Cartesian product between two tables, use a CROSS JOIN.
 q27.tpl - Will not run on Impala because use of 'with rollup'
-q29.tpl - Memory limit
-q32.tpl - date cast, decimal cast - will need to change query
-q34.tpl - Needed Limit command after ORDER by. Memory limit
+q29.tpl - 
+q32.tpl - FIXED: date cast, decimal cast - will need to change query
+q34.tpl - FIXED: command after ORDER by. Memory limit
 q39.tpl - stddev_samp() not defined with Impala.
-q42.tpl - Memory limit exceeded.
-q45.tpl - Memory limit exceeded.
+q42.tpl - 
+q45.tpl - 
 q49.tpl - Will not run on Impala because use of rank/over/partion window functions. Decimal cast
-q50.tpl - Memory limit exceeded.
+q50.tpl - 
 q51.tpl - Will not run on Impala because use of window functions 'over / partition' 
-q62.tpl - Memory limit exceeded.
+q62.tpl - completes
 q66.tpl - Decimal cast
-q68.tpl - Memory limit exceeded.
-q78.tpl - Memory limit exceeded.
+q68.tpl - 
+q78.tpl - NPE in creating plan
 q80.tpl - Will not run on Impala because use of 'with rollup'
-q82.tpl - date & decimal cast - will need to change query
+q82.tpl - FIXED - date & decimal cast - will need to change query
 q88.tpl - Memory limit exceeded.
 q92.tpl - date & decimal cast - will need to change query
-q95.tpl - fixed date type dependency, now memory exceeded
-q97.tpl - memory exceeded
+q95.tpl - NPE in creating plan
+q97.tpl - NPE in creating plan
 
