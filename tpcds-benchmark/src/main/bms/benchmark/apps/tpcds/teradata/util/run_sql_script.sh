@@ -1,7 +1,6 @@
 #!/bin/bash
 
 set -o nounset
-set -o errexit
 
 # Must source exports.sh in order to export global parameters defined in test properties
 . $BENCHMARK_PATH/exports.sh
@@ -11,9 +10,15 @@ if [ $# -ne 1 ]
 then
     "ERROR: Expecting path to SQL script as single argument"
     exit 1
-fi    
+fi
 
 script_path="$1"
+
+if [ ! -f $script_path ]
+then
+    log_error "Requested script $script_path is not accessible"
+    exit 1
+fi
 
 bteq <<EOF
 .LOGON ${BMS_TERADATA_DB_HOST}/${BMS_TERADATA_DB_UID},${BMS_TERADATA_DB_PWD};
@@ -24,3 +29,11 @@ $(cat "$script_path")
 .LOGOFF;
 .EXIT;
 EOF
+
+rc=$?
+
+if [ $rc -ne 0 ]
+then
+    log_error "Error executing SQL script $script_path (BTEQ return code: $rc)"
+    exit 1
+fi
