@@ -1,0 +1,5 @@
+TMS4: 10.25.12.250 (root/tdc)
+
+/data/tpcds/SF1000 	(1TB data = scale factor 1000)
+/data/tpcds/SF3000 	(3TB data = scale factor 3000)
+/data/tpcds/SF10000 	(10TB data = scale factor 10000)
