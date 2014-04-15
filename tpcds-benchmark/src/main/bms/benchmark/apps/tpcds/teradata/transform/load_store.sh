@@ -28,17 +28,23 @@ end-for
 EOF
 
 
-log_info ""
+log_info "Loading store table"
 bteq_output=$(mktemp)
 bteq <<EOF > $bteq_output
     .LOGON ${BMS_TERADATA_DB_HOST}/${BMS_TERADATA_DB_UID},${BMS_TERADATA_DB_PWD};
     DATABASE ${BMS_TERADATA_DBNAME_ETL1};
 
-    DELETE FROM store;
+    -- Test only: clear and restore store table from backup
+    --DELETE FROM store;
+    --INSERT INTO store SELECT * FROM _bak_04150923_store;
     
-    INSERT INTO store SELECT * FROM _bak_04150923_store;
-    
+    SELECT 1 FROM dbc.TablesV 
+    WHERE databaseName='${BMS_TERADATA_DBNAME_ETL1}' 
+    AND tableKind='T'
+    AND tableName='storv_tmp';
+    .IF activitycount=0 THEN GOTO CREATE_TABLE
     DROP TABLE storv_tmp;
+    .LABEL CREATE_TABLE
     
     CREATE TABLE storv_tmp AS (
     SELECT 
@@ -109,8 +115,9 @@ bteq <<EOF > $bteq_output
         ,s_country
         ,s_gmt_offset
         ,s_tax_percentage
+    )
     SELECT *
-    FROM store_tmp;
+    FROM storv_tmp;
 
     .LOGOFF;
     .EXIT;
