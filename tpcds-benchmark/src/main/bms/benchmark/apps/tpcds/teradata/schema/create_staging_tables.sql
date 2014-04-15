@@ -39,7 +39,7 @@ CREATE MULTISET TABLE s_customer,
 	CHECKSUM = DEFAULT,
 	DEFAULT MERGEBLOCKRATIO
 	(
-        cust_customer_id INTEGER,
+        cust_customer_id CHAR(16),
         cust_salutation CHAR(10),
         cust_last_name CHAR(20),
         cust_first_name    CHAR(20),
@@ -76,6 +76,27 @@ CREATE MULTISET TABLE s_customer,
         cust_depend_college_cnt  INTEGER,
         cust_vehicle_cnt   INTEGER,
         cust_annual_income NUMERIC(9,2)
+)
+NO PRIMARY INDEX;
+
+CREATE TABLE s_customer_address,
+    NO FALLBACK,
+	NO BEFORE JOURNAL,
+	NO AFTER JOURNAL,
+	CHECKSUM = DEFAULT,
+	DEFAULT MERGEBLOCKRATIO
+(
+    cadr_address_id CHAR(16) NOT NULL,
+    cadr_street_number INTEGER ,
+    cadr_street_name1 CHAR(25) ,
+    cadr_street_name2 CHAR(25) ,
+    cadr_street_type CHAR(15) ,
+    cadr_suitnumber CHAR(10) ,
+    cadr_city CHAR(60) ,
+    cadr_county CHAR(30) ,
+    cadr_state CHAR(2) ,
+    cadr_zip CHAR(10) ,
+    cadr_country CHAR(20) 
 )
 NO PRIMARY INDEX;
 
