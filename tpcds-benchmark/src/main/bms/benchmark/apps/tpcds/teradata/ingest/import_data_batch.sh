@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Generate fastload scripts from live data dictionary definitions
+# Load source data files into staging table structures
 
 set -o nounset
 
@@ -8,6 +8,7 @@ set -o nounset
 . $BENCHMARK_PATH/exports.sh
 . $BENCHMARK_PATH/lib/lib.sh
 
+# Generate fastload scripts from live data dictionary definitions
 function get_fastload_script  {
     table_name="$1"
     input_file="$2"
