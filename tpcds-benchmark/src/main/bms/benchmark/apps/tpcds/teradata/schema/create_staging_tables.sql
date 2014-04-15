@@ -2,8 +2,6 @@
     - Add null constraints as specified in TPC-DS spec (see section A.1 "Refresh Data Set DDL")
 */
 
-DATABASE tpcds1000g;
-
 CREATE MULTISET TABLE s_zip_to_gmt,NO FALLBACK ,
 	NO BEFORE JOURNAL,
 	NO AFTER JOURNAL,
