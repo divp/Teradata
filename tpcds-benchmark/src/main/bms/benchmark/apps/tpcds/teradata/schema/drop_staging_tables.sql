@@ -1,6 +1,7 @@
 DROP TABLE s_zip_to_gmt;
 DROP TABLE s_purchase_lineitem;
 DROP TABLE s_customer;
+DROP TABLE s_customer_address;
 DROP TABLE s_purchase;
 DROP TABLE s_catalog_order;
 DROP TABLE s_web_order;
