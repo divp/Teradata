@@ -157,7 +157,7 @@ CREATE MULTISET TABLE store ,NO FALLBACK ,
       s_zip CHAR(10) CHARACTER SET LATIN NOT CASESPECIFIC,
       s_country VARCHAR(20) CHARACTER SET LATIN NOT CASESPECIFIC,
       s_gmt_offset DECIMAL(5,2),
-      s_tax_precentage DECIMAL(5,2))
+      s_tax_percentage DECIMAL(5,2))
 PRIMARY INDEX ( s_store_sk );
 
 
