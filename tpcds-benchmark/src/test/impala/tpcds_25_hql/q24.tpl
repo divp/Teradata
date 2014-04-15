@@ -42,7 +42,7 @@ group by c_last_name
         ,c_first_name
         ,s_store_name
 ) a
-join (select 0.05*avg(netpaid) as adj_netpaid from temp_ssales3299) b on (1=1)
+cross join (select 0.05*avg(netpaid) as adj_netpaid from temp_ssales3299) b
 where a.paid > b.adj_netpaid
 ;
 select c_last_name,c_first_name,s_store_name,paid
@@ -57,7 +57,7 @@ group by c_last_name
         ,c_first_name
         ,s_store_name
 ) a
-join (select 0.05*avg(netpaid) as adj_netpaid from temp_ssales3299) b on (1=1)
+cross join (select 0.05*avg(netpaid) as adj_netpaid from temp_ssales3299) b
 where a.paid > b.adj_netpaid
 ;
 drop table if exists temp_ssales3299;

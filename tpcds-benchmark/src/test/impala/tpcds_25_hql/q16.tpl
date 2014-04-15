@@ -13,7 +13,7 @@ select
    left join (select cr_order_number from catalog_returns group by cr_order_number) cr1 on (cs1.cs_order_number = cr1.cr_order_number) 
 where
     d.d_date >= '1999-02-01' and 
-         d.d_date <= date_add('1999-02-01',60)
+         d.d_date <= '1999-04-02'
 and e.ca_state = 'MS' 
 and f.cc_county in ('Williamson County','Williamson County','Williamson County','Williamson County', 'Williamson County')
 and cr1.cr_order_number is null
