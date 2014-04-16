@@ -2,7 +2,9 @@ DROP VIEW storv;
 
 CREATE VIEW storv AS
 SELECT 
-    max_s_store_sk + ROW_NUMBER() OVER (ORDER BY 1) s_store_sk
+    -- Get next surrogate key
+    MAX(s_store_sk) OVER (ORDER BY 1) + 
+        ROW_NUMBER() OVER (ORDER BY 1) s_store_sk
     ,stor_store_id s_store_id
     ,CURRENT_DATE s_rec_start_date
     ,CAST(NULL AS DATE) s_rec_end_date
@@ -37,10 +39,7 @@ FROM  s_store
     AND s_rec_end_date IS NULL)
   LEFT OUTER JOIN date_dim d1 
     ON   (CAST(stor_closed_date AS DATE)= d1.d_date)
-  CROSS JOIN (SELECT MAX(s_store_sk) max_s_store_sk FROM store) t0
     ;
-
-.EXIT
 
 DROP VIEW itemv;
 
@@ -75,23 +74,24 @@ LEFT OUTER JOIN item
 DROP VIEW cadrv;
 
 CREATE VIEW cadrv AS
-SELECT  ca_address_sk
-      ,ca_address_id
-      ,cust_street_number ca_street_number
-      ,rtrim(cust_street_name1) || ' ' || rtrim(cust_street_name2) ca_street_name
-      ,cust_street_type ca_street_type
-      ,cust_suite_number ca_suite_number
-      ,cust_city ca_city
-      ,cust_county ca_county
-      ,cust_state ca_state
-      ,cust_zip ca_zip
-      ,cust_country ca_country
-      ,zipg_gmt_offset ca_gmt_offset
-      ,cust_loc_type ca_location_type
+SELECT  
+    ca_address_sk
+    ,ca_address_id
+    ,cust_street_number ca_street_number
+    ,RTRIM(cust_street_name1) || ' ' || RTRIM(cust_street_name2) ca_street_name
+    ,cust_street_type ca_street_type
+    ,cust_suite_number ca_suite_number
+    ,cust_city ca_city
+    ,cust_county ca_county
+    ,cust_state ca_state
+    ,cust_zip ca_zip
+    ,cust_country ca_country
+    ,zipg_gmt_offset ca_gmt_offset
+    ,cust_loc_type ca_location_type
 FROM s_customer,
-     customer customer,
-     customer_address cat,
-     s_zip_to_gmt
+    customer customer,
+    customer_address cat,
+    s_zip_to_gmt
 WHERE  cust_customer_id = c_customer_id
   AND c_current_addr_sk = ca_address_sk
   AND cust_zip = zipg_zip;
@@ -99,101 +99,107 @@ WHERE  cust_customer_id = c_customer_id
 DROP VIEW custv;
 
 CREATE VIEW custv AS
-SELECT    c_customer_sk
-        ,cust_customer_id c_customer_id
-        ,cd_demo_sk c_current_cdemo_sk
-        ,hd_demo_sk c_current_hdemo_sk
-        ,ca_address_sk c_current_addr_sk
-        ,d1.d_date_sk c_first_shipto_date_sk
-        ,d2.d_date_sk c_first_sales_date_sk
-        ,cust_salutation c_salutation
-        ,cust_first_name c_first_name
-        ,cust_last_name c_last_name
-        ,cust_preffered_flag c_preferred_cust_flag
-        ,EXTRACT(DAY FROM CAST(cust_birth_date AS DATE)) c_birth_day
-        ,EXTRACT(MONTH FROM CAST(cust_birth_date AS DATE)) c_birth_month
-        ,EXTRACT(YEAR FROM CAST(cust_birth_date AS DATE)) c_birth_year
-        ,cust_birth_country c_birth_country
-        ,cust_login_id c_login
-        ,cust_email_address c_email_address
-        ,cust_last_review_date c_last_review_date
+SELECT    
+    c_customer_sk
+    ,cust_customer_id c_customer_id
+    ,cd_demo_sk c_current_cdemo_sk
+    ,hd_demo_sk c_current_hdemo_sk
+    ,ca_address_sk c_current_addr_sk
+    ,d1.d_date_sk c_first_shipto_date_sk
+    ,d2.d_date_sk c_first_sales_date_sk
+    ,cust_salutation c_salutation
+    ,cust_first_name c_first_name
+    ,cust_last_name c_last_name
+    ,cust_preffered_flag c_preferred_cust_flag
+    ,EXTRACT(DAY FROM CAST(cust_birth_date AS DATE)) c_birth_day
+    ,EXTRACT(MONTH FROM CAST(cust_birth_date AS DATE)) c_birth_month
+    ,EXTRACT(YEAR FROM CAST(cust_birth_date AS DATE)) c_birth_year
+    ,cust_birth_country c_birth_country
+    ,cust_login_id c_login
+    ,cust_email_address c_email_address
+    ,cust_last_review_date c_last_review_date
 FROM s_customer
 LEFT OUTER JOIN customer 
     ON   (c_customer_id=cust_customer_id) 
 LEFT OUTER JOIN customer_address 
     ON   (c_current_addr_sk = ca_address_sk)
-        ,customer_demographics
-        ,household_demographics
-        ,income_band ib
-        ,date_dim d1
-        ,date_dim d2
+    ,customer_demographics
+    ,household_demographics
+    ,income_band ib
+    ,date_dim d1
+    ,date_dim d2
 WHERE    
-        cust_gender = cd_gender
-        AND cust_marital_status = cd_marital_status
-        AND cust_educ_status = cd_education_status
-        AND cust_purch_est = cd_purchase_estimate
-        AND cust_credit_rating = cd_credit_rating
-        AND cust_depend_cnt = cd_dep_count
-        AND cust_depend_emp_cnt = cd_dep_employed_count
-        AND cust_depend_college_cnt = cd_dep_college_count
-        AND round(cust_annual_income, 0) BETWEEN ib.ib_lower_bound AND ib.ib_upper_bound
-        AND hd_income_band_sk = ib_income_band_sk
-        AND cust_buy_potential = hd_buy_potential
-        AND cust_depend_cnt= hd_dep_count
-        AND cust_vehicle_cnt = hd_vehicle_count
-        AND d1.d_date = cust_first_purchase_date
-        AND d2.d_date = cust_first_shipto_date;
+    cust_gender = cd_gender
+    AND cust_marital_status = cd_marital_status
+    AND cust_educ_status = cd_education_status
+    AND cust_purch_est = cd_purchase_estimate
+    AND cust_credit_rating = cd_credit_rating
+    AND cust_depend_cnt = cd_dep_count
+    AND cust_depend_emp_cnt = cd_dep_employed_count
+    AND cust_depend_college_cnt = cd_dep_college_count
+    AND ROUND(cust_annual_income, 0) BETWEEN ib.ib_lower_bound AND ib.ib_upper_bound
+    AND hd_income_band_sk = ib_income_band_sk
+    AND cust_buy_potential = hd_buy_potential
+    AND cust_depend_cnt= hd_dep_count
+    AND cust_vehicle_cnt = hd_vehicle_count
+    AND d1.d_date = cust_first_purchase_date
+    AND d2.d_date = cust_first_shipto_date;
         
 DROP VIEW wrhsv;
 
 CREATE VIEW wrhsv AS
-SELECT  w_warehouse_sk
-       ,wrhs_warehouse_id w_warehouse_id
-       ,wrhs_warehouse_desc w_warehouse_name
-       ,wrhs_warehouse_sq_ft w_warehouse_sq_ft
-       ,w_street_number
-       ,w_street_name
-       ,w_street_type
-       ,w_suite_number
-       ,w_city
-       ,w_county
-       ,w_state
-       ,w_zip    
-       ,w_country
-       ,w_gmt_offset
+SELECT  
+    w_warehouse_sk
+    ,wrhs_warehouse_id w_warehouse_id
+    ,wrhs_warehouse_desc w_warehouse_name
+    ,wrhs_warehouse_sq_ft w_warehouse_sq_ft
+    ,w_street_number
+    ,w_street_name
+    ,w_street_type
+    ,w_suite_number
+    ,w_city
+    ,w_county
+    ,w_state
+    ,w_zip    
+    ,w_country
+    ,w_gmt_offset
 FROM s_warehouse,
-        warehouse
-WHERE    wrhs_warehouse_id = w_warehouse_id;
+    warehouse
+WHERE
+    wrhs_warehouse_id = w_warehouse_id;
 
 DROP VIEW ccv;
 
 CREATE VIEW ccv AS 
-SELECT   NEXT VALUE FOR cc_seq cc_call_center_sk
-        ,call_center_id cc_call_center_id
-        ,CURRENT_DATE cc_rec_start_date
-        ,CAST(NULL AS DATE) cc_rec_end_date
-        ,d1.d_date_sk cc_closed_date_sk
-        ,d2.d_date_sk cc_open_date_sk
-        ,call_center_name cc_name
-        ,call_center_class cc_class
-        ,call_center_employees cc_employees
-        ,call_center_sq_ft cc_sq_ft
-        ,call_center_hours cc_hours
-        ,call_center_manager cc_manager
-        ,cc_mkt_id
-        ,cc_mkt_class
-        ,cc_mkt_desc
-        ,cc_market_manager
-        ,cc_division
-        ,cc_division_name
-        ,cc_company
-        ,cc_company_name
-        ,cc_street_number,cc_street_name,cc_street_type,cc_suite_number,
-        cc_city
-        ,cc_county,cc_state,cc_zip
-        ,cc_country
-        ,cc_gmt_offset
-        ,call_center_tax_percentage cc_tax_percentage
+SELECT
+    -- Get next surrogate key
+    MAX(cc_call_center_sk) OVER (ORDER BY 1) + 
+        ROW_NUMBER() OVER (ORDER BY 1) cc_call_center_sk
+    ,call_center_id cc_call_center_id
+    ,CURRENT_DATE cc_rec_start_date
+    ,CAST(NULL AS DATE) cc_rec_end_date
+    ,d1.d_date_sk cc_closed_date_sk
+    ,d2.d_date_sk cc_open_date_sk
+    ,call_center_name cc_name
+    ,call_center_class cc_class
+    ,call_center_employees cc_employees
+    ,call_center_sq_ft cc_sq_ft
+    ,call_center_hours cc_hours
+    ,call_center_manager cc_manager
+    ,cc_mkt_id
+    ,cc_mkt_class
+    ,cc_mkt_desc
+    ,cc_market_manager
+    ,cc_division
+    ,cc_division_name
+    ,cc_company
+    ,cc_company_name
+    ,cc_street_number,cc_street_name,cc_street_type,cc_suite_number,
+    cc_city
+    ,cc_county,cc_state,cc_zip
+    ,cc_country
+    ,cc_gmt_offset
+    ,call_center_tax_percentage cc_tax_percentage
 FROM s_call_center
 LEFT OUTER JOIN date_dim d2 
     ON   d2.d_date = CAST(call_closed_date AS DATE)
@@ -206,15 +212,16 @@ LEFT OUTER JOIN call_center
 DROP VIEW catv;
 
 CREATE VIEW catv AS
-SELECT  cp_catalog_page_sk
-      ,scp.cpag_id cp_catalog_page_id
-      ,startd.d_date_sk cp_start_date_sk
-      ,endd.d_date_sk cp_end_date_sk
-      ,cpag_department cp_department
-      ,cpag_catalog_number cp_catalog_number
-      ,cpag_catalog_page_number cp_catalog_page_number
-      ,scp.cpag_description cp_description
-      ,scp.cpag_type cp_type   
+SELECT  
+    cp_catalog_page_sk
+    ,scp.cpag_id cp_catalog_page_id
+    ,startd.d_date_sk cp_start_date_sk
+    ,endd.d_date_sk cp_end_date_sk
+    ,cpag_department cp_department
+    ,cpag_catalog_number cp_catalog_number
+    ,cpag_catalog_page_number cp_catalog_page_number
+    ,scp.cpag_description cp_description
+    ,scp.cpag_type cp_type   
 FROM s_catalog_page scp
 INNER JOIN date_dim startd 
     ON   (scp.cpag_start_date = startd.d_date)
@@ -226,25 +233,26 @@ INNER JOIN catalog_page cp
 DROP VIEW promv;
 
 CREATE VIEW promv AS
-SELECT   p_promo_sk
-       ,prom_promotion_id p_promo_id
-       ,d1.d_date_sk p_start_date_sk
-       ,d2.d_date_sk p_end_date_sk
-       ,p_item_sk
-       ,prom_cost p_cost
-       ,prom_response_target p_response_target
-       ,prom_promotion_name p_promo_name
-       ,prom_channel_dmail p_channel_dmail
-       ,prom_channel_email p_channel_email
-       ,prom_channel_catalog p_channel_catalog
-       ,prom_channel_tv p_channel_tv
-       ,prom_channel_radio p_channel_radio
-       ,prom_channel_press p_channel_press
-       ,prom_channel_event p_channel_event
-       ,prom_channel_demo p_channel_demo
-       ,prom_channel_details p_channel_details
-       ,prom_purpose p_purpose
-       ,prom_discount_active p_discount_active
+SELECT   
+    p_promo_sk
+    ,prom_promotion_id p_promo_id
+    ,d1.d_date_sk p_start_date_sk
+    ,d2.d_date_sk p_end_date_sk
+    ,p_item_sk
+    ,prom_cost p_cost
+    ,prom_response_target p_response_target
+    ,prom_promotion_name p_promo_name
+    ,prom_channel_dmail p_channel_dmail
+    ,prom_channel_email p_channel_email
+    ,prom_channel_catalog p_channel_catalog
+    ,prom_channel_tv p_channel_tv
+    ,prom_channel_radio p_channel_radio
+    ,prom_channel_press p_channel_press
+    ,prom_channel_event p_channel_event
+    ,prom_channel_demo p_channel_demo
+    ,prom_channel_details p_channel_details
+    ,prom_purpose p_purpose
+    ,prom_discount_active p_discount_active
 FROM s_promotion
 LEFT OUTER JOIN date_dim d1 
     ON   (prom_start_date = d1.d_date)
@@ -256,32 +264,35 @@ LEFT OUTER JOIN promotion
 DROP VIEW websv;
 
 CREATE VIEW websv AS
-SELECT NEXT VALUE FOR web_seq web_site_sk
-      ,wsit_web_site_id web_site_id
-      ,CURRENT_DATE web_rec_start_date
-      ,CAST(NULL AS DATE) web_rec_end_date
-      ,wsit_site_name web_name
-      ,d1.d_date_sk web_open_date_sk
-      ,d2.d_date_sk web_close_date_sk
-      ,wsit_site_class web_class
-      ,wsit_site_manager web_manager
-      ,web_mkt_id 
-      ,web_mkt_class
-      ,web_mkt_desc
-      ,web_market_manager
-      ,web_company_id
-      ,web_company_name
-      ,web_street_number 
-      ,web_street_name
-      ,web_street_type 
-      ,web_suite_number
-      ,web_city 
-      ,web_county 
-      ,web_state
-      ,web_zip
-      ,web_country 
-      ,web_gmt_offset
-      ,wsit_tax_percentage web_tax_percentage
+SELECT 
+    -- Get next surrogate key
+    MAX(web_site_sk) OVER (ORDER BY 1) + 
+        ROW_NUMBER() OVER (ORDER BY 1) web_site_sks
+    ,wsit_web_site_id web_site_id
+    ,CURRENT_DATE web_rec_start_date
+    ,CAST(NULL AS DATE) web_rec_end_date
+    ,wsit_site_name web_name
+    ,d1.d_date_sk web_open_date_sk
+    ,d2.d_date_sk web_close_date_sk
+    ,wsit_site_class web_class
+    ,wsit_site_manager web_manager
+    ,web_mkt_id 
+    ,web_mkt_class
+    ,web_mkt_desc
+    ,web_market_manager
+    ,web_company_id
+    ,web_company_name
+    ,web_street_number 
+    ,web_street_name
+    ,web_street_type 
+    ,web_suite_number
+    ,web_city 
+    ,web_county 
+    ,web_state
+    ,web_zip
+    ,web_country 
+    ,web_gmt_offset
+    ,wsit_tax_percentage web_tax_percentage
 FROM  s_web_site
 LEFT OUTER JOIN date_dim d1 
     ON   (d1.d_date = CAST(wsit_open_date AS DATE))
@@ -294,20 +305,23 @@ LEFT OUTER JOIN web_site
 DROP VIEW webv;
 
 CREATE VIEW webv AS
-SELECT  NEXT VALUE FOR wp_seq wp_web_page_sk
-      ,wpag_web_page_id wp_web_page_id
-      ,CURRENT_DATE wp_rec_start_date
-      ,CAST(NULL AS DATE) wp_rec_end_date
-      ,d1.d_date_sk wp_creation_date_sk
-      ,d2.d_date_sk wp_access_date_sk
-      ,wpag_autogen_flag wp_autogen_flag
-      ,wp_customer_sk
-      ,wpag_url wp_url
-      ,wpag_type wp_type 
-      ,wpag_char_cnt wp_char_count
-      ,wpag_link_cnt wp_link_count
-      ,wpag_image_cnt wp_image_count  
-      ,wpag_max_ad_cnt wp_max_ad_count
+SELECT
+    -- Get next surrogate key
+    MAX(wp_web_page_sk) OVER (ORDER BY 1) + 
+        ROW_NUMBER() OVER (ORDER BY 1) wp_web_page_sk
+    ,wpag_web_page_id wp_web_page_id
+    ,CURRENT_DATE wp_rec_start_date
+    ,CAST(NULL AS DATE) wp_rec_end_date
+    ,d1.d_date_sk wp_creation_date_sk
+    ,d2.d_date_sk wp_access_date_sk
+    ,wpag_autogen_flag wp_autogen_flag
+    ,wp_customer_sk
+    ,wpag_url wp_url
+    ,wpag_type wp_type 
+    ,wpag_char_cnt wp_char_count
+    ,wpag_link_cnt wp_link_count
+    ,wpag_image_cnt wp_image_count  
+    ,wpag_max_ad_cnt wp_max_ad_count
 FROM  s_web_page 
 LEFT OUTER JOIN date_dim d1 
     ON   CAST(wpag_create_date AS DATE) = d1.d_date
@@ -338,10 +352,10 @@ SELECT   d_date_sk ss_sold_date_sk,
         plin_sale_price * plin_quantity ss_ext_sales_price,
         i_wholesale_cost * plin_quantity ss_ext_wholesale_cost, 
         i_current_price * plin_quantity ss_ext_list_price, 
-        i_current_price * s_tax_precentage ss_ext_tax, 
+        i_current_price * s_tax_percentage ss_ext_tax, 
         plin_coupon_amt ss_coupon_amt,
         (plin_sale_price * plin_quantity)-plin_coupon_amt ss_net_paid,
-        ((plin_sale_price * plin_quantity)-plin_coupon_amt)*(1+s_tax_precentage) ss_net_paid_inc_tax,
+        ((plin_sale_price * plin_quantity)-plin_coupon_amt)*(1+s_tax_percentage) ss_net_paid_inc_tax,
         ((plin_sale_price * plin_quantity)-plin_coupon_amt)-(plin_quantity*i_wholesale_cost) ss_net_profit
 FROM s_purchase 
 LEFT OUTER JOIN customer 
