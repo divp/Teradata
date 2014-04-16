@@ -342,7 +342,12 @@ CREATE MULTISET TABLE s_store_returns,
     sret_return_time   CHAR(10),
     sret_ticket_number   CHAR(20),
     sret_return_qty INTEGER,
-    sret_return_amount   NUMERIC(7,2),
+    /*
+    Error in TPC-DS, column 'sret_return_amount' renamed 'sret_return_amt'
+    to comply with naming convention and correct incorrect references
+    in ETL view 'srv'
+    */
+    sret_return_amt   NUMERIC(7,2),
     sret_return_tax NUMERIC(7,2),
     sret_return_fee NUMERIC(7,2),
     sret_return_ship_cost   NUMERIC(7,2),
