@@ -9,12 +9,13 @@ set -o nounset
 log=$(mktemp /tmp/$(basename $0).log.XXXXXXXXXX)
 log_info "Full detail log: $log"
 
-fact_tables=(s_catalog_order s_catalog_order_lineitem s_catalog_returns s_inventory s_purchase s_purchase_lineitem s_store s_store_returns s_web_order s_web_order_lineitem s_web_returns)
-dim_tables=(s_call_center s_catalog_page s_customer s_customer_address s_item s_promotion s_warehouse s_web_page s_web_site s_zip_to_gmt)
+fact_tables=(catalog_order catalog_sales catalog_returns inventory store store_sales store_returns web_sales web_returns)
+dim_tables=(call_center catalog_page customer customer_address customer_demographics date_dim household_demographics income_band item promotion reason ship_mode store time_dim warehouse web_page web_site)
 
 my_tables=(customer customer_address store item)
-tstamp=$(date +%Y%m%d%H%M%S)
-for table in ${my_tables[@]} #${dim_tables[@]} # ${fact_tables[@]}
+tstamp=$(date +%m%d%H%M)
+#for table in ${my_tables[@]} 
+for table in ${dim_tables[@]} # ${fact_tables[@]}
 do
     log_info "Backing up table ${table}"
     bteq_output=$(mktemp)
