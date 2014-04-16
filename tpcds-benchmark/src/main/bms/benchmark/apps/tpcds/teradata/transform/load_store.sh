@@ -24,7 +24,6 @@ for every row v in view V
 end-for
 EOF
 
-
 target_table='store'
 etl_view='storv'
 tmp_table=${etl_view}_tmp
