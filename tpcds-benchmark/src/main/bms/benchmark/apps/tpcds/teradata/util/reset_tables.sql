@@ -1,0 +1,3 @@
+    -- Test only: clear and restore store table from backup
+    --DELETE FROM store;
+    --INSERT INTO store SELECT * FROM _bak_04150923_store;
