@@ -1,5 +1,6 @@
 -- q92
-select
+
+select /* q92 */
    sum(ws_ext_discount_amt)  as Excess_Discount_Amount
 from    
     web_sales ws

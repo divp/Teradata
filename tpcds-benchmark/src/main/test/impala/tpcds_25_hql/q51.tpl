@@ -1,5 +1,6 @@
 -- q51
-select  *
+
+select  /* q51 */ *
 from (select item_sk
      ,d_date
      ,web_sales

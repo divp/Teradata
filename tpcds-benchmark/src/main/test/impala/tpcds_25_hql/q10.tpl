@@ -1,5 +1,6 @@
 -- q10
-select
+
+select /* q10 */
   cd_gender,
   cd_marital_status,
   cd_education_status,
@@ -39,6 +40,4 @@ order by cd_gender,
           cd_dep_count,
           cd_dep_employed_count,
           cd_dep_college_count
-limit 100
-;
-
+limit 100;

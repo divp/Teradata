@@ -1,5 +1,6 @@
 -- q88
-select  *
+
+select  /* q88 */ *
 from
  (select count(*) h8_30_to_9
  from store_sales ss

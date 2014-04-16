@@ -1,5 +1,6 @@
 -- q03
-select  dt.d_year
+
+select  /* q03 */ dt.d_year
         ,i.i_brand_id brand_id
         ,i.i_brand brand
         ,sum(ss_ext_sales_price) as sum_agg

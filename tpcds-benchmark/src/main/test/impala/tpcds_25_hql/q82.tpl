@@ -1,5 +1,7 @@
 --q82
-select  i_item_id
+
+select  /* q82 */ 
+	i_item_id
        ,i_item_desc
        ,i_current_price
  from item im

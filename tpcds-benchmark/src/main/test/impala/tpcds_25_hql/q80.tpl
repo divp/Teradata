@@ -1,5 +1,6 @@
 -- q80
-select  channel
+
+select  /* q80 */ channel
         , id
         , sum(sales) as sales
         , sum(return_amt) as return_amt

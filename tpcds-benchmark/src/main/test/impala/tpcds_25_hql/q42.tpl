@@ -1,5 +1,7 @@
 -- q42
-select  dt.d_year
+
+select  /* q42 */
+        dt.d_year
         ,i.i_category_id
         ,i.i_category
         ,sum(ss_ext_sales_price) as ext_p

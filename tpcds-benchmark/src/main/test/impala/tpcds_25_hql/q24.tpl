@@ -1,7 +1,9 @@
 -- q24
+
 drop table if exists temp_ssales3299;
 create table temp_ssales3299 as
-select c_last_name
+select /* q24 */
+       c_last_name
       ,c_first_name
       ,s_store_name
       ,ca_state

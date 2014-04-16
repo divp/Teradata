@@ -1,5 +1,7 @@
 -- q32
-select  sum(cs_ext_discount_amt)  as excess_discount_amount
+
+select  /* q32 */ 
+    sum(cs_ext_discount_amt)  as excess_discount_amount
 from
     catalog_sales cs
     join item i on (i.i_item_sk = cs.cs_item_sk)

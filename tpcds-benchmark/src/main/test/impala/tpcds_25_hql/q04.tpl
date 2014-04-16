@@ -1,7 +1,8 @@
 -- q04
+
 drop table if exists temp_year_total884;
 create table temp_year_total884 as
-select * from
+select /* q04 */ * from
 (
 select c_customer_id customer_id
        ,c_first_name customer_first_name

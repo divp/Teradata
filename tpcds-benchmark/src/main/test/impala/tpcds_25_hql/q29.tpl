@@ -1,5 +1,6 @@
 -- q29
-select   
+
+select /* q29 */
      i_item_id
     ,i_item_desc
     ,s_store_id

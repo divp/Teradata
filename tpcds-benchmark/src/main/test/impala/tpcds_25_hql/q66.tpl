@@ -1,5 +1,6 @@
 -- q66
-select   
+
+select   /* q66 */
          w_warehouse_name
         ,w_warehouse_sq_ft
         ,w_city

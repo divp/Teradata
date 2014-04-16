@@ -1,5 +1,7 @@
 -- q27
-select  i_item_id,
+
+select  /* q27 */
+        i_item_id,
         s_state, 
         GROUPING__ID,
         avg(ss_quantity) agg1,

@@ -1,5 +1,6 @@
 -- q50
-select  
+
+select   /* q50 */
    s_store_name
   ,s_company_id
   ,s_street_number

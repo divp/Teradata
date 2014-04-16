@@ -1,5 +1,7 @@
 -- q68
-select  c_last_name
+
+select  /* q68 */
+        c_last_name
        ,c_first_name
        ,ca_city
        ,bought_city

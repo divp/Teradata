@@ -1,5 +1,6 @@
 -- q49
-select   *
+
+select /* q49 */ *
 from
 (
 select
