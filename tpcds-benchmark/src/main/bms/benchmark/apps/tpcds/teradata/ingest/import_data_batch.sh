@@ -127,15 +127,23 @@ EOF
 log=$(mktemp /tmp/$(basename $0).log.XXXXXXXXXX)
 log_info "Full detail log: $log"
 
-log_info "Dropping staging tables" | tee -a $log
-$(dirname $0)/../util/run_sql_script.sh $(dirname $0)/../schema/drop_staging_tables.sql >> $log
-[ $? -ne 0 ] && (tail $log; log_error "Error dropping staging tables. See detail log: $log"; exit 1)
+if [ $# -gt 0 ]
+then
+    log_info "Found command line arguments: running selective load of named tables [$*]"
+    tables=$*
+else
+    log_info "No command line arguments: running complete load including all staging tables (existing staging tables will be dropped and recreated)"
+    tables=(s_call_center s_catalog_order s_catalog_order_lineitem s_catalog_page s_catalog_returns s_customer s_customer_address s_inventory s_item s_promotion s_purchase s_purchase_lineitem s_store s_store_returns s_warehouse s_web_order s_web_order_lineitem s_web_page s_web_returns s_web_site s_zip_to_gmt)
+    
+    log_info "Dropping staging tables" | tee -a $log
+    $(dirname $0)/../util/run_sql_script.sh $(dirname $0)/../schema/drop_staging_tables.sql >> $log
+    [ $? -ne 0 ] && (tail $log; log_error "Error dropping staging tables. See detail log: $log"; exit 1)
 
-log_info "Creating staging tables" | tee -a $log
-$(dirname $0)/../util/run_sql_script.sh $(dirname $0)/../schema/create_staging_tables.sql >> $log
-[ $? -ne 0 ] && (tail $log; log_error "Error creating staging tables. See detail log: $log"; exit 1)
+    log_info "Creating staging tables" | tee -a $log
+    $(dirname $0)/../util/run_sql_script.sh $(dirname $0)/../schema/create_staging_tables.sql >> $log
+    [ $? -ne 0 ] && (tail $log; log_error "Error creating staging tables. See detail log: $log"; exit 1)
+fi
 
-tables=(s_call_center s_catalog_order s_catalog_order_lineitem s_catalog_page s_catalog_returns s_customer s_customer_address s_inventory s_item s_promotion s_purchase s_purchase_lineitem s_store s_store_returns s_warehouse s_web_order s_web_order_lineitem s_web_page s_web_returns s_web_site s_zip_to_gmt)
 for table in ${tables[@]}
 do
     log_info "Processing table $table"
