@@ -28,7 +28,7 @@ target_table='store'
 etl_view='storv'
 tmp_table=${etl_view}_tmp
 
-log_info "Loading ${target_table} table"
+log_info "Updating ${target_table} table"
 bteq <<EOF 2>&1 > $log
     .LOGON ${BMS_TERADATA_DB_HOST}/${BMS_TERADATA_DB_UID},${BMS_TERADATA_DB_PWD};
     DATABASE ${BMS_TERADATA_DBNAME_ETL1};
