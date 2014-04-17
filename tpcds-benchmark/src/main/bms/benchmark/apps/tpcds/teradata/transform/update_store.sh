@@ -10,6 +10,9 @@ log=$(mktemp /tmp/$(basename $0).log.XXXXXXXXXX)
 log_info "Full detail log: $log"
 
 cat <<EOF >/dev/null
+TPC-DS ETL update prototype    
+Method 2: history keeping
+Dimension Type: Historical
 for every row v in view V
    begin transaction // minimal transaction boundary
        if there is a row d in table D where the business keys of v and d are equal

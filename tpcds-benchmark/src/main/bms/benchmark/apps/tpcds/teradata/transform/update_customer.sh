@@ -10,6 +10,7 @@ log=$(mktemp /tmp/$(basename $0).log.XXXXXXXXXX)
 log_info "Full detail log: $log"
 
 cat <<EOF >/dev/null
+TPC-DS ETL update prototype    
 Method 1: non history keeping
 Dimension Type: Non-Historical
 for every row v in view V
