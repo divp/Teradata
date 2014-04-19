@@ -5,7 +5,7 @@ function error_handler() {
   echo "Line exited with status: ${2}"
 }
 
-trap 'error_handler ${LINENO} $?' ERR
+#trap 'error_handler ${LINENO} $?' ERR
 
 # Example command line:
 # /opt/benchmark/runtest.sh -j esg_benchmark.jmx -p /opt/benchmark/config/sample/test.properties
@@ -181,21 +181,34 @@ function check_config {
 
 function ssh_passwordless_help {
     cat <<EOF
-    Must enable passwordless SSH access from this host to all nodes in the cluster for user $(whoami).
+    Must enable passwordless SSH access from this host to all nodes in the cluster for user $BMS_TARGET_UID.
     Typical procedure:
     # on client:
     # Generate public SSH key
     [[ ! -f ~/.ssh/id_rsa.pub ]] && ssh-keygen
 
-    # then for each node in cluster, copy public key into remote authorized keys file 
-    cat ~/.ssh/id_rsa.pub | ssh ${h} 'cat >> ~/.ssh/authorized_keys'
+    # then for each node in cluster, copy public key into remote authorized keys file
+    for node in \$CLUSTER_NODES
+    do
+        ssh root@\${node} "id $BMS_TARGET_UID"
+        if [ \$? -ne 0 ]
+        then
+            echo "User $BMS_TARGET_UID does not exist on \${node}"
+            ssh root@\${node} "useradd -d /homt/$BMS_TARGET_UID $BMS_TARGET_UID"
+            ssh root@\${node} "passw $BMS_TARGET_PWD"
+            ssh $BMS_TARGET_PWD@\$node "[[ ! -f ~/.ssh/id_rsa.pub ]] && ssh-keygen"
+            #for node in ${CLUSTER_NODES[@]}; do ssh root@${node} 'mkdir -p /data/benchmark; chown bms:root /data/benchmark; chmod 755 /data/benchmark'; done
+        fi
+        
+        cat ~/.ssh/id_rsa.pub | ssh \${node} 'cat >> ~/.ssh/authorized_keys'
 
-    # and adjust permissions. SSH will refuse passwordless connections if these persmissions are
-    # not set correctly
-    chmod go-w ~/
-    chmod 700 ~/.ssh
-    chmod 600 ~/.ssh/authorized_keys ~/.ssh/id_rsa
-    chmod 644 ~/.ssh/id_rsa.pub ~/.ssh/known_hosts
+        # and adjust permissions. SSH will refuse passwordless connections if these persmissions are
+        # not set correctly
+        chmod go-w ~/
+        chmod 700 ~/.ssh
+        chmod 600 ~/.ssh/authorized_keys ~/.ssh/id_rsa
+        chmod 644 ~/.ssh/id_rsa.pub ~/.ssh/known_hosts
+    done
 EOF
 }
 
