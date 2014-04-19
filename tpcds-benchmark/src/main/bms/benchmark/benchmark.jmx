@@ -7177,7 +7177,7 @@ JMeterUtils.setProperty(&quot;IMPALAD_HOST&quot;, IMPALAD[rand.nextInt(6)]);</st
         <stringProp name="TestPlan.comments">Teradata/Hadoop ETL benchmark (Q1 2014)</stringProp>
       </ThreadGroup>
       <hashTree>
-        <IfController guiclass="IfControllerPanel" testclass="IfController" testname="TERADATA" enabled="true">
+        <IfController guiclass="IfControllerPanel" testclass="IfController" testname="Teradata" enabled="true">
           <stringProp name="IfController.condition">${__P(BMS_EXEC_PLATFORM_TERADATA)}</stringProp>
           <boolProp name="IfController.evaluateAll">false</boolProp>
           <boolProp name="IfController.useExpression">true</boolProp>
@@ -7199,7 +7199,16 @@ JMeterUtils.setProperty(&quot;IMPALAD_HOST&quot;, IMPALAD[rand.nextInt(6)]);</st
           </IfController>
           <hashTree>
             <OnceOnlyController guiclass="OnceOnlyControllerGui" testclass="OnceOnlyController" testname="Once Only Controller" enabled="true"/>
-            <hashTree/>
+            <hashTree>
+              <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL100: Run initialization load" enabled="true">
+                <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
+                <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
+                <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
+                <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
+                <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/ingest/import_initial.sh 2&gt;&amp;1</stringProp>
+              </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
+              <hashTree/>
+            </hashTree>
           </hashTree>
           <IfController guiclass="IfControllerPanel" testclass="IfController" testname="Query" enabled="true">
             <stringProp name="IfController.condition">${__P(BMS_EXEC_MODE_QUERY)}</stringProp>
