@@ -62,7 +62,7 @@ do
 EOF
     ;;
     move)
-        log_info "Moving table contents from ${table} into ${backup_table}"
+        log_info "Moving table contents (rename) from ${table} into ${backup_table}, keep empty source"
         bteq_output=$(mktemp)
         bteq <<EOF > $bteq_output
             .LOGON ${BMS_TERADATA_DB_HOST}/${BMS_TERADATA_DB_UID},${BMS_TERADATA_DB_PWD};
