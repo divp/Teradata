@@ -147,7 +147,7 @@ fi
 for table in ${tables[@]}
 do
     log_info "Processing table $table"
-    input_file=${BMS_SOURCE_DATA_PATH}/tpcds/${table}_1.dat
+    --input_file=$BMS_SOURCE_DATA_PATH/tpcds/$BMS_ETL1_SCALE_TAG/000/${table}.dat
     script=$(mktemp /tmp/$(basename $0).fastload.script.XXXXXXXXXX)
     log_info "Generating fastload script" | tee -a $log
     get_fastload_script $table $input_file > $script
