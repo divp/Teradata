@@ -17,70 +17,95 @@ bteq <<EOF 2>&1 > $log
     .LOGON ${BMS_TERADATA_DB_HOST}/${BMS_TERADATA_DB_UID},${BMS_TERADATA_DB_PWD};
     DATABASE ${BMS_TERADATA_DBNAME_ETL1};
     
-    // Calculate prior frequencies, or counts of distinct transaction keys
-    by item key. Prune seach to exclude rarely sold items.
-    CREATE VIEW fact_mba_support AS
-    SELECT  ss_item_sk, COUNT(DISTINCT(ticket_number)) AS txn_count
-    INTO  mba_support_tmp
-    FROM 
-        store_sales
-    /* Add catalog_sales and web_sales*/
-    GROUP   BY prod_key
-    ORDER   BY txn_count DESC
-    LIMIT 1000;
+    DROP TABLE tmp_affinity_marginal_freqs;
+   
+    -- Calculate marginal (prior) frequencies, or counts of distinct transaction keys
+    -- by item key for most frequently sold items.
+    CREATE TABLE tmp_affinity_marginal_freqs AS (
+        SELECT TOP 1000 
+        ss_item_sk, COUNT(DISTINCT(ss_ticket_number)) AS freq
+        FROM 
+            store_sales
+        -- Add catalog_sales and web_sales?
+        GROUP   BY ss_item_sk
+        ORDER   BY freq DESC
+    ) WITH DATA;
+    
+    DROP TABLE tmp_affinity_total_freq;
+   
+    -- Calculate total number of transactions (used later to derive probabilities)
+    CREATE TABLE tmp_affinity_total_freq AS (
+        SELECT COUNT(DISTINCT(ss_ticket_number)) AS freq
+        FROM 
+            store_sales
+        -- Add catalog_sales and web_sales?
+    ) WITH DATA;
+    
+    DROP TABLE tmp_affinity_joint_freqs;
+    
+    -- Calculate joint (posterior) frequencies, or counts of distinct transaction keys
+    -- by item pair occurring in the same transaction. Compute only for selected
+    -- items from marginal frequency calculation (pruning)
+    CREATE TABLE tmp_affinity_joint_freqs AS (
+        SELECT t1.ss_item_sk ss_item_sk1, t2.ss_item_sk ss_item_sk2, COUNT(DISTINCT t1.ss_ticket_number) freq
+        FROM
+            store_sales t1
+        INNER JOIN
+            store_sales t2
+        ON
+            t1.ss_ticket_number = t2.ss_ticket_number
+        AND
+            t1.ss_item_sk <> t2.ss_item_sk
+        INNER JOIN
+            tmp_affinity_marginal_freqs t3
+        ON
+            t1.ss_item_sk = t3.ss_item_sk
+        INNER JOIN
+            tmp_affinity_marginal_freqs t4
+        ON
+            t2.ss_item_sk = t4.ss_item_sk
+        GROUP BY t1.ss_item_sk, t2.ss_item_sk
+    ) WITH DATA;
 
-    // Identify all transactions involving at least one item of interest
-    CREATE VIEW fact_mba_search_space AS
-    SELECT  DISTINCT s.ss_item_sk, s.ss_item_sk
-    INTO 
-    FROM 
-       store_sales t
-    INNER JOIN
-        mba_support_tmp s
-        ON   
-        t.ss_item_sk= s. ss_item_sk;
-
-    // Calculate global transaction count, allowing calculation of probabilities.
-    CREATE VIEW fact_mba_global_tmp AS
-    SELECT  COUNT(DISTINCT ss_item_sk) AS txn_count
-    FROM fact_mba_search_space; 
-
-    // Calculate affinity metrics (note floating point arithmetic for log_lift column)
-    CREATE TABLE fact_mba_base AS    
-    SELECT  *
-    FROM (
+    DROP TABLE fact_affinity_base;
+    
+    -- Calculate affinity metrics (note floating point arithmetic for log_lift column)
+    CREATE TABLE fact_affinity_base AS (
         SELECT
-            pk1 AS prod_key1,
-            pk2 AS prod_key2,
-            MAX(tmp.txn_count) AS mrg_freq,
-            MAX(tmp2.txn_count) AS rel_mrg_freq,
-            MAX(j.joint_freq) AS joint_freq,
-            MAX(tmp3.txn_count) AS total_transactions
-            LOG( (MAX(j.joint_freq) - ( MAX(tmp.txn_count) * MAX(tmp2.txn_count) )  ) / MAX(tmp.txn_count) ) AS log_lift
+            ss_item_sk1,
+            ss_item_sk2,
+            observed_prob,
+            expected_prob,
+            LOG(observed_prob/expected_prob) log_lift
         FROM (
             SELECT
-                f1. ss_item_sk AS pk1,
-                f2. ss_item_sk AS pk2,
-                COUNT(DISTINCT f1. ss_ticket_number) AS joint_freq
-            FROM
-                fact_mba_search_space f1
-            INNER JOIN
-                fact_mba_search_space f2
-            ON
-                f1.ss_ticket_number = f2. ss_ticket_number
-            AND
-                f1.ss_item_sk <> f2. ss_item_sk
-            GROUP BY
-                f1.ss_item_sk,f2. ss_item_sk
-        ) j
-        INNER JOIN fact_mba_support tmp
-            ON j.pk1 = tmp. ss_item_sk
-        INNER JOIN fact_mba_support tmp2
-            ON j.pk2 = tmp2. ss_item_sk
-        CROSS JOIN fact_mba_global_tmp tmp3
-        GROUP BY
-            j.pk1,j.pk2
-    ) p;
+                ss_item_sk1,
+                ss_item_sk2,
+                (CAST(joint_freq AS FLOAT) / total_freq) AS observed_prob,
+                (CAST((mrg_freq1 * mrg_freq2) AS FLOAT) / POWER(total_freq,2)) AS expected_prob
+            FROM (
+                SELECT
+                    t1.ss_item_sk1,
+                    t1.ss_item_sk2,
+                    t1.freq joint_freq,
+                    t1.freq mrg_freq1,
+                    t2.freq mrg_freq2,
+                    t4.freq total_freq
+                FROM
+                    tmp_affinity_joint_freqs t1
+                INNER JOIN
+                    tmp_affinity_marginal_freqs t2
+                ON
+                    t1.ss_item_sk1 = t2.ss_item_sk
+                INNER JOIN
+                    tmp_affinity_marginal_freqs t3
+                ON
+                    t1.ss_item_sk2 = t3.ss_item_sk
+                CROSS JOIN
+                    tmp_affinity_total_freq t4
+            ) tfreq
+        ) tprob
+    ) WITH DATA;
     
     .LOGOFF;
     .EXIT;
