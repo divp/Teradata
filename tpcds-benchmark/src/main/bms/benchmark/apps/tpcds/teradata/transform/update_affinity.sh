@@ -10,7 +10,6 @@ log=$(mktemp /tmp/$(basename $0).log.XXXXXXXXXX)
 log_info "Full detail log: $log"
 
 target_table='AGG_FACT_AFFINITY'
-etl_view='ssv'
 
 log_info "Updating ${target_table} table"
 bteq <<EOF 2>&1 > $log
@@ -106,6 +105,8 @@ bteq <<EOF 2>&1 > $log
             ) tfreq
         ) tprob
     ) WITH DATA;
+    
+    SELECT COUNT(*) FROM fact_affinity_base;
     
     .LOGOFF;
     .EXIT;
