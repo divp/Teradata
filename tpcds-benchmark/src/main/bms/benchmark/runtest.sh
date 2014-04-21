@@ -29,7 +29,7 @@ fi
 
 JMETER_BIN=${JMETER_HOME}/bin/jmeter.sh
 
-VERSION="1.0.152"
+VERSION="1.0.154"
 log_info "Starting Benchmark Management System test driver (v. $VERSION)"
 
 function print_help {
@@ -294,7 +294,7 @@ function check_cluster {
     done
 }
 
-function start_stats {
+function stop_stats {
     $BENCHMARK_PATH/stats/collect/stop_stats_collection.sh
     if [ $? -ne 0 ]
     then
@@ -303,7 +303,7 @@ function start_stats {
     fi
 }
 
-function stop_stats {
+function start_stats {
     $BENCHMARK_PATH/stats/collect/start_stats_collection.sh $BENCHMARK_RUN_ID 
     if [ $? -ne 0 ]
     then
@@ -477,7 +477,7 @@ run_test
 
 if [ $STATS == 'full' ]
 then
-    log_info "Stopping statistics collection started"
+    log_info "Stopping statistics collection"
     stop_stats
 fi
 
