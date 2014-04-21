@@ -5,18 +5,22 @@ set -o nounset
 # Must source exports.sh in order to export global parameters defined in test properties
 . $BENCHMARK_PATH/exports.sh
 . $BENCHMARK_PATH/lib/lib.sh
+. $BENCHMARK_PATH/lib/teradata_lib.sh
 
 log=$(mktemp /tmp/$(basename $0).log.XXXXXXXXXX)
 log_info "Full detail log: $log"
 
-target_table='AGG_FACT_AFFINITY'
+target_table='fact_agg_item_affinity'
+
+drop_table $target_table
+drop_table 'tmp_affinity_marginal_freqs'
+drop_table 'tmp_affinity_total_freq'
+drop_table 'tmp_affinity_joint_freqs'
 
 log_info "Updating ${target_table} table"
 bteq <<EOF 2>&1 > $log
     .LOGON ${BMS_TERADATA_DB_HOST}/${BMS_TERADATA_DB_UID},${BMS_TERADATA_DB_PWD};
     DATABASE ${BMS_TERADATA_DBNAME_ETL1};
-    
-    DROP TABLE tmp_affinity_marginal_freqs;
    
     -- Calculate marginal (prior) frequencies, or counts of distinct transaction keys
     -- by item key for most frequently sold items.
@@ -29,8 +33,6 @@ bteq <<EOF 2>&1 > $log
         GROUP   BY ss_item_sk
         ORDER   BY freq DESC
     ) WITH DATA;
-    
-    DROP TABLE tmp_affinity_total_freq;
    
     -- Calculate total number of transactions (used later to derive probabilities)
     CREATE TABLE tmp_affinity_total_freq AS (
@@ -39,8 +41,6 @@ bteq <<EOF 2>&1 > $log
             store_sales
         -- Add catalog_sales and web_sales?
     ) WITH DATA;
-    
-    DROP TABLE tmp_affinity_joint_freqs;
     
     -- Calculate joint (posterior) frequencies, or counts of distinct transaction keys
     -- by item pair occurring in the same transaction. Compute only for selected
@@ -65,11 +65,9 @@ bteq <<EOF 2>&1 > $log
             t2.ss_item_sk = t4.ss_item_sk
         GROUP BY t1.ss_item_sk, t2.ss_item_sk
     ) WITH DATA;
-
-    DROP TABLE fact_affinity_base;
     
     -- Calculate affinity metrics (note floating point arithmetic for log_lift column)
-    CREATE TABLE fact_affinity_base AS (
+    CREATE TABLE ${target_table} AS (
         SELECT
             ss_item_sk1,
             ss_item_sk2,
@@ -106,7 +104,7 @@ bteq <<EOF 2>&1 > $log
         ) tprob
     ) WITH DATA;
     
-    SELECT COUNT(*) FROM fact_affinity_base;
+    SELECT COUNT(*) FROM ${target_table};
     
     .LOGOFF;
     .EXIT;

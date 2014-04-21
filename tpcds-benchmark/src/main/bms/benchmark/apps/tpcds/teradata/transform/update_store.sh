@@ -5,6 +5,7 @@ set -o nounset
 # Must source exports.sh in order to export global parameters defined in test properties
 . $BENCHMARK_PATH/exports.sh
 . $BENCHMARK_PATH/lib/lib.sh
+. $BENCHMARK_PATH/lib/teradata_lib.sh
 
 log=$(mktemp /tmp/$(basename $0).log.XXXXXXXXXX)
 log_info "Full detail log: $log"
@@ -31,12 +32,12 @@ target_table='store'
 etl_view='storv'
 tmp_table=${etl_view}_tmp
 
+drop_table ${tmp_table}
+
 log_info "Updating ${target_table} table"
 bteq <<EOF 2>&1 > $log
     .LOGON ${BMS_TERADATA_DB_HOST}/${BMS_TERADATA_DB_UID},${BMS_TERADATA_DB_PWD};
     DATABASE ${BMS_TERADATA_DBNAME_ETL1};
-
-    DROP TABLE ${tmp_table};
     
     CREATE TABLE ${tmp_table} AS (
     SELECT 
