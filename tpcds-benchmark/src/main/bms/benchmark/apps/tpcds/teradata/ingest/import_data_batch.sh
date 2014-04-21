@@ -127,10 +127,18 @@ EOF
 log=$(mktemp /tmp/$(basename $0).log.XXXXXXXXXX)
 log_info "Full detail log: $log"
 
-if [ $# -gt 0 ]
+if [ $# -ne 1 ]
 then
-    log_info "Found command line arguments: running selective load of named tables [$*]"
-    tables=$*
+    batch_id=$1
+    log_info "Found command line arguments: request for load of batch ${batch_id}"
+    batch_dir=$BMS_SOURCE_DATA_PATH/tpcds/$BMS_ETL1_SCALE_TAG/${batch_id}
+    if [ -d $batch_dir ]
+    then
+        log_info "Batch ${batch_id} found at ${batch_dir}"
+    else
+        log_error "Batch does not exist (${batch_dir})"
+        exit 1
+    fi
 else
     log_info "No command line arguments: running complete load including all staging tables (existing staging tables will be dropped and recreated)"
     tables=(s_call_center s_catalog_order s_catalog_order_lineitem s_catalog_page s_catalog_returns s_customer s_customer_address s_inventory s_item s_promotion s_purchase s_purchase_lineitem s_store s_store_returns s_warehouse s_web_order s_web_order_lineitem s_web_page s_web_returns s_web_site s_zip_to_gmt)
@@ -147,7 +155,7 @@ fi
 for table in ${tables[@]}
 do
     log_info "Processing table $table"
-    --input_file=$BMS_SOURCE_DATA_PATH/tpcds/$BMS_ETL1_SCALE_TAG/000/${table}.dat
+    input_file=${batch_dir}/${table}.dat
     script=$(mktemp /tmp/$(basename $0).fastload.script.XXXXXXXXXX)
     log_info "Generating fastload script" | tee -a $log
     get_fastload_script $table $input_file > $script
@@ -157,4 +165,6 @@ do
     fastload <$script >> $log
     [ $? -ne 0 ] && (tail $log; log_error "Error running fastload script ($script). See detail log: $log"; exit 1)
 done
+
+echo $BMS_TOKEN_EXIT_OK
 

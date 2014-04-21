@@ -125,4 +125,4 @@ fi
 
 log_info "Table loaded ${target_table} successfully"
 
-
+echo $BMS_TOKEN_EXIT_OK

@@ -88,7 +88,7 @@ bteq <<EOF 2>&1 > $log
         ss_net_paid,
         ss_net_paid_inc_tax,
         ss_net_profit
-    FROM ${etl_view} WITH DATA;
+    FROM ${etl_view};
 
     .LOGOFF;
     .EXIT;
@@ -104,4 +104,4 @@ fi
 
 log_info "Table loaded ${target_table} successfully"
 
-
+echo $BMS_TOKEN_EXIT_OK

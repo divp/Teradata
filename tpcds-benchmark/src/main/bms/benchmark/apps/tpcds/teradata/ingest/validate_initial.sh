@@ -49,5 +49,7 @@ bteq <<EOF >/dev/null
     .EXIT;
 EOF
     #[ $? -ne 0 ] && (tail $log; log_error "Error running fastload script ($script). See detail log: $log"; exit 1)
-cat $bteq_output    
+cat $bteq_output
+
+echo $BMS_TOKEN_EXIT_OK
 

@@ -91,6 +91,8 @@ EOF
         DROP TABLE FASTLOAD_ERR1;
         DROP TABLE FASTLOAD_ERR2;
         
+        DELETE FROM ${table_name};
+        
         BEGIN LOADING ${table_name} ERRORFILES FASTLOAD_ERR1, FASTLOAD_ERR2;
         
         INSERT INTO ${table_name} VALUES (
@@ -134,14 +136,6 @@ then
 else
     log_info "No command line arguments: running complete initial load including tables (existing target tables will be dropped and recreated)"
     tables=(inventory ship_mode time_dim web_site household_demographics store call_center warehouse catalog_page item web_page catalog_returns catalog_sales customer date_dim income_band store_returns customer_demographics web_returns customer_address reason store_sales promotion web_sales)
-    
-    log_info "Dropping staging tables" | tee -a $log
-    $(dirname $0)/../util/run_sql_script.sh $(dirname $0)/../schema/drop_staging_tables.sql >> $log
-    [ $? -ne 0 ] && (tail $log; log_error "Error dropping staging tables. See detail log: $log"; exit 1)
-
-    log_info "Creating staging tables" | tee -a $log
-    $(dirname $0)/../util/run_sql_script.sh $(dirname $0)/../schema/create_staging_tables.sql >> $log
-    [ $? -ne 0 ] && (tail $log; log_error "Error creating staging tables. See detail log: $log"; exit 1)
 fi
 
 for table in ${tables[@]}
@@ -157,4 +151,6 @@ do
     fastload <$script >> $log
     [ $? -ne 0 ] && (tail $log; log_error "Error running fastload script ($script). See detail log: $log"; exit 1)
 done
+
+echo $BMS_TOKEN_EXIT_OK
 

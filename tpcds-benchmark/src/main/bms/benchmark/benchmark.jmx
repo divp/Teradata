@@ -6,7 +6,13 @@
       <boolProp name="TestPlan.functional_mode">false</boolProp>
       <boolProp name="TestPlan.serialize_threadgroups">true</boolProp>
       <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
-        <collectionProp name="Arguments.arguments"/>
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="BMS_TOKEN_EXIT_OK" elementType="Argument">
+            <stringProp name="Argument.name">BMS_TOKEN_EXIT_OK</stringProp>
+            <stringProp name="Argument.value">@@@OK@@@</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
       </elementProp>
       <stringProp name="TestPlan.user_define_classpath"></stringProp>
     </TestPlan>
@@ -7221,7 +7227,7 @@ JMeterUtils.setProperty(&quot;IMPALAD_HOST&quot;, IMPALAD[rand.nextInt(6)]);</st
                 <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
                 <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
                 <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-                <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/ingest/import_data_batch.sh 2&gt;&amp;1</stringProp>
+                <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/ingest/import_data_batch.sh 000 2&gt;&amp;1</stringProp>
               </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
               <hashTree/>
               <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL1_00: Validate batch" enabled="true">
@@ -7229,7 +7235,7 @@ JMeterUtils.setProperty(&quot;IMPALAD_HOST&quot;, IMPALAD[rand.nextInt(6)]);</st
                 <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
                 <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
                 <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-                <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/ingest/validate_batch.sh 2&gt;&amp;1</stringProp>
+                <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/ingest/validate_batch.sh 000 2&gt;&amp;1</stringProp>
               </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
               <hashTree/>
               <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL1_00: Update customer" enabled="true">
@@ -7263,6 +7269,15 @@ JMeterUtils.setProperty(&quot;IMPALAD_HOST&quot;, IMPALAD[rand.nextInt(6)]);</st
                 <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
                 <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/transform/validate_update.sh 2&gt;&amp;1</stringProp>
               </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
+              <hashTree/>
+              <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
+                <collectionProp name="Asserion.test_strings">
+                  <stringProp name="-1551073116">@@@OK@@@</stringProp>
+                </collectionProp>
+                <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+                <boolProp name="Assertion.assume_success">false</boolProp>
+                <intProp name="Assertion.test_type">2</intProp>
+              </ResponseAssertion>
               <hashTree/>
             </hashTree>
           </hashTree>
