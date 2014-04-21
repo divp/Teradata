@@ -25,7 +25,7 @@ sql=''
 i=0
 for table in ${tables[@]}
 do
-    log_info "Processing table $table"
+    #log_info "Processing table $table"
     (( i+=1 ))
     sql="${sql} SELECT CAST('${table}' AS VARCHAR(25)) AS TABLE_NAME, COUNT(*) AS ROW_COUNT FROM ${table} "
     if [ $i -lt ${#tables[@]} ] 
