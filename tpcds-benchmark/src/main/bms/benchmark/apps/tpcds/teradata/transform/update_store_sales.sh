@@ -39,7 +39,7 @@ bteq <<EOF 2>&1 > $log
     .LOGON ${BMS_TERADATA_DB_HOST}/${BMS_TERADATA_DB_UID},${BMS_TERADATA_DB_PWD};
     DATABASE ${BMS_TERADATA_DBNAME_ETL1};
     
-    INSERT INTO ${target_table} 
+    INSERT INTO ${target_table} (
         ss_sold_date_sk, 
         ss_sold_time_sk, 
         ss_item_sk, 
@@ -63,6 +63,7 @@ bteq <<EOF 2>&1 > $log
         ss_net_paid,
         ss_net_paid_inc_tax,
         ss_net_profit
+    )
     SELECT
         ss_sold_date_sk, 
         ss_sold_time_sk, 
