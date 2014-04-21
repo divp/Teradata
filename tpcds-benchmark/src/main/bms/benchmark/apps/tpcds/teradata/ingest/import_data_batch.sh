@@ -8,6 +8,11 @@ set -o nounset
 . $BENCHMARK_PATH/exports.sh
 . $BENCHMARK_PATH/lib/lib.sh
 
+function print_help {
+    echo "Usage: $0 -b BATCH_ID -t TABLES"
+    echo "Import a data batch identified by BATCH_ID. TABLES allows a comma-delimited list of tables to be loaded; if omitted, all tables in the target are loaded"
+}
+
 # Generate fastload scripts from live data dictionary definitions
 function get_fastload_script  {
     table_name="$1"
@@ -127,9 +132,26 @@ EOF
 log=$(mktemp /tmp/$(basename $0).log.XXXXXXXXXX)
 log_info "Full detail log: $log"
 
-if [ $# -eq 1 ]
+batch_id=-1
+tables=''
+while getopts "b:t:" opt
+do
+    case $opt in
+        b) batch_id=$OPTARG ;;
+        t) tables=$OPTARG ;;
+        \?)
+            print_help >&2
+            exit 1
+        ;;
+    esac
+done
+
+if [ $batch_id -eq -1 ]
 then
-    batch_id=$1
+    log_error "Expecting batch identifier as single argument"
+    print_help >&2
+    exit 1
+else    
     log_info "Found command line arguments: request for load of batch ${batch_id}"
     batch_dir=$BMS_SOURCE_DATA_PATH/tpcds/$BMS_ETL1_SCALE_TAG/00${batch_id}
     if [ -d $batch_dir ]
@@ -139,9 +161,6 @@ then
         log_error "Batch does not exist (${batch_dir})"
         exit 1
     fi
-else
-    log_error "Expecting batch identifier as single argument"
-    exit 1
 fi    
 log_info "No command line arguments: running complete load including all staging tables (existing staging tables will be dropped and recreated)"
 tables=(s_call_center s_catalog_order s_catalog_order_lineitem s_catalog_page s_catalog_returns s_customer s_customer_address s_inventory s_item s_promotion s_purchase s_purchase_lineitem s_store s_store_returns s_warehouse s_web_order s_web_order_lineitem s_web_page s_web_returns s_web_site s_zip_to_gmt)
@@ -156,10 +175,9 @@ $(dirname $0)/../util/run_sql_script.sh $(dirname $0)/../schema/create_staging_t
 
 for table in ${tables[@]}
 do
-    log_info "Processing table $table"
     input_file=${batch_dir}/${table}_${batch_id}.dat
     script=$(mktemp /tmp/$(basename $0).fastload.script.XXXXXXXXXX)
-    log_info "Generating fastload script" | tee -a $log
+    log_info "Generating fastload script for table ${table} from file ${input_file}" | tee -a $log
     get_fastload_script $table $input_file > $script
     [ $? -ne 0 ] && (tail $log; log_error "Error generating fastload script. See detail log: $log"; exit 1)
     
