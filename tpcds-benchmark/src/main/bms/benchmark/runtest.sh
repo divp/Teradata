@@ -481,8 +481,6 @@ then
     stop_stats
 fi
 
-echo "TODO: Build teardown logic"
-
 #cd ${BENCHMARK_OUTPUT_PATH}; ${BENCHMARK_STATS_PATH}/collect/master/get_logs.sh ${__P(BENCHMARK_RUN_ID)}
 #jmeter.sh -n -tesg_benchmark_aster.jmx -JBENCHMARK_USER_COUNT=5 -JBENCHMARK_TEST_TAG=${TAG} -JBENCHMARK_SA_LOOP_COUNT=1 -JBENCHMARK_WL_LOOP_COUNT=1 -JBENCHMARK_WP_LOOP_COUNT=1 JBENCHMARK_ADW_LOOP_COUNT=1
 #mv ${BENCHMARK_OUTPUT_PATH}/jmeter.log ${BENCHMARK_OUTPUT_PATH}/jmeter.${__P(BENCHMARK_RUN_ID)}.log 2>&1

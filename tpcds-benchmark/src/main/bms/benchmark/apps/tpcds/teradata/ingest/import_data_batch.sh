@@ -177,11 +177,10 @@ for table in ${tables[@]}
 do
     input_file=${batch_dir}/${table}_${batch_id}.dat
     script=$(mktemp /tmp/$(basename $0).fastload.script.XXXXXXXXXX)
-    log_info "Generating fastload script for table ${table} from file ${input_file}" | tee -a $log
     get_fastload_script $table $input_file > $script
     [ $? -ne 0 ] && (tail $log; log_error "Error generating fastload script. See detail log: $log"; exit 1)
     
-    log_info "Running fastload script ($script)" | tee -a $log
+    log_info "Running fastload into '${table}' from ${input_file}. Script: ${script}" | tee -a $log
     fastload <$script >> $log
     [ $? -ne 0 ] && (tail $log; log_error "Error running fastload script ($script). See detail log: $log"; exit 1)
 done

@@ -143,7 +143,6 @@ do
     log_info "Processing table $table"
     input_file=$BMS_SOURCE_DATA_PATH/tpcds/$BMS_ETL1_SCALE_TAG/000/${table}.dat
     script=$(mktemp /tmp/$(basename $0).fastload.script.XXXXXXXXXX)
-    log_info "Generating fastload script" | tee -a $log
     get_fastload_script $table $input_file > $script
     [ $? -ne 0 ] && (tail $log; log_error "Error generating fastload script. See detail log: $log"; exit 1)
     
