@@ -477,6 +477,7 @@ run_test
 
 if [ $STATS == 'full' ]
 then
+    log_info "Stopping statistics collection started"
     stop_stats
 fi
 
