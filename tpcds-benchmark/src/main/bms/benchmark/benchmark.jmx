@@ -7204,9 +7204,9 @@ JMeterUtils.setProperty(&quot;IMPALAD_HOST&quot;, IMPALAD[rand.nextInt(6)]);</st
             <boolProp name="IfController.useExpression">true</boolProp>
           </IfController>
           <hashTree>
-            <OnceOnlyController guiclass="OnceOnlyControllerGui" testclass="OnceOnlyController" testname="Once Only Controller" enabled="true"/>
+            <OnceOnlyController guiclass="OnceOnlyControllerGui" testclass="OnceOnlyController" testname="Intialization load (once only)" enabled="true"/>
             <hashTree>
-              <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL1_00: Run initialization load" enabled="false">
+              <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL1_00: Run initialization load" enabled="true">
                 <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
                 <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
                 <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
@@ -7214,7 +7214,7 @@ JMeterUtils.setProperty(&quot;IMPALAD_HOST&quot;, IMPALAD[rand.nextInt(6)]);</st
                 <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/ingest/import_initial.sh 2&gt;&amp;1</stringProp>
               </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
               <hashTree/>
-              <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL1_00: Validate initialization load" enabled="false">
+              <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL1_00: Validate initialization load" enabled="true">
                 <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
                 <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
                 <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
@@ -7232,7 +7232,7 @@ JMeterUtils.setProperty(&quot;IMPALAD_HOST&quot;, IMPALAD[rand.nextInt(6)]);</st
               </ResponseAssertion>
               <hashTree/>
             </hashTree>
-            <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+            <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Batch update loop" enabled="true">
               <boolProp name="LoopController.continue_forever">true</boolProp>
               <stringProp name="LoopController.loops">4</stringProp>
             </LoopController>
