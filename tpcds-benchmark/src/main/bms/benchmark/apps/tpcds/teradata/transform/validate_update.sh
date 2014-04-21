@@ -16,7 +16,7 @@ then
     log_info "Found command line arguments: running selective validation of named tables [$*]"
     tables=$*
 else
-    log_info "No command line arguments: running complete validation of initial load "
+    log_info "No command line arguments: running complete validation of data update "
     tables=(inventory ship_mode time_dim web_site household_demographics store call_center warehouse catalog_page item web_page catalog_returns catalog_sales customer date_dim income_band store_returns customer_demographics web_returns customer_address reason store_sales promotion web_sales)
 fi
 
