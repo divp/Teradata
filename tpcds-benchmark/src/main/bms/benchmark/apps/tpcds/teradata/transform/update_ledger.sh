@@ -29,7 +29,7 @@ bteq <<EOF 2>&1 > $log
         SUM(
             CASE 
             WHEN t_i.i_category_id IN (1,3,4,6) 
-            AND t_cdemo.cd_marital_status  IN ('S','W','D')
+            AND t_cdemo.cd_marital_status IN ('S','W','D')
             AND t_promo.p_channel_dmail = 'Y'
             THEN
                 t_ss.ss_net_paid
@@ -40,7 +40,7 @@ bteq <<EOF 2>&1 > $log
         SUM(
             CASE 
             WHEN t_i.i_category_id NOT IN (1,3,4,6) 
-            AND t_cdemo.cd_marital_status  NOT IN ('S','W','D')
+            AND t_cdemo.cd_marital_status NOT IN ('S','W','D')
             AND t_cdemo.cd_credit_rating NOT IN ('High Risk','Unknown')
             AND t_cdemo.cd_dep_count > 0
             AND t_promo.p_channel_dmail = 'Y'
