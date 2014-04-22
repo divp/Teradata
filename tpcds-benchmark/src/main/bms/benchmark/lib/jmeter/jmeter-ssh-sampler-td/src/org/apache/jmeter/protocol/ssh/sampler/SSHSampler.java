@@ -44,7 +44,7 @@ public class SSHSampler extends AbstractSampler implements TestBean {
 	
 	private static final int CONNECTION_TIMEOUT = 5000;
 	
-	private static final String VERSION = "1.4.019";
+	private static final String VERSION = "1.4.022";
 
 	private String hostname = "";
 	private int port = 22;
@@ -157,11 +157,11 @@ public class SSHSampler extends AbstractSampler implements TestBean {
 		
 		ChannelExec channel = (ChannelExec) session.openChannel("exec");
 		log.info(
-				String.format("Executing command [%s][channel:%d][sample:%d][id:%d]:'%s'",
+				String.format("Executing command [%s][id:%d][channel:%d][sample:%d]:'%s'",
 					getName(), 
+					instanceId,
 					channel.getId(), 
 					sampleCount,
-					instanceId,
 					truncate(command)));
 		BufferedReader stdoutReader = new BufferedReader(new InputStreamReader(channel.getInputStream()));
 		BufferedReader stderrReader = new BufferedReader(new InputStreamReader(channel.getErrStream()));
@@ -174,14 +174,16 @@ public class SSHSampler extends AbstractSampler implements TestBean {
 		float elapsedTime = (System.nanoTime() - startTime)/(1.0e9f);
 		
 		log.info(
-			String.format("Command response (stdout) [%s][t:%.3fs]:'%s'",
+			String.format("Command response (stdout) [%s][id:%d][t:%.3fs]:'%s'",
 				getName(), 
+				instanceId,
 				elapsedTime, 
 				stdout));
 		if (stderr.length() > 0) {
 			log.error(
-					String.format("Command response (stderr) [%s][t:%.3fs]:'%s'",
+					String.format("Command response (stderr) [%s][id:%d][t:%.3fs]:'%s'",
 						getName(),
+						instanceId,
 						elapsedTime, 
 						stderr));
 			throw new SSHCommandException("Runtime error in SSH sampler '" + this.getName() + "' [" + stderr +"]" );
