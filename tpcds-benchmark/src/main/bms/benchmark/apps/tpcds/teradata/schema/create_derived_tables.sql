@@ -28,5 +28,5 @@ CREATE SET TABLE fact_agg_sales_ledger ,NO FALLBACK ,
       net_paid DECIMAL(15,2),
       singles_promo_apparel_net_paid DECIMAL(15,2),
       family_credit_promo_apparel_net_paid DECIMAL(15,2))
-PRIMARY INDEX ( d_date );
+PRIMARY INDEX ( i_item_id );
 
