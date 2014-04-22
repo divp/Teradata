@@ -36,7 +36,6 @@ import com.jcraft.jsch.Session;
 /**
  * SSH Sampler that collects single lines of output and returns
  * them as samples.
- *
  */
 public class SSHSampler extends AbstractSampler implements TestBean {
 	private static final long serialVersionUID = -1644622213906052022L;
@@ -45,7 +44,7 @@ public class SSHSampler extends AbstractSampler implements TestBean {
 	
 	private static final int CONNECTION_TIMEOUT = 5000;
 	
-	private static final String VERSION = "1.3.035";
+	private static final String VERSION = "1.4.019";
 
 	private String hostname = "";
 	private int port = 22;
@@ -69,6 +68,7 @@ public class SSHSampler extends AbstractSampler implements TestBean {
 		SampleResult res = new SampleResult();
 		//res.setSampleLabel(username + "@" + hostname + ":" + port);
 		res.setSampleLabel(getName());
+		final String ERROR_DESC="Runtime error while processing SSH request: ";
 		
 		// Set up sampler return types
 		res.setSamplerData(command);
@@ -76,11 +76,23 @@ public class SSHSampler extends AbstractSampler implements TestBean {
 		res.setContentType("text/plain");
 		
 		String response;
-		if(session == null) {
+		if (session == null) {
 			log.info("Teradata SSH Sampler for JMeter  (v." + VERSION + ")");
 			log.info("Creating SSH connection to " +  getUsername() + "@" + getHostname() + ":" + getPort() +
 					" [sampler instance: '" + getName() + "']");
 			connect();
+		} else {
+		    try {
+		        if (!session.isConnected()) {
+		            log.info("Session is disconnected. Creating new connection ");
+		            connect();
+		        }
+		    } catch (Exception e1) {
+				res.setSuccessful(false);
+				res.setResponseCode("Exception");
+				res.setResponseMessage(e1.getClass().getName() + ":" + e1.getMessage());
+				log.error(ERROR_DESC + e1.getClass().getName() + ":" + e1.getMessage());
+		    }
 		}
 		
 		try {
@@ -92,31 +104,15 @@ public class SSHSampler extends AbstractSampler implements TestBean {
 			}
 			response = doCommand(session, command, res);
 			res.setResponseData(response.getBytes());
-			
 			res.setSuccessful(true);
 			res.setResponseCodeOK();
 	        res.setResponseMessageOK();
-		} catch (JSchException e1) {
-			res.setSuccessful(false);
-			res.setResponseCode("JSchException");
-			res.setResponseMessage(e1.getMessage());
-			log.error(e1.getMessage());
-		} catch (IOException e1) {
-			res.setSuccessful(false);
-			res.setResponseCode("IOException");
-			res.setResponseMessage(e1.getMessage());
-			log.error(e1.getMessage());
-		} catch (NullPointerException e1) {
-			res.setSuccessful(false);
-			res.setResponseCode("Connection Failed");
-			res.setResponseMessage(e1.getMessage());
-			log.error(e1.getMessage());
 		} catch (Exception e1) {
 			res.setSuccessful(false);
 			res.setResponseCode("Exception");
-			res.setResponseMessage(e1.getMessage());
-			log.error(e1.getMessage());
-		}
+			res.setResponseMessage(e1.getClass().getName() + ":" + e1.getMessage());
+			log.error(ERROR_DESC + e1.getClass().getName() + ":" + e1.getMessage());
+		} 
 		if(session != null) {
 			log.info("Closing SSH connection to " +  getUsername() + "@" + getHostname() + ":" + getPort() +
 					" [sampler instance: '" + getName() + "']");
@@ -155,7 +151,7 @@ public class SSHSampler extends AbstractSampler implements TestBean {
 	 * @throws JSchException 
 	 * @throws IOException Error has occurred down in the network layer
 	 */
-	private String doCommand(Session session, String command, SampleResult res) throws JSchException, IOException {
+	private String doCommand(Session session, String command, SampleResult res) throws SSHCommandException, JSchException, IOException {
 
 		long startTime = System.nanoTime();
 		
@@ -183,6 +179,7 @@ public class SSHSampler extends AbstractSampler implements TestBean {
 					getName(), 
 					channel.getId(), 
 					stderr));
+			throw new SSHCommandException("Runtime error in SSH sampler '" + this.getName() + "' [" + stderr +"]" );
 		}
 
 		channel.disconnect();
