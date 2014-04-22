@@ -55,25 +55,29 @@ public class SSHSampler extends AbstractSampler implements TestBean {
 	private String command = "date";
 
 	private static final JSch jsch = new JSch();
-	private static long requestCount = 0;
+	private static long sampleCount = 0;
+	private static long instanceCount = 0;
+	private long instanceId;
 	private Session session = null;
 	
 	private String failureReason = "Unknown";
 	
 	public SSHSampler() {
 		super();
+		instanceCount++;
+		instanceId=instanceCount;
 		setName("Teradata SSH Sampler for JMeter  (v." + VERSION + ")");
-		log.info("Teradata SSH Sampler for JMeter  (v." + VERSION + ")");
 	}
 	
 	public SampleResult sample(Entry e) {
+		sampleCount++;
 		SampleResult res = new SampleResult();
 		//res.setSampleLabel(username + "@" + hostname + ":" + port);
 		res.setSampleLabel(getName());
+		if (sampleCount == 1) {
+			log.info("Teradata SSH Sampler for JMeter  (v." + VERSION + ")");
+		}
 		final String ERROR_DESC="Runtime error while processing SSH request: ";
-		log.info("Processing SSH sample #" + requestCount + " on current sampler instance");
-		requestCount++;
-		
 		// Set up sampler return types
 		res.setSamplerData(command);
 		res.setDataType(SampleResult.TEXT);
@@ -152,29 +156,34 @@ public class SSHSampler extends AbstractSampler implements TestBean {
 		long startTime = System.nanoTime();
 		
 		ChannelExec channel = (ChannelExec) session.openChannel("exec");
-		log.info("[" + getName() + "][#" + channel.getId() + "]: executing command '" + truncate(command) + "'" );		
+		log.info(
+				String.format("Executing command [%s][channel:%d][sample:%d][id:%d]:'%s'",
+					getName(), 
+					channel.getId(), 
+					sampleCount,
+					instanceId,
+					truncate(command)));
 		BufferedReader stdoutReader = new BufferedReader(new InputStreamReader(channel.getInputStream()));
 		BufferedReader stderrReader = new BufferedReader(new InputStreamReader(channel.getErrStream()));
 		channel.setCommand(command);
 		res.sampleStart();
 		channel.connect();
-		String stdout= readBufferString(stdoutReader);
-		String stderr= readBufferString(stderrReader);
+		String stdout = readBufferString(stdoutReader);
+		String stderr = readBufferString(stderrReader);
 		res.sampleEnd();
 		float elapsedTime = (System.nanoTime() - startTime)/(1.0e9f);
 		
 		log.info(
-			String.format("[%s][#%d][%.3fs] command response (stdout): '%s'",
-			getName(), 
-			channel.getId(), 
-			elapsedTime, 
-			stdout));
+			String.format("Command response (stdout) [%s][t:%.3fs]:'%s'",
+				getName(), 
+				elapsedTime, 
+				stdout));
 		if (stderr.length() > 0) {
 			log.error(
-					String.format("[%s][#%d] command response (stderr): '%s'",
-					getName(), 
-					channel.getId(), 
-					stderr));
+					String.format("Command response (stderr) [%s][t:%.3fs]:'%s'",
+						getName(),
+						elapsedTime, 
+						stderr));
 			throw new SSHCommandException("Runtime error in SSH sampler '" + this.getName() + "' [" + stderr +"]" );
 		}
 
