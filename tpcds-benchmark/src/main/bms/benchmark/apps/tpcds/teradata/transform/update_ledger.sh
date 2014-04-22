@@ -22,9 +22,9 @@ bteq <<EOF 2>&1 > $log
         SELECT   
             t_d.d_date,
             t_i.i_item_id,
-            t_i.i_brand,
+            MAX(t_i.i_brand) i_brand,
             t_s.s_store_id,
-            t_s.s_store_name,
+            MAX(t_s.s_store_name) s_store_name,
             COUNT(*) AS transaction_count,
             SUM(t_ss.ss_quantity) AS quantity,
             SUM(t_ss.ss_wholesale_cost) AS wholesale_cost,
@@ -80,9 +80,7 @@ bteq <<EOF 2>&1 > $log
         GROUP BY 
             t_d.d_date,
             t_i.i_item_id,
-            t_i.i_brand,
-            t_s.s_store_id,
-            t_s.s_store_name
+            t_s.s_store_id
     ) AS t_src
     ON t_src.d_date = t_tgt.d_date
     AND t_src.i_item_id = t_tgt.i_item_id
