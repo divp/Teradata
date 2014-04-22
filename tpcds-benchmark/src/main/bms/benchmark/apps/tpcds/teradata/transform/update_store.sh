@@ -39,6 +39,7 @@ bteq <<EOF 2>&1 > $log
     .LOGON ${BMS_TERADATA_DB_HOST}/${BMS_TERADATA_DB_UID},${BMS_TERADATA_DB_PWD};
     DATABASE ${BMS_TERADATA_DBNAME_ETL1};
     
+    -- Save ETL view data in temporary table (required to preserve state before update step below)
     CREATE TABLE ${tmp_table} AS (
     SELECT 
         s_store_sk
@@ -72,12 +73,14 @@ bteq <<EOF 2>&1 > $log
         ,s_tax_percentage
     FROM ${etl_view}) WITH DATA;
     
+    -- Update target table
     UPDATE ${target_table}
     SET 
         s_rec_end_date = CURRENT_DATE - 1
     WHERE  s_rec_end_date IS NULL
     AND s_store_id IN (SELECT s_store_id FROM ${etl_view});
     
+    -- Insert new rows
     INSERT INTO ${target_table} (
         s_store_sk
         ,s_store_id
