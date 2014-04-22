@@ -7204,7 +7204,7 @@ JMeterUtils.setProperty(&quot;IMPALAD_HOST&quot;, IMPALAD[rand.nextInt(6)]);</st
             <boolProp name="IfController.useExpression">true</boolProp>
           </IfController>
           <hashTree>
-            <OnceOnlyController guiclass="OnceOnlyControllerGui" testclass="OnceOnlyController" testname="Intialization load (once only)" enabled="true"/>
+            <OnceOnlyController guiclass="OnceOnlyControllerGui" testclass="OnceOnlyController" testname="Intialization load (once only)" enabled="false"/>
             <hashTree>
               <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL1_00: Run initialization load" enabled="true">
                 <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
@@ -7224,7 +7224,7 @@ JMeterUtils.setProperty(&quot;IMPALAD_HOST&quot;, IMPALAD[rand.nextInt(6)]);</st
               <hashTree/>
               <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
                 <collectionProp name="Asserion.test_strings">
-                  <stringProp name="-1551073116">@@@OK@@@</stringProp>
+                  <stringProp name="216552436">${BMS_TOKEN_EXIT_OK}</stringProp>
                 </collectionProp>
                 <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
                 <boolProp name="Assertion.assume_success">false</boolProp>
@@ -7246,77 +7246,99 @@ JMeterUtils.setProperty(&quot;IMPALAD_HOST&quot;, IMPALAD[rand.nextInt(6)]);</st
                 <boolProp name="CounterConfig.per_user">false</boolProp>
               </CounterConfig>
               <hashTree/>
-              <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL1_00: Import batch" enabled="true">
-                <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
-                <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
-                <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
-                <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-                <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/ingest/import_data_batch.sh -b ${ETL1_BATCH_COUNTER} 2&gt;&amp;1</stringProp>
-              </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
+              <BeanShellPreProcessor guiclass="TestBeanGUI" testclass="BeanShellPreProcessor" testname="BeanShell PreProcessor" enabled="false">
+                <boolProp name="resetInterpreter">false</boolProp>
+                <stringProp name="parameters"></stringProp>
+                <stringProp name="filename"></stringProp>
+                <stringProp name="script">log.info(&quot;Batch counter: &quot; + ${ETL1_BATCH_COUNTER});</stringProp>
+              </BeanShellPreProcessor>
               <hashTree/>
-              <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL1_00: Validate batch" enabled="true">
-                <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
-                <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
-                <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
-                <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-                <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/ingest/validate_batch.sh 2&gt;&amp;1</stringProp>
-              </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
-              <hashTree/>
-              <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL1_00: Update customer" enabled="true">
-                <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
-                <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
-                <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
-                <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-                <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/transform/update_customer.sh 2&gt;&amp;1</stringProp>
-              </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
-              <hashTree/>
-              <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL1_00: Update store" enabled="true">
-                <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
-                <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
-                <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
-                <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-                <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/transform/update_store.sh 2&gt;&amp;1</stringProp>
-              </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
-              <hashTree/>
-              <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL1_00: Update store sales" enabled="true">
-                <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
-                <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
-                <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
-                <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-                <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/transform/update_store_sales.sh 2&gt;&amp;1</stringProp>
-              </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
-              <hashTree/>
-              <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL1_00: Update ledger" enabled="true">
-                <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
-                <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
-                <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
-                <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-                <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/transform/update_ledger.sh 2&gt;&amp;1</stringProp>
-              </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
-              <hashTree/>
-              <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL1_00: Update affinity" enabled="true">
-                <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
-                <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
-                <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
-                <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-                <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/transform/update_affinity.sh 2&gt;&amp;1</stringProp>
-              </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
-              <hashTree/>
-              <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL1_00: Validate update" enabled="true">
-                <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
-                <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
-                <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
-                <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-                <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/transform/validate_update.sh 2&gt;&amp;1</stringProp>
-              </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
-              <hashTree/>
-              <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="BeanShell Sampler" enabled="false">
-                <stringProp name="BeanShellSampler.query">log.info(&quot;Batch counter: &quot; + ${ETL1_LOOP_COUNTER});</stringProp>
+              <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="Echo update batch counter" enabled="true">
+                <stringProp name="BeanShellSampler.query">log.info(&quot;Processing update batch #&quot; + ${ETL1_BATCH_COUNTER});</stringProp>
                 <stringProp name="BeanShellSampler.filename"></stringProp>
                 <stringProp name="BeanShellSampler.parameters"></stringProp>
                 <boolProp name="BeanShellSampler.resetInterpreter">false</boolProp>
               </BeanShellSampler>
               <hashTree/>
+              <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Transaction Controller" enabled="true">
+                <boolProp name="TransactionController.includeTimers">false</boolProp>
+                <boolProp name="TransactionController.parent">false</boolProp>
+              </TransactionController>
+              <hashTree>
+                <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL1_00: Import batch" enabled="true">
+                  <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
+                  <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
+                  <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
+                  <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
+                  <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/ingest/import_data_batch.sh -b ${ETL1_BATCH_COUNTER} 2&gt;&amp;1</stringProp>
+                </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
+                <hashTree/>
+                <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL1_00: Validate batch" enabled="true">
+                  <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
+                  <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
+                  <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
+                  <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
+                  <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/ingest/validate_batch.sh 2&gt;&amp;1</stringProp>
+                </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
+                <hashTree/>
+                <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL1_00: Update customer" enabled="true">
+                  <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
+                  <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
+                  <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
+                  <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
+                  <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/transform/update_customer.sh 2&gt;&amp;1</stringProp>
+                </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
+                <hashTree/>
+                <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL1_00: Update store" enabled="true">
+                  <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
+                  <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
+                  <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
+                  <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
+                  <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/transform/update_store.sh 2&gt;&amp;1</stringProp>
+                </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
+                <hashTree/>
+                <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL1_00: Update store sales" enabled="true">
+                  <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
+                  <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
+                  <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
+                  <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
+                  <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/transform/update_store_sales.sh 2&gt;&amp;1</stringProp>
+                </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
+                <hashTree/>
+                <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL1_00: Update ledger" enabled="true">
+                  <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
+                  <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
+                  <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
+                  <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
+                  <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/transform/update_ledger.sh 2&gt;&amp;1</stringProp>
+                </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
+                <hashTree/>
+                <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL1_00: Update affinity" enabled="true">
+                  <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
+                  <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
+                  <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
+                  <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
+                  <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/transform/update_affinity.sh 2&gt;&amp;1</stringProp>
+                </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
+                <hashTree/>
+                <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL1_00: Validate update" enabled="true">
+                  <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
+                  <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
+                  <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
+                  <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
+                  <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/transform/validate_update.sh 2&gt;&amp;1</stringProp>
+                </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
+                <hashTree/>
+                <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
+                  <collectionProp name="Asserion.test_strings">
+                    <stringProp name="216552436">${BMS_TOKEN_EXIT_OK}</stringProp>
+                  </collectionProp>
+                  <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+                  <boolProp name="Assertion.assume_success">false</boolProp>
+                  <intProp name="Assertion.test_type">2</intProp>
+                </ResponseAssertion>
+                <hashTree/>
+              </hashTree>
             </hashTree>
           </hashTree>
           <IfController guiclass="IfControllerPanel" testclass="IfController" testname="Query" enabled="true">
@@ -7348,7 +7370,17 @@ JMeterUtils.setProperty(&quot;IMPALAD_HOST&quot;, IMPALAD[rand.nextInt(6)]);</st
               <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
               <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/run_sql.sh Q03 2&gt;&amp;1</stringProp>
             </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
-            <hashTree/>
+            <hashTree>
+              <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
+                <collectionProp name="Asserion.test_strings">
+                  <stringProp name="216552436">${BMS_TOKEN_EXIT_OK}</stringProp>
+                </collectionProp>
+                <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+                <boolProp name="Assertion.assume_success">false</boolProp>
+                <intProp name="Assertion.test_type">2</intProp>
+              </ResponseAssertion>
+              <hashTree/>
+            </hashTree>
           </hashTree>
         </hashTree>
         <IfController guiclass="IfControllerPanel" testclass="IfController" testname="Hadoop" enabled="true">
