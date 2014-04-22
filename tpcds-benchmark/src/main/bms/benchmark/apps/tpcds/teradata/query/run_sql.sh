@@ -31,8 +31,9 @@ echo "Running SQL query from file $query_file (output log: $LOG_FILE):"
 # query_text="$(echo "$(eval echo \"$(cat $query_file)\")")"
 
 query_text="$(cat $query_file)"
+echo "$query_text"
 
-stderr_file=$(mktemp)
+bteq_output=$(mktemp)
 
 bteq <<EOF >/dev/null
     .LOGON ${BMS_TERADATA_DB_HOST}/${BMS_TERADATA_DB_UID},${BMS_TERADATA_DB_PWD};
@@ -47,8 +48,8 @@ bteq <<EOF >/dev/null
 EOF
 
 rc=$?
-stderr=$(cat $stderr_file)
-rm $stderr_file
+stderr=$(cat $bteq_output)
+rm $bteq_output
 
 if [ $rc -ne 0 ]
 then
