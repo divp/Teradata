@@ -10,16 +10,15 @@ set -o nounset
 log=$(mktemp /tmp/$(basename $0).log.XXXXXXXXXX)
 log_info "Full detail log: $log"
 
-target_table='agg_fact_sales_customer_profile'
-
-drop_table ${target_table}
+target_table='fact_agg_sales_ledger'
 
 log_info "Updating ${target_table} table"
 bteq <<EOF 2>&1 > $log
     .LOGON ${BMS_TERADATA_DB_HOST}/${BMS_TERADATA_DB_UID},${BMS_TERADATA_DB_PWD};
     DATABASE ${BMS_TERADATA_DBNAME_ETL1};
     
-    CREATE TABLE ${target_table} AS (
+    MERGE INTO ${target_table} AS t_tgt
+    USING (
         SELECT   
             t_d.d_date,
             t_i.i_item_id,
@@ -84,7 +83,32 @@ bteq <<EOF 2>&1 > $log
             t_i.i_brand,
             t_s.s_store_id,
             t_s.s_store_name
-    ) WITH DATA;
+    ) AS t_src
+    ON t_src.d_date = t_tgt.d_date
+    AND t_src.i_item_id = t_tgt.i_item_id
+    AND t_src.s_store_id = t_tgt.s_store_id
+    WHEN MATCHED THEN UPDATE SET 
+        i_brand = t_src.i_brand,
+        s_store_name = t_src.s_store_name,
+        transaction_count = t_src.transaction_count,
+        quantity = t_src.quantity,
+        wholesale_cost = t_src.wholesale_cost,
+        net_paid = t_src.net_paid,
+        singles_promo_apparel_net_paid = t_src.singles_promo_apparel_net_paid,
+        family_credit_promo_apparel_net_paid = t_src.family_credit_promo_apparel_net_paid
+    WHEN NOT MATCHED THEN INSERT VALUES (   
+        t_src.d_date,
+        t_src.i_item_id,
+        t_src.i_brand,
+        t_src.s_store_id,
+        t_src.s_store_name,
+        t_src.transaction_count,
+        t_src.quantity,
+        t_src.wholesale_cost,
+        t_src.net_paid,
+        t_src.singles_promo_apparel_net_paid,
+        t_src.family_credit_promo_apparel_net_paid
+    );
     
     SELECT COUNT(*) FROM ${target_table};
 
