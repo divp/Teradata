@@ -55,6 +55,7 @@ public class SSHSampler extends AbstractSampler implements TestBean {
 	private String command = "date";
 
 	private static final JSch jsch = new JSch();
+	private static long requestCount = 0;
 	private Session session = null;
 	
 	private String failureReason = "Unknown";
@@ -62,6 +63,7 @@ public class SSHSampler extends AbstractSampler implements TestBean {
 	public SSHSampler() {
 		super();
 		setName("Teradata SSH Sampler for JMeter  (v." + VERSION + ")");
+		log.info("Teradata SSH Sampler for JMeter  (v." + VERSION + ")");
 	}
 	
 	public SampleResult sample(Entry e) {
@@ -69,6 +71,8 @@ public class SSHSampler extends AbstractSampler implements TestBean {
 		//res.setSampleLabel(username + "@" + hostname + ":" + port);
 		res.setSampleLabel(getName());
 		final String ERROR_DESC="Runtime error while processing SSH request: ";
+		log.info("Processing SSH sample #" + requestCount + " on current sampler instance");
+		requestCount++;
 		
 		// Set up sampler return types
 		res.setSamplerData(command);
@@ -77,14 +81,11 @@ public class SSHSampler extends AbstractSampler implements TestBean {
 		
 		String response;
 		if (session == null) {
-			log.info("Teradata SSH Sampler for JMeter  (v." + VERSION + ")");
-			log.info("Creating SSH connection to " +  getUsername() + "@" + getHostname() + ":" + getPort() +
-					" [sampler instance: '" + getName() + "']");
 			connect();
 		} else {
 		    try {
 		        if (!session.isConnected()) {
-		            log.info("Session is disconnected. Creating new connection ");
+		            log.debug("Session is disconnected. Creating new connection ");
 		            connect();
 		        }
 		    } catch (Exception e1) {
@@ -112,11 +113,6 @@ public class SSHSampler extends AbstractSampler implements TestBean {
 			res.setResponseCode("Exception");
 			res.setResponseMessage(e1.getClass().getName() + ":" + e1.getMessage());
 			log.error(ERROR_DESC + e1.getClass().getName() + ":" + e1.getMessage());
-		} 
-		if(session != null) {
-			log.info("Closing SSH connection to " +  getUsername() + "@" + getHostname() + ":" + getPort() +
-					" [sampler instance: '" + getName() + "']");
-			disconnect();
 		}
 		return res;
 	}
@@ -191,6 +187,8 @@ public class SSHSampler extends AbstractSampler implements TestBean {
 	 */
 	public void connect() {
 		try {
+			log.debug("Creating SSH connection to " +  getUsername() + "@" + getHostname() + ":" + getPort() +
+					" [sampler instance: '" + getName() + "']");
 			failureReason = "Unknown";
 			session = jsch.getSession(getUsername(), getHostname(), getPort());
 			session.setPassword(getPassword());
@@ -209,10 +207,6 @@ public class SSHSampler extends AbstractSampler implements TestBean {
 		float elapsedTime = (System.nanoTime() - startTime)/(1.0e9f);
 		System.out.println(String.format("[%.3fs]", elapsedTime));
 		//return 0;
-	}
-	
-	public void disconnect() {
-		if(session != null) session.disconnect();
 	}
 	
 	// Accessors
@@ -271,6 +265,8 @@ public class SSHSampler extends AbstractSampler implements TestBean {
 			
 		} finally {
 			if(session != null) {
+				log.debug("Closing SSH connection to " +  getUsername() + "@" + getHostname() + ":" + getPort() +
+						" [sampler instance: '" + getName() + "']");
 				session.disconnect();
 				session = null;
 			}
