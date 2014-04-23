@@ -68,10 +68,10 @@ EOF
             .LOGON ${BMS_TERADATA_DB_HOST}/${BMS_TERADATA_DB_UID},${BMS_TERADATA_DB_PWD};
             DATABASE ${BMS_TERADATA_DBNAME_ETL1};
 
-            RENAME TABLE ${table} TO _bak_${tstamp}_${table};
+            RENAME TABLE ${table} TO ${backup_table};
             
             CREATE TABLE ${table} AS (
-                SELECT * FROM _bak_${tstamp}_${table}
+                SELECT * FROM ${backup_table}
             ) WITH NO DATA;
 
             .LOGOFF;
