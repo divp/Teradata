@@ -162,11 +162,11 @@ public class SSHSampler extends AbstractSampler implements TestBean {
 	private String doCommand(Session session, String command, SampleResult res) throws SSHCommandException, JSchException, IOException {
 
 		long startTime = System.nanoTime();
-		
 		ChannelExec channel = (ChannelExec) session.openChannel("exec");
 		log.info(
-				String.format("Executing command [%s][id:%d][channel:%d][sample:%d]:'%s'",
+				String.format("Executing command [%s][%s][id:%d][channel:%d][sample:%d]:'%s'",
 					getName(), 
+					getThreadName(),
 					instanceId,
 					channel.getId(), 
 					sampleCount,
