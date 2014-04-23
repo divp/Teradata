@@ -5,14 +5,36 @@ set -o nounset
 . $BENCHMARK_PATH/exports.sh
 . $BENCHMARK_PATH/lib/lib.sh
 
-if [ $# -lt 1 ]
+function print_help {
+    echo "Usage: $0 -s SCALE_TAG -q QUERY_TAG -u USER_ID"
+    echo "e.g. $0 -s sf1000 -q Q25-032 -u 3"
+}
+
+SCALE_TAG=''
+QUERY_TAG=''
+USER_ID=''
+while getopts "s:q:u:" opt
+do
+    case $opt in
+        s) SCALE_TAG=$OPTARG ;;
+        q) QUERY_TAG=$OPTARG ;;
+        u) USER_ID=$OPTARG ;;
+        \?)
+            print_help >&2
+            exit 1
+        ;;
+    esac
+done
+
+if [[ -z $SCALE_TAG || -z $QUERY_TAG || -z $USER_ID ]]
 then
-    log_error "Expecting query tag as required first argument"
+    log_error "Invalid arguments: $*"
+    print_help >&2
     exit 1
 fi
 
-query_name=$1
-query_file=$(dirname $0)/sql/${query_name}.sql
+# Resolve physical query file from input arguments
+query_file=$(dirname $0)/sql/${SCALE_TAG}/user$(printf "%02d" $USER_ID)/${QUERY_TAG}.sql
 
 if [ ! -f $query_file ]
 then
