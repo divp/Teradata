@@ -7200,17 +7200,17 @@ JMeterUtils.setProperty(&quot;IMPALAD_HOST&quot;, IMPALAD[rand.nextInt(6)]);</st
             <boolProp name="IfController.useExpression">true</boolProp>
           </IfController>
           <hashTree>
-            <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="Acquire query lock (ETL1_SYNC_EUQ_LOCK)" enabled="true">
-              <stringProp name="TestPlan.comments">Acquire global property to hold execution of end user queryies (thread group ETL2)</stringProp>
-              <stringProp name="BeanShellSampler.query">props.put(&quot;ETL1_SYNC_EUQ_LOCK&quot;,&quot;true&quot;);
-log.info(&quot;Acquire query lock ETL1_SYNC_EUQ_LOCK=&quot; + props.get(&quot;ETL1_SYNC_EUQ_LOCK&quot;));</stringProp>
-              <stringProp name="BeanShellSampler.filename"></stringProp>
-              <stringProp name="BeanShellSampler.parameters"></stringProp>
-              <boolProp name="BeanShellSampler.resetInterpreter">false</boolProp>
-            </BeanShellSampler>
-            <hashTree/>
             <OnceOnlyController guiclass="OnceOnlyControllerGui" testclass="OnceOnlyController" testname="Intialization load (once only)" enabled="true"/>
             <hashTree>
+              <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="Acquire query lock (ETL1_SYNC_EUQ_LOCK)" enabled="true">
+                <stringProp name="TestPlan.comments">Acquire global property to hold execution of end user queryies (thread group ETL2)</stringProp>
+                <stringProp name="BeanShellSampler.query">props.put(&quot;ETL1_SYNC_EUQ_LOCK&quot;,&quot;true&quot;);
+log.info(ctx.getThread().getThreadName() + &quot;: Acquire query lock ETL1_SYNC_EUQ_LOCK=&quot; + props.get(&quot;ETL1_SYNC_EUQ_LOCK&quot;));</stringProp>
+                <stringProp name="BeanShellSampler.filename"></stringProp>
+                <stringProp name="BeanShellSampler.parameters"></stringProp>
+                <boolProp name="BeanShellSampler.resetInterpreter">false</boolProp>
+              </BeanShellSampler>
+              <hashTree/>
               <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL1_00: Run initialization load" enabled="true">
                 <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
                 <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
@@ -7218,7 +7218,18 @@ log.info(&quot;Acquire query lock ETL1_SYNC_EUQ_LOCK=&quot; + props.get(&quot;ET
                 <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
                 <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/ingest/import_initial.sh 2&gt;&amp;1</stringProp>
               </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
-              <hashTree/>
+              <hashTree>
+                <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
+                  <collectionProp name="Asserion.test_strings">
+                    <stringProp name="216552436">${BMS_TOKEN_EXIT_OK}</stringProp>
+                  </collectionProp>
+                  <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+                  <boolProp name="Assertion.assume_success">false</boolProp>
+                  <intProp name="Assertion.test_type">2</intProp>
+                  <stringProp name="Assertion.scope">all</stringProp>
+                </ResponseAssertion>
+                <hashTree/>
+              </hashTree>
               <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL1_00: Validate initialization load" enabled="true">
                 <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
                 <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
@@ -7226,26 +7237,28 @@ log.info(&quot;Acquire query lock ETL1_SYNC_EUQ_LOCK=&quot; + props.get(&quot;ET
                 <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
                 <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/ingest/validate_initial.sh 2&gt;&amp;1</stringProp>
               </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
-              <hashTree/>
-              <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
-                <collectionProp name="Asserion.test_strings">
-                  <stringProp name="216552436">${BMS_TOKEN_EXIT_OK}</stringProp>
-                </collectionProp>
-                <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
-                <boolProp name="Assertion.assume_success">false</boolProp>
-                <intProp name="Assertion.test_type">2</intProp>
-              </ResponseAssertion>
+              <hashTree>
+                <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
+                  <collectionProp name="Asserion.test_strings">
+                    <stringProp name="216552436">${BMS_TOKEN_EXIT_OK}</stringProp>
+                  </collectionProp>
+                  <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+                  <boolProp name="Assertion.assume_success">false</boolProp>
+                  <intProp name="Assertion.test_type">2</intProp>
+                  <stringProp name="Assertion.scope">all</stringProp>
+                </ResponseAssertion>
+                <hashTree/>
+              </hashTree>
+              <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="Release query lock (ETL1_SYNC_EUQ_LOCK)" enabled="true">
+                <stringProp name="TestPlan.comments">Release global property to hold execution of end user queryies (thread group ETL2)</stringProp>
+                <stringProp name="BeanShellSampler.query">props.put(&quot;ETL1_SYNC_EUQ_LOCK&quot;,&quot;false&quot;);
+log.info(ctx.getThread().getThreadName() + &quot;: Release query lock ETL1_SYNC_EUQ_LOCK=&quot; + props.get(&quot;ETL1_SYNC_EUQ_LOCK&quot;));</stringProp>
+                <stringProp name="BeanShellSampler.filename"></stringProp>
+                <stringProp name="BeanShellSampler.parameters"></stringProp>
+                <boolProp name="BeanShellSampler.resetInterpreter">false</boolProp>
+              </BeanShellSampler>
               <hashTree/>
             </hashTree>
-            <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="Release query lock (ETL1_SYNC_EUQ_LOCK)" enabled="true">
-              <stringProp name="TestPlan.comments">Release global property to hold execution of end user queryies (thread group ETL2)</stringProp>
-              <stringProp name="BeanShellSampler.query">props.put(&quot;ETL1_SYNC_EUQ_LOCK&quot;,&quot;false&quot;);
-log.info(&quot;Release query lock ETL1_SYNC_EUQ_LOCK=&quot; + props.get(&quot;ETL1_SYNC_EUQ_LOCK&quot;));</stringProp>
-              <stringProp name="BeanShellSampler.filename"></stringProp>
-              <stringProp name="BeanShellSampler.parameters"></stringProp>
-              <boolProp name="BeanShellSampler.resetInterpreter">false</boolProp>
-            </BeanShellSampler>
-            <hashTree/>
             <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="ETL1_BATCH_COUNTER" enabled="true">
               <stringProp name="CounterConfig.start">1</stringProp>
               <stringProp name="CounterConfig.end"></stringProp>
@@ -7470,7 +7483,7 @@ log.info(&quot;Release query lock ETL1_SYNC_EUQ_LOCK=&quot; + props.get(&quot;ET
           </IfController>
           <hashTree>
             <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="Check query lock (ETL1_SYNC_EUQ_LOCK)" enabled="true">
-              <stringProp name="BeanShellSampler.query">log.info(&quot;Check query lock ETL1_SYNC_EUQ_LOCK=&quot; + props.get(&quot;ETL1_SYNC_EUQ_LOCK&quot;));</stringProp>
+              <stringProp name="BeanShellSampler.query">log.info(ctx.getThread().getThreadName() + &quot;: Check query lock ETL1_SYNC_EUQ_LOCK=&quot; + props.get(&quot;ETL1_SYNC_EUQ_LOCK&quot;));</stringProp>
               <stringProp name="BeanShellSampler.filename"></stringProp>
               <stringProp name="BeanShellSampler.parameters"></stringProp>
               <boolProp name="BeanShellSampler.resetInterpreter">false</boolProp>
@@ -7493,13 +7506,13 @@ log.info(&quot;Release query lock ETL1_SYNC_EUQ_LOCK=&quot; + props.get(&quot;ET
               <hashTree/>
             </hashTree>
             <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="Acknowledge release of query lock (ETL1_SYNC_EUQ_LOCK)" enabled="true">
-              <stringProp name="BeanShellSampler.query">log.info(&quot;Detected release of query lock ETL1_SYNC_EUQ_LOCK=&quot; + props.get(&quot;ETL1_SYNC_EUQ_LOCK&quot;));</stringProp>
+              <stringProp name="BeanShellSampler.query">log.info(ctx.getThread().getThreadName() + &quot;: Detected release of query lock ETL1_SYNC_EUQ_LOCK=&quot; + props.get(&quot;ETL1_SYNC_EUQ_LOCK&quot;));</stringProp>
               <stringProp name="BeanShellSampler.filename"></stringProp>
               <stringProp name="BeanShellSampler.parameters"></stringProp>
               <boolProp name="BeanShellSampler.resetInterpreter">false</boolProp>
             </BeanShellSampler>
             <hashTree/>
-            <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL1_01: Run QT-a" enabled="true">
+            <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL2_01: Run QT-a" enabled="true">
               <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
               <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
               <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
@@ -7507,7 +7520,7 @@ log.info(&quot;Release query lock ETL1_SYNC_EUQ_LOCK=&quot; + props.get(&quot;ET
               <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/query/run_sql.sh QF-a 2&gt;&amp;1</stringProp>
             </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
             <hashTree/>
-            <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL1_02: Run QT-b" enabled="true">
+            <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL2_02: Run QT-b" enabled="true">
               <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
               <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
               <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
