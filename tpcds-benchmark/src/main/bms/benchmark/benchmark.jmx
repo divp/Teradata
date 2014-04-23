@@ -7344,7 +7344,7 @@ log.info(ctx.getThread().getThreadName() + &quot;: Release query lock ETL1_SYNC_
                 <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/transform/validate_update.sh 2&gt;&amp;1</stringProp>
               </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
               <hashTree/>
-              <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="false">
+              <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
                 <collectionProp name="Asserion.test_strings">
                   <stringProp name="216552436">${BMS_TOKEN_EXIT_OK}</stringProp>
                 </collectionProp>
@@ -7498,7 +7498,7 @@ log.info(ctx.getThread().getThreadName() + &quot;: Release query lock ETL1_SYNC_
               </ConstantTimer>
               <hashTree/>
               <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="Echo sync wait message" enabled="true">
-                <stringProp name="BeanShellSampler.query">log.info(&quot;Waiting for ETL1_SYNC_EUQ_LOCK: &quot; + props.get(&quot;ETL1_SYNC_EUQ_LOCK&quot;));</stringProp>
+                <stringProp name="BeanShellSampler.query">log.debug(ctx.getThread().getThreadName() + &quot;: Waiting for ETL1_SYNC_EUQ_LOCK: &quot; + props.get(&quot;ETL1_SYNC_EUQ_LOCK&quot;));</stringProp>
                 <stringProp name="BeanShellSampler.filename"></stringProp>
                 <stringProp name="BeanShellSampler.parameters"></stringProp>
                 <boolProp name="BeanShellSampler.resetInterpreter">false</boolProp>
@@ -7506,28 +7506,34 @@ log.info(ctx.getThread().getThreadName() + &quot;: Release query lock ETL1_SYNC_
               <hashTree/>
             </hashTree>
             <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="Acknowledge release of query lock (ETL1_SYNC_EUQ_LOCK)" enabled="true">
-              <stringProp name="BeanShellSampler.query">log.info(ctx.getThread().getThreadName() + &quot;: Detected release of query lock ETL1_SYNC_EUQ_LOCK=&quot; + props.get(&quot;ETL1_SYNC_EUQ_LOCK&quot;));</stringProp>
+              <stringProp name="BeanShellSampler.query">log.info(ctx.getThread().getThreadName() + &quot;: Query lock released; ETL1_SYNC_EUQ_LOCK=&quot; + props.get(&quot;ETL1_SYNC_EUQ_LOCK&quot;));</stringProp>
               <stringProp name="BeanShellSampler.filename"></stringProp>
               <stringProp name="BeanShellSampler.parameters"></stringProp>
               <boolProp name="BeanShellSampler.resetInterpreter">false</boolProp>
             </BeanShellSampler>
             <hashTree/>
-            <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL2_01: Run QT-a" enabled="true">
-              <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
-              <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
-              <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
-              <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-              <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/query/run_sql.sh QF-a 2&gt;&amp;1</stringProp>
-            </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
-            <hashTree/>
-            <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL2_02: Run QT-b" enabled="true">
-              <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
-              <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
-              <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
-              <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-              <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/query/run_sql.sh QF-b 2&gt;&amp;1</stringProp>
-            </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
-            <hashTree/>
+            <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+              <boolProp name="LoopController.continue_forever">true</boolProp>
+              <stringProp name="LoopController.loops">5</stringProp>
+            </LoopController>
+            <hashTree>
+              <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL2_01: Run QT-a" enabled="true">
+                <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
+                <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
+                <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
+                <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
+                <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/query/run_sql.sh QF-a 2&gt;&amp;1</stringProp>
+              </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
+              <hashTree/>
+              <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL2_02: Run QT-b" enabled="true">
+                <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
+                <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
+                <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
+                <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
+                <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/query/run_sql.sh QF-b 2&gt;&amp;1</stringProp>
+              </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
+              <hashTree/>
+            </hashTree>
           </hashTree>
         </hashTree>
         <IfController guiclass="IfControllerPanel" testclass="IfController" testname="Hadoop" enabled="true">
