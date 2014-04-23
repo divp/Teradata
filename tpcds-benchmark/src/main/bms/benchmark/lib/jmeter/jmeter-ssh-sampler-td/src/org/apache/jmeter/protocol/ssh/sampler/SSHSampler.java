@@ -44,7 +44,7 @@ public class SSHSampler extends AbstractSampler implements TestBean {
 	
 	private static final int CONNECTION_TIMEOUT = 5000;
 	
-	private static final String VERSION = "1.4.022";
+	private static final String VERSION = "1.4.023";
 
 	private String hostname = "";
 	private int port = 22;
@@ -121,10 +121,18 @@ public class SSHSampler extends AbstractSampler implements TestBean {
 		return res;
 	}
 	
+	// Get synoptic string representation to avoid overflowing output logs
+	// Use ellipsis to signal truncation and include enough text from string's end
+	// to capture status tokens (e.g. BMS_TOKEN_OK='@@@OK@@@')
 	private String truncate(String string) {
-		final int SUBSTR_LENGTH = 8192;
-		if (string.length() > SUBSTR_LENGTH) {
-			return string.substring(0, SUBSTR_LENGTH) + "[...]";
+		final int BUFFER_LENGTH_KB = 8;
+		final int BUFFER_LENGTH = BUFFER_LENGTH_KB*1024;
+		final int EPILOG_LENGTH = 64;
+		if (string.length() > BUFFER_LENGTH) {
+			return string.substring(0, BUFFER_LENGTH - EPILOG_LENGTH) 
+					+ "\n[...]<Truncated by SSH sampler to fit in buffer (" + 
+					+ BUFFER_LENGTH_KB + "KB)>[...]\n"
+					+ string.substring(BUFFER_LENGTH - EPILOG_LENGTH + 1);
 		} else {
 			return string;
 		}
