@@ -7189,6 +7189,15 @@ JMeterUtils.setProperty(&quot;IMPALAD_HOST&quot;, IMPALAD[rand.nextInt(6)]);</st
           <boolProp name="IfController.useExpression">true</boolProp>
         </IfController>
         <hashTree>
+          <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="Initialize query lock (relase ETL_SYNC_EUQ_LOCK)" enabled="true">
+            <stringProp name="TestPlan.comments">Ensure initial state to avoid deadlock on query-only runs (thread group ETLQ)</stringProp>
+            <stringProp name="BeanShellSampler.query">props.put(&quot;ETL_SYNC_EUQ_LOCK&quot;,&quot;false&quot;);
+log.info(ctx.getThread().getThreadName() + &quot;: Initialize query lock ETL_SYNC_EUQ_LOCK=&quot; + props.get(&quot;ETL_SYNC_EUQ_LOCK&quot;));</stringProp>
+            <stringProp name="BeanShellSampler.filename"></stringProp>
+            <stringProp name="BeanShellSampler.parameters"></stringProp>
+            <boolProp name="BeanShellSampler.resetInterpreter">false</boolProp>
+          </BeanShellSampler>
+          <hashTree/>
           <IfController guiclass="IfControllerPanel" testclass="IfController" testname="Load" enabled="true">
             <stringProp name="IfController.condition">${__P(BMS_EXEC_MODE_LOAD)}</stringProp>
             <boolProp name="IfController.evaluateAll">false</boolProp>
@@ -7477,7 +7486,7 @@ log.info(ctx.getThread().getThreadName() + &quot;: Release query lock ETL_SYNC_E
               <stringProp name="ConstantTimer.delay">500</stringProp>
             </ConstantTimer>
             <hashTree/>
-            <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="Check query lock (ETL_SYNC_EUQ_LOCK)" enabled="false">
+            <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="Check query lock (ETL_SYNC_EUQ_LOCK)" enabled="true">
               <stringProp name="BeanShellSampler.query">log.info(ctx.getThread().getThreadName() + &quot;: Check query lock ETL_SYNC_EUQ_LOCK=&quot; + props.get(&quot;ETL_SYNC_EUQ_LOCK&quot;));</stringProp>
               <stringProp name="BeanShellSampler.filename"></stringProp>
               <stringProp name="BeanShellSampler.parameters"></stringProp>
@@ -7515,7 +7524,7 @@ log.info(ctx.getThread().getThreadName() + &quot;: Release query lock ETL_SYNC_E
               <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
               <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
               <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-              <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/query/run_sql -s ${__P(BMS_ETL_SCALE_TAG)} -q Q25-032 -u ${__threadNum} &gt;&amp;1</stringProp>
+              <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/query/run_sql.sh -s ${__P(BMS_ETL_SCALE_TAG)} -q Q25-32 -u ${__threadNum} &gt;&amp;1</stringProp>
             </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
             <hashTree/>
           </hashTree>
