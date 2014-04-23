@@ -42,7 +42,7 @@ then
     exit 1
 fi
 
-LOG_FILE=$(get_script_log_name $0.${query_name})
+LOG_FILE=$(get_script_log_name $0.${SCALE_TAG}.user$(printf "%02d" $USER_ID).${QUERY_TAG})
 exec > >(tee -a $LOG_FILE) 2> >(tee -a $LOG_FILE >&2)
 
 echo "Running SQL query from file $query_file (output log: $LOG_FILE):"
