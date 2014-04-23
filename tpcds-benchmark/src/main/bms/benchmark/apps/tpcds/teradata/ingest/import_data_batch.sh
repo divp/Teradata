@@ -153,7 +153,7 @@ then
     exit 1
 else    
     log_info "Found command line arguments: request for load of batch ${batch_id}"
-    batch_dir=$BMS_SOURCE_DATA_PATH/tpcds/$BMS_ETL1_SCALE_TAG/00${batch_id}
+    batch_dir=$BMS_SOURCE_DATA_PATH/tpcds/$BMS_ETL_SCALE_TAG/00${batch_id}
     if [ -d $batch_dir ]
     then
         log_info "Batch ${batch_id} found at ${batch_dir}"

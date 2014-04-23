@@ -35,7 +35,7 @@ do
         sql="${sql};"
     fi
 done
-    #input_file=$BMS_SOURCE_DATA_PATH/tpcds/$BMS_ETL1_SCALE_TAG/000/${table}.dat
+    #input_file=$BMS_SOURCE_DATA_PATH/tpcds/$BMS_ETL_SCALE_TAG/000/${table}.dat
     
 bteq <<EOF >/dev/null
     .LOGON ${BMS_TERADATA_DB_HOST}/${BMS_TERADATA_DB_UID},${BMS_TERADATA_DB_PWD};
