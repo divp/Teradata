@@ -8,6 +8,8 @@ set -o nounset
 . $BENCHMARK_PATH/exports.sh
 . $BENCHMARK_PATH/lib/lib.sh
 
+BACKUP_TAG=
+
 # Generate fastload scripts from live data dictionary definitions
 function get_fastload_script  {
     table_name="$1"
@@ -90,8 +92,8 @@ EOF
         
         DROP TABLE FASTLOAD_ERR1;
         DROP TABLE FASTLOAD_ERR2;
-        
-        DELETE FROM ${table_name};
+
+        DROP TABLE ${table_name};
         
         BEGIN LOADING ${table_name} ERRORFILES FASTLOAD_ERR1, FASTLOAD_ERR2;
         
@@ -137,6 +139,15 @@ else
     log_info "No command line arguments: running complete initial load including tables (existing target tables will be dropped and recreated)"
     tables=(inventory ship_mode time_dim web_site household_demographics store call_center warehouse catalog_page item web_page catalog_returns catalog_sales customer date_dim income_band store_returns customer_demographics web_returns customer_address reason store_sales promotion web_sales)
 fi
+
+$BENCHMARK_PATH/apps/tpcds/teradata/schema/backup_target_tables.sh move
+
+rc=$?
+if [ $rc -ne 0 ]
+then
+    log_error "Unable to complete target table backup - cancelling import"
+    exit 1
+fi    
 
 for table in ${tables[@]}
 do
