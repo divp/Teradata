@@ -92,8 +92,6 @@ EOF
         
         DROP TABLE FASTLOAD_ERR1;
         DROP TABLE FASTLOAD_ERR2;
-
-        DROP TABLE ${table_name};
         
         BEGIN LOADING ${table_name} ERRORFILES FASTLOAD_ERR1, FASTLOAD_ERR2;
         
