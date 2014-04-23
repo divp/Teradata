@@ -2,8 +2,6 @@
 
 set -o errexit
 
-TEMP_FILE_PREFIX=
-
 function finish {
     kill -SIGKILL $(jobs -p) 2>/dev/null
     #echo "Loops: $counter"
