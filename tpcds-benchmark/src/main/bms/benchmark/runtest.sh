@@ -5,7 +5,7 @@ function error_handler() {
   echo "Line exited with status: ${2}"
 }
 
-#trap 'error_handler ${LINENO} $?' ERR
+trap 'error_handler ${LINENO} $?' ERR
 
 # Example command line:
 # /opt/benchmark/runtest.sh -j esg_benchmark.jmx -p /opt/benchmark/config/sample/test.properties
@@ -194,9 +194,9 @@ function ssh_passwordless_help {
         if [ \$? -ne 0 ]
         then
             echo "User $BMS_TARGET_UID does not exist on \${node}"
-            ssh root@\${node} "useradd -d /homt/$BMS_TARGET_UID $BMS_TARGET_UID"
-            ssh root@\${node} "passw $BMS_TARGET_PWD"
-            ssh $BMS_TARGET_PWD@\$node "[[ ! -f ~/.ssh/id_rsa.pub ]] && ssh-keygen"
+            ssh root@\${node} "useradd -d /home/$BMS_TARGET_UID $BMS_TARGET_UID"
+            ssh root@\${node} "passwd $BMS_TARGET_PWD"
+            ssh $BMS_TARGET_UID@\$node "[[ ! -f ~/.ssh/id_rsa.pub ]] && ssh-keygen"
             #for node in ${CLUSTER_NODES[@]}; do ssh root@${node} 'mkdir -p /data/benchmark; chown bms:root /data/benchmark; chmod 755 /data/benchmark'; done
         fi
         
@@ -287,7 +287,6 @@ function check_cluster {
             log_info "Filesystem write check to $host:/$BMS_OUTPUT_PATH OK"
         else
             log_error "Filesystem write test to output directory \$BMS_OUTPUT_PATH=$BMS_OUTPUT_PATH failed on host $host."
-            log_info "Check that directory exists and has read+write access for user $BMS_TARGET_UID"
             exit 1
         fi
 
