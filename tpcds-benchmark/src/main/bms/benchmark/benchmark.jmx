@@ -471,7 +471,7 @@ log.info(&quot;==================================&quot;);</stringProp>
           <boolProp name="BeanShellSampler.resetInterpreter">false</boolProp>
         </BeanShellSampler>
         <hashTree/>
-        <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="DEBUG: show variables" enabled="false">
+        <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="DEBUG: show variables" enabled="true">
           <stringProp name="BeanShellSampler.query">import org.apache.jmeter.util.JMeterUtils;
 
 log.info(&quot;&gt; &gt; - - - - - - - - - - - - - - - V A R I A B L E S - - - - - - - - - - - - - - -&quot;);
@@ -488,12 +488,23 @@ log.info(&quot;&lt;  - - - - - - - - - - - - - - - V A R I A B L E S - - - - - -
         <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="DEBUG: show properties" enabled="true">
           <stringProp name="BeanShellSampler.query">import org.apache.jmeter.util.JMeterUtils;
 
+String[] keys = JMeterUtils.getJMeterProperties().keySet().toArray(new String[0]);
+Arrays.sort(keys);
+
 log.info(&quot;&gt; &gt; - - - - - - - - - - - - - - - P R OP E R T I E S - - - - - - - - - - - - - - -&quot;);
-for (prop : JMeterUtils.getJMeterProperties().propertyNames()) {
+for (prop : keys) {
     log.info(&quot;prop: &quot; + prop + &quot;=&quot; + JMeterUtils.getJMeterProperties().getProperty(prop));
 }
 log.info(&quot;&lt;  - - - - - - - - - - - - - - - P R OP E R T I E S - - - - - - - - - - - - - - -&quot;);
 </stringProp>
+          <stringProp name="BeanShellSampler.filename"></stringProp>
+          <stringProp name="BeanShellSampler.parameters"></stringProp>
+          <boolProp name="BeanShellSampler.resetInterpreter">false</boolProp>
+        </BeanShellSampler>
+        <hashTree/>
+        <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="System.exit(0);" enabled="false">
+          <stringProp name="BeanShellSampler.query">log.info(&quot;Teardown complete. Calling System.exit&quot;);
+System.exit(0);</stringProp>
           <stringProp name="BeanShellSampler.filename"></stringProp>
           <stringProp name="BeanShellSampler.parameters"></stringProp>
           <boolProp name="BeanShellSampler.resetInterpreter">false</boolProp>
