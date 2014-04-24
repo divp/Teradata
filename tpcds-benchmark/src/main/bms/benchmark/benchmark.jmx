@@ -7173,7 +7173,7 @@ JMeterUtils.setProperty(&quot;IMPALAD_HOST&quot;, IMPALAD[rand.nextInt(6)]);</st
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <stringProp name="LoopController.loops">${__P(BMS_ETL_LOOP_COUNT)}</stringProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">${__P(BMS_USER_COUNT)}</stringProp>
+        <stringProp name="ThreadGroup.num_threads">${__P(BMS_ETL_USER_COUNT)}</stringProp>
         <stringProp name="ThreadGroup.ramp_time">${__P(BMS_RAMP_UP_SEC)}</stringProp>
         <longProp name="ThreadGroup.start_time">1318848428000</longProp>
         <longProp name="ThreadGroup.end_time">1318848428000</longProp>
@@ -7450,9 +7450,9 @@ log.info(ctx.getThread().getThreadName() + &quot;: Release query lock ETL_SYNC_E
         <stringProp name="ThreadGroup.on_sample_error">stoptestnow</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
-          <stringProp name="LoopController.loops">${__P(BMS_ETL_QUERY_LOOP_COUNT)}</stringProp>
+          <stringProp name="LoopController.loops">${__P(BMS_ETLQ_LOOP_COUNT)}</stringProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">${__P(BMS_USER_COUNT)}</stringProp>
+        <stringProp name="ThreadGroup.num_threads">${__P(BMS_ETLQ_USER_COUNT)}</stringProp>
         <stringProp name="ThreadGroup.ramp_time">${__P(BMS_RAMP_UP_SEC)}</stringProp>
         <longProp name="ThreadGroup.start_time">1318848428000</longProp>
         <longProp name="ThreadGroup.end_time">1318848428000</longProp>
@@ -7526,6 +7526,15 @@ log.info(ctx.getThread().getThreadName() + &quot;: Release query lock ETL_SYNC_E
               <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
               <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/query/run_sql.sh -s ${__P(BMS_ETL_SCALE_TAG)} -q Q25-32 -u ${__threadNum} &gt;&amp;1</stringProp>
             </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
+            <hashTree/>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="false">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="216552436">${BMS_TOKEN_EXIT_OK}</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+            </ResponseAssertion>
             <hashTree/>
           </hashTree>
         </hashTree>
