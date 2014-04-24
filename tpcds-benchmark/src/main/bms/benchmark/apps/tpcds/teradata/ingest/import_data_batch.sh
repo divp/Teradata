@@ -28,7 +28,7 @@ function get_fastload_script  {
         .LOGON ${BMS_TERADATA_DB_HOST}/${BMS_TERADATA_DB_UID},${BMS_TERADATA_DB_PWD};
         DATABASE ${BMS_TERADATA_DBNAME_ETL1};
 
-        select columnname from dbc.columns where tablename='${table_name}';
+        SELECT columnName FROM dbc.columns WHERE tableName='${table_name}' AND databaseName='${BMS_TERADATA_DBNAME_ETL1}';
 
         .LOGOFF;
         .EXIT;
