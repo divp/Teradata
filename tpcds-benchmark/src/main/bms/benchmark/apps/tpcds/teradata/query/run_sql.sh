@@ -55,7 +55,10 @@ echo "Running SQL query from file $query_file (output log: $LOG_FILE):"
 query_text="$(cat $query_file)"
 echo "$query_text"
 
+echo "---"
 bteq_output=$(mktemp)
+
+log_info "Logging in as ${BMS_TERADATA_DB_HOST}/${BMS_TERADATA_DB_UID},${BMS_TERADATA_DB_PWD};"
 
 bteq <<EOF >/dev/null
     .LOGON ${BMS_TERADATA_DB_HOST}/${BMS_TERADATA_DB_UID},${BMS_TERADATA_DB_PWD};
@@ -68,15 +71,16 @@ bteq <<EOF >/dev/null
     .LOGOFF;
     .EXIT;
 EOF
-
 rc=$?
-stderr=$(cat $bteq_output)
-rm $bteq_output
 
 if [ $rc -ne 0 ]
 then
   log_error "($0) Runtime error [$stderr]"
   exit $rc
 fi
+
+echo "---"
+stderr=$(cat $bteq_output)
+rm $bteq_output
 
 echo $BMS_TOKEN_EXIT_OK
