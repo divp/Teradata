@@ -541,8 +541,8 @@ CREATE MULTISET TABLE store_sales ,NO FALLBACK ,
       ss_coupon_amt DECIMAL(7,2),
       ss_net_paid DECIMAL(7,2),
       ss_net_paid_inc_tax DECIMAL(7,2),
-      ss_net_profit DECIMAL(7,2), 
-     FOREIGN KEY ( ss_sold_date_sk ) REFERENCES WITH NO CHECK OPTION tpcds1000g.date_dim ( d_date_sk ))
+      ss_net_profit DECIMAL(7,2)
+    )
 NO PRIMARY INDEX 
 PARTITION BY ( COLUMN ADD 10,RANGE_N(ss_sold_date_sk BETWEEN 2450816 AND 2452642 EACH 1, NO RANGE OR UNKNOWN) );
 
