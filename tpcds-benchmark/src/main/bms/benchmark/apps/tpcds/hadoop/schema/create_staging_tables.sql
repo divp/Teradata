@@ -1,6 +1,6 @@
 
-CREATE DATABASE IF NOT EXISTS raw_ingest_sf1;
-USE raw_ingest_sf1;
+CREATE DATABASE IF NOT EXISTS raw_ingest_sf1000;
+USE raw_ingest_sf1000;
 
 DROP TABLE IF EXISTS s_purchase_lineitem;
 
