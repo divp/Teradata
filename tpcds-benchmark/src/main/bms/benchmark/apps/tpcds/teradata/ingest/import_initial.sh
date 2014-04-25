@@ -7,8 +7,7 @@ set -o nounset
 # Must source exports.sh in order to export global parameters defined in test properties
 . $BENCHMARK_PATH/exports.sh
 . $BENCHMARK_PATH/lib/lib.sh
-
-BACKUP_TAG=
+. $BENCHMARK_PATH/lib/teradata_lib.sh
 
 # Generate fastload scripts from live data dictionary definitions
 function get_fastload_script  {
@@ -24,7 +23,7 @@ function get_fastload_script  {
     bteq <<EOF > $bteq_output
         .LOGON ${BMS_TERADATA_DB_HOST}/${BMS_TERADATA_DB_UID},${BMS_TERADATA_DB_PWD};
         DATABASE ${BMS_TERADATA_DBNAME_ETL1};
-
+        
         SELECT columnName FROM dbc.columns WHERE tableName='${table_name}' AND databaseName='${BMS_TERADATA_DBNAME_ETL1}';
 
         .LOGOFF;
