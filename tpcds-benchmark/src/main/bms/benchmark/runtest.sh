@@ -5,7 +5,7 @@ function error_handler() {
   echo "Line exited with status: ${2}"
 }
 
-trap 'error_handler ${LINENO} $?' ERR
+#trap 'error_handler ${LINENO} $?' ERR
 
 # Example command line:
 # /opt/benchmark/runtest.sh -j esg_benchmark.jmx -p /opt/benchmark/config/sample/test.properties
@@ -81,6 +81,7 @@ function check_cli_options {
 
 function check_jmeter {
     required_jars=($JMETER_HOME/lib/jsch-0.1.48.jar $JMETER_HOME/lib/ext/jmeter-ssh-sampler-td-0.1.0.jar)
+    
     for jar in $required_jars
     do
         if [ ! -r $jar ]
@@ -199,7 +200,7 @@ function ssh_passwordless_help {
             ssh $BMS_TARGET_UID@\$node "[[ ! -f ~/.ssh/id_rsa.pub ]] && ssh-keygen"
             #for node in ${CLUSTER_NODES[@]}; do ssh root@${node} 'mkdir -p /data/benchmark; chown bms:root /data/benchmark; chmod 755 /data/benchmark'; done
         fi
-        
+        ssh-copy-id -i ~/.ssh/id_rsa.pub $BMS_USER@{node}
         cat ~/.ssh/id_rsa.pub | ssh \${node} 'cat >> ~/.ssh/authorized_keys'
 
         # and adjust permissions. SSH will refuse passwordless connections if these persmissions are
@@ -353,9 +354,9 @@ function get_node_system_data {
 DEBUG=0
 STATS='full'
 JMETER_OPTIONS=''
-DRY_RUN=0
+RESOLVE_EXPORTS=0
 CHECK_CONFIG=1
-while getopts "gj:J:np:s:" opt
+while getopts "egj:J:np:s:" opt
 do
     case $opt in
         g) DEBUG=1 ;;
@@ -363,6 +364,7 @@ do
         J) JMETER_OPTIONS=$JMETER_OPTIONS' -J'$OPTARG ;;
         n) CHECK_CONFIG=0 ; STATS='nostats';;
         p) BMS_PROPS_FILE=$OPTARG ;;
+        e) RESOLVE_EXPORTS=1 ;;
         s) STATS=$OPTARG ;;
         \?)
             print_help >&2
@@ -387,6 +389,12 @@ then
     log_error "Error generating exports. Stopping test."
     exit 1
 fi
+
+if [ $RESOLVE_EXPORTS -eq 1 ]
+then
+    log_info "Exiting after resolving runtime exports (-e option found). This mode resolves the supplied properties file and generates $BENCHMARK_PATH/exports.sh for use outside JMeter"
+    exit 0
+fi    
 
 . $BENCHMARK_PATH/exports.sh
 
