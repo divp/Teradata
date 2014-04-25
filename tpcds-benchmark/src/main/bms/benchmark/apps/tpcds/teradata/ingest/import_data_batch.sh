@@ -7,6 +7,7 @@ set -o nounset
 # Must source exports.sh in order to export global parameters defined in test properties
 . $BENCHMARK_PATH/exports.sh
 . $BENCHMARK_PATH/lib/lib.sh
+. $BENCHMARK_PATH/lib/teradata_lib.sh
 
 function print_help {
     echo "Usage: $0 -b BATCH_ID -t TABLES"
@@ -27,7 +28,7 @@ function get_fastload_script  {
     bteq <<EOF > $bteq_output
         .LOGON ${BMS_TERADATA_DB_HOST}/${BMS_TERADATA_DB_UID},${BMS_TERADATA_DB_PWD};
         DATABASE ${BMS_TERADATA_DBNAME_ETL1};
-
+        
         SELECT columnName FROM dbc.columns WHERE tableName='${table_name}' AND databaseName='${BMS_TERADATA_DBNAME_ETL1}';
 
         .LOGOFF;
@@ -62,7 +63,7 @@ EOF
         then
             state=2
             continue
-        fi
+            fi
         if [[ $state -eq 2 ]] 
         then
             if [[ $line =~ ^$ ]]
@@ -153,7 +154,7 @@ then
     exit 1
 else    
     log_info "Found command line arguments: request for load of batch ${batch_id}"
-    batch_dir=$BMS_SOURCE_DATA_PATH/tpcds/$BMS_ETL_SCALE_TAG/00${batch_id}
+    batch_dir=$BMS_SOURCE_DATA_PATH/tpcds/$BMS_ETL_SCALE_TAG/$(printf "%03d" ${batch_id})
     if [ -d $batch_dir ]
     then
         log_info "Batch ${batch_id} found at ${batch_dir}"
@@ -180,6 +181,7 @@ do
     get_fastload_script $table $input_file > $script
     [ $? -ne 0 ] && (tail $log; log_error "Error generating fastload script. See detail log: $log"; exit 1)
     
+    remove_fastload_table_lock $table
     log_info "Running fastload into '${table}' from ${input_file}. Script: ${script}" | tee -a $log
     fastload <$script >> $log
     [ $? -ne 0 ] && (tail $log; log_error "Error running fastload script ($script). See detail log: $log"; exit 1)
