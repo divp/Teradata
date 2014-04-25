@@ -29,3 +29,22 @@ function drop_table {
 EOF
 }
 
+function remove_fastload_table_lock {
+    table=$1
+    if [ $# -ne 1 ]
+    then
+        log_error "Remove fastload table lock: expecting table name as argument"
+        exit 1
+    fi
+    log_info "Removing fastload lock on table ${table}"
+    bteq <<EOF 2>&1 > $log
+        .LOGON ${BMS_TERADATA_DB_HOST}/${BMS_TERADATA_DB_UID},${BMS_TERADATA_DB_PWD};
+        DATABASE ${BMS_TERADATA_DBNAME_ETL1};
+
+        DELETE FROM sysadmin.fastlog WHERE tableName='${table}' AND databaseName='${BMS_TERADATA_DBNAME_ETL1}';
+        
+        .LOGOFF
+        .QUIT
+EOF
+}
+
