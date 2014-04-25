@@ -2,7 +2,8 @@
 # ******************************************
 # Sample exports file - use only for basic testing. exports.sh is generated automatically at runtime by the BMS framework based on the
 # properties file supplied to runtest.sh via the -p option (e.g. $BENCHMARK_PATH/config/test.base.properties)
-# You may edit properties in this file for testing. Your test scripts must import $BENCHMARK_PATH/exports.sh to function within the BMS framework
+# You may edit properties in this file for testing and rename it $BENCHMARK_PATH/exports.sh to debug test scripts without running the entire BMS framework
+# Your test scripts must import $BENCHMARK_PATH/exports.sh to function within the BMS framework
 # Be advised that exports.sh is automatically overwritten at runtime, so ensure you have a copy of your settings before starting tests 
 # driven by $BNECHMARK_PATH/runtest.sh
 # ******************************************
