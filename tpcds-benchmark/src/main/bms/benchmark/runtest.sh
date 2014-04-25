@@ -81,7 +81,25 @@ function check_cli_options {
 
 function check_jmeter {
     required_jars=($JMETER_HOME/lib/jsch-0.1.48.jar $JMETER_HOME/lib/ext/jmeter-ssh-sampler-td-0.1.0.jar)
-    
+    log_info "Checking Java runtime environment"
+    which java
+    if [ $? -ne 0 ]
+    then
+        log_error "Error locating Java runtime environment. Please locate a Java 1.7.x installation or higher and add to the system path"
+        exit 1
+    fi
+    java -version
+    rc=$?
+    if [ $rc -ne 0 ]
+    then
+        log_error "Error while verifying Java runtime environment"
+        exit 1
+    fi
+    if [ ! -x $JMETER_BIN ]
+    then
+        log_error "Error while verifying JMeter executable at $JMETER_BIN. Ensure the installation exists and has execution permissions"
+        exit 1
+    fi
     for jar in $required_jars
     do
         if [ ! -r $jar ]
