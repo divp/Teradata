@@ -54,6 +54,7 @@ do
     echo "Configuring passwordless SSH to node $node"
     #ssh root@${node} "useradd bms; mkdir /home/bms; chown bms:root /home/bms"
     ssh root@${node} "chmod a+rx /data; mkdir -p /data/benchmark; chmod 755 /data/benchmark; chown bms:root /data/benchmark"
+    ssh-copy-id -i ~/.ssh/id_rsa.pub $BMS_USER@{node}
     #echo -e "tdc\ntdc" | ssh root@${node} "passwd bms"
     #ssh bms@${node} "[[ ! -f ~/.ssh/id_rsa.pub ]] && ssh-keygen"
     #cat ~/.ssh/id_rsa.pub | ssh ${node} 'cat >> ~/.ssh/authorized_keys'
