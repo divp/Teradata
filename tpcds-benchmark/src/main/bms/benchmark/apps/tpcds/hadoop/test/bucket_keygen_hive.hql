@@ -8,11 +8,11 @@ CLUSTERED BY(sk) INTO 32 BUCKETS
 STORED AS ORC;
 
 set hive.enforce.bucketing = true;
-set mapred.reduce.tasks = 5;
+set mapred.reduce.tasks = 32;
 
 INSERT OVERWRITE TABLE test_bucket_fact
-select sk, value from (
-  select rank() over (distribute by abs(hash(value) sort by value) sk, value from raw_data
+select bk*1000000 + sk, value from (
+  select abs(hash(value)%32 bk, rank() over (distribute by abs(hash(value)%32 sort by value) sk, value from raw_data
 ) x DISTRIBUTE BY sk
 ;
 
