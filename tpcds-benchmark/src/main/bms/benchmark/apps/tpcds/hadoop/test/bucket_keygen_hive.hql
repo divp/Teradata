@@ -8,6 +8,7 @@ CLUSTERED BY(sk) INTO 32 BUCKETS
 STORED AS ORC;
 
 set hive.enforce.bucketing = true;
+set mapred.reduce.tasks = 5;
 
 INSERT OVERWRITE TABLE test_bucket_fact
 select sk, value from (
