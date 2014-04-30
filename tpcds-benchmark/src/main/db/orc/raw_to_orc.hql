@@ -174,7 +174,7 @@ case when s_state='' then null else s_state end,
 case when s_zip='' then null else s_zip end,
 case when s_country='' then null else s_country end,
 s_gmt_offset,
-s_tax_precentage
+s_tax_percentage
 from raw_tpcds1000g.store;
 
 insert overwrite table call_center

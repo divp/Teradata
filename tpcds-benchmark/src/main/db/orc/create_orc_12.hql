@@ -1,4 +1,4 @@
-use tpcds1000g;
+use orc_tpcds1000g;
 
 drop table if exists customer_address;
 create  table customer_address
@@ -184,7 +184,7 @@ create  table store
     s_zip                     varchar(10)                      ,
     s_country                 varchar(20)                   ,
     s_gmt_offset              double                  ,
-    s_tax_precentage          double                  
+    s_tax_percentage          double                  
 )  STORED AS orc  tblproperties ("orc.compress"="SNAPPY");
 
 drop table if exists call_center;
