@@ -54,7 +54,8 @@ else
     fi
 
     log_info "Downloading compiled statistics from head node"
-    scp $TARGET_UID@$TARGET_HOST:$BMS_OUTPUT_PATH/\*_${RUN_ID}_allnodes.log $BMS_OUTPUT_PATH
+    scp $BMS_TARGET_UID@$BMS_TARGET_HOST:$BMS_OUTPUT_PATH/bms-${RUN_ID}-ALL.* $BMS_OUTPUT_PATH 
+    scp $BMS_TARGET_UID@$BMS_TARGET_HOST:$BMS_OUTPUT_PATH/\*_${RUN_ID}_allnodes.log $BMS_OUTPUT_PATH
 fi
 
 INPUT_FILE=$BMS_OUTPUT_PATH/iostat_${RUN_ID}_allnodes.log
@@ -63,7 +64,7 @@ log_info "Staging iostat data (detail log at $LOG_FILE)"
 
 fastload 2>&1 > $LOG_FILE <<EOF
 
-LOGON localhost/dbc,dbc;
+.LOGON localhost/dbc,dbc;
 
 DATABASE benchmark;
 
@@ -92,9 +93,9 @@ CREATE TABLE stage_iostat,
 )
 UNIQUE PRIMARY INDEX (tstamp_epoch,node_id,device);
 
-ERRLIMIT 1;
+.ERRLIMIT 1;
 
-SET RECORD VARTEXT ',';
+.SET RECORD VARTEXT ',';
 DEFINE
     in_tstamp_epoch (VARCHAR(30))
     ,in_x0 (VARCHAR(30))
@@ -115,7 +116,7 @@ FILE=$INPUT_FILE;
 
 SHOW;
 
-BEGIN LOADING benchmark.stage_iostat ERRORFILES benchmark.ERR1, benchmark.ERR2;
+.BEGIN LOADING benchmark.stage_iostat ERRORFILES benchmark.ERR1, benchmark.ERR2;
 
 INSERT INTO benchmark.stage_iostat VALUES (
     :in_tstamp_epoch
@@ -135,8 +136,8 @@ INSERT INTO benchmark.stage_iostat VALUES (
     ,:in_util
 );
 
-END LOADING;
-LOGOFF;
+.END LOADING;
+.LOGOFF;
 EOF
 
 rc=$?
@@ -262,7 +263,7 @@ log_info "Staging sar data (detail log at $LOG_FILE)"
 
 fastload 2>&1 > $LOG_FILE <<EOF
 
-LOGON localhost/dbc,dbc;
+.LOGON localhost/dbc,dbc;
 
 DATABASE benchmark;
 
@@ -277,7 +278,7 @@ CREATE TABLE stage_sarstat,
     ,x0 INT     
     ,node_id VARCHAR(30)
     ,x1 VARCHAR(30)
-    --,x2 VARCHAR(30)
+    ,x2 VARCHAR(30)
     ,iface VARCHAR(20)
     ,rxpcks DECIMAL(9,2)
     ,txpcks DECIMAL(9,2)
@@ -291,13 +292,13 @@ UNIQUE PRIMARY INDEX (tstamp_epoch,node_id);
 
 ERRLIMIT 1;
 
-SET RECORD VARTEXT ',';
+.SET RECORD VARTEXT ',';
 DEFINE
     in_tstamp_epoch (VARCHAR(30))
     ,in_x0 (VARCHAR(30))    
     ,in_node_id (VARCHAR(30))
     ,in_x1 (VARCHAR(30))
-    /*,in_x2 (VARCHAR(30))*/
+    ,in_x2 (VARCHAR(30))
     ,in_iface (VARCHAR(30))
     ,in_rxpcks (VARCHAR(30))
     ,in_txpcks (VARCHAR(30))
@@ -310,14 +311,14 @@ FILE=$INPUT_FILE;
 
 SHOW;
 
-BEGIN LOADING benchmark.stage_sarstat ERRORFILES benchmark.ERR1, benchmark.ERR2;
+.BEGIN LOADING benchmark.stage_sarstat ERRORFILES benchmark.ERR1, benchmark.ERR2;
 
 INSERT INTO benchmark.stage_sarstat VALUES (
     :in_tstamp_epoch
     ,:in_x0    
     ,:in_node_id
     ,:in_x1
-    /*,:in_x2*/
+    ,:in_x2
     ,:in_iface
     ,:in_rxpcks
     ,:in_txpcks
@@ -328,8 +329,8 @@ INSERT INTO benchmark.stage_sarstat VALUES (
     ,:in_rxmcsts
 );
 
-END LOADING;
-LOGOFF;
+.END LOADING;
+.LOGOFF;
 EOF
 
 rc=$?

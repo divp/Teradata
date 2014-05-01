@@ -5,6 +5,7 @@ set -o nounset
 # Must source exports.sh in order to export global parameters defined in test properties
 . $BENCHMARK_PATH/exports.sh
 . $BENCHMARK_PATH/lib/lib.sh
+. $BENCHMARK_PATH/lib/teradata_lib.sh
 
 log=$(mktemp /tmp/$(basename $0).log.XXXXXXXXXX)
 log_info "Full detail log: $log"
@@ -31,13 +32,14 @@ target_table='store'
 etl_view='storv'
 tmp_table=${etl_view}_tmp
 
+drop_table ${tmp_table}
+
 log_info "Updating ${target_table} table"
 bteq <<EOF 2>&1 > $log
     .LOGON ${BMS_TERADATA_DB_HOST}/${BMS_TERADATA_DB_UID},${BMS_TERADATA_DB_PWD};
     DATABASE ${BMS_TERADATA_DBNAME_ETL1};
-
-    DROP TABLE ${tmp_table};
     
+    -- Save ETL view data in temporary table (required to preserve state before update step below)
     CREATE TABLE ${tmp_table} AS (
     SELECT 
         s_store_sk
@@ -71,12 +73,14 @@ bteq <<EOF 2>&1 > $log
         ,s_tax_percentage
     FROM ${etl_view}) WITH DATA;
     
+    -- Update target table
     UPDATE ${target_table}
     SET 
         s_rec_end_date = CURRENT_DATE - 1
     WHERE  s_rec_end_date IS NULL
     AND s_store_id IN (SELECT s_store_id FROM ${etl_view});
     
+    -- Insert new rows
     INSERT INTO ${target_table} (
         s_store_sk
         ,s_store_id
@@ -125,4 +129,4 @@ fi
 
 log_info "Table loaded ${target_table} successfully"
 
-
+echo $BMS_TOKEN_EXIT_OK

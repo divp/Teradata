@@ -10,7 +10,6 @@ CREATE MULTISET TABLE inventory ,NO FALLBACK ,
       inv_quantity_on_hand INTEGER)
 PRIMARY INDEX ( inv_item_sk );
 
-
 CREATE MULTISET TABLE ship_mode ,NO FALLBACK ,
      NO BEFORE JOURNAL,
      NO AFTER JOURNAL,
@@ -24,7 +23,6 @@ CREATE MULTISET TABLE ship_mode ,NO FALLBACK ,
       sm_carrier CHAR(20) CHARACTER SET LATIN NOT CASESPECIFIC,
       sm_contract CHAR(20) CHARACTER SET LATIN NOT CASESPECIFIC)
 PRIMARY INDEX ( sm_ship_mode_sk );
-
 
 CREATE MULTISET TABLE time_dim ,NO FALLBACK ,
      NO BEFORE JOURNAL,
@@ -43,7 +41,6 @@ CREATE MULTISET TABLE time_dim ,NO FALLBACK ,
       t_sub_shift CHAR(20) CHARACTER SET LATIN NOT CASESPECIFIC,
       t_meal_time CHAR(20) CHARACTER SET LATIN NOT CASESPECIFIC)
 PRIMARY INDEX ( t_time_sk );
-
 
 CREATE MULTISET TABLE web_site ,NO FALLBACK ,
      NO BEFORE JOURNAL,
@@ -79,7 +76,6 @@ CREATE MULTISET TABLE web_site ,NO FALLBACK ,
       web_tax_percentage DECIMAL(5,2))
 PRIMARY INDEX ( web_site_sk );
 
-
 CREATE MULTISET TABLE household_demographics ,NO FALLBACK ,
      NO BEFORE JOURNAL,
      NO AFTER JOURNAL,
@@ -92,37 +88,6 @@ CREATE MULTISET TABLE household_demographics ,NO FALLBACK ,
       hd_dep_count INTEGER,
       hd_vehicle_count INTEGER)
 PRIMARY INDEX ( hd_demo_sk );
-
-
-CREATE MULTISET TABLE store_returns_raw ,NO FALLBACK ,
-     NO BEFORE JOURNAL,
-     NO AFTER JOURNAL,
-     CHECKSUM = DEFAULT,
-     DEFAULT MERGEBLOCKRATIO
-     (
-      sr_returned_date_sk INTEGER,
-      sr_return_time_sk INTEGER,
-      sr_item_sk INTEGER NOT NULL,
-      sr_customer_sk INTEGER,
-      sr_cdemo_sk INTEGER,
-      sr_hdemo_sk INTEGER,
-      sr_addr_sk INTEGER,
-      sr_store_sk INTEGER,
-      sr_reason_sk INTEGER,
-      sr_ticket_number INTEGER NOT NULL,
-      sr_return_quantity INTEGER,
-      sr_return_amt DECIMAL(7,2),
-      sr_return_tax DECIMAL(7,2),
-      sr_return_amt_inc_tax DECIMAL(7,2),
-      sr_fee DECIMAL(7,2),
-      sr_return_ship_cost DECIMAL(7,2),
-      sr_refunded_cash DECIMAL(7,2),
-      sr_reversed_charge DECIMAL(7,2),
-      sr_store_credit DECIMAL(7,2),
-      sr_net_loss DECIMAL(7,2))
-PRIMARY INDEX ( sr_item_sk );
-
-
 CREATE MULTISET TABLE store ,NO FALLBACK ,
      NO BEFORE JOURNAL,
      NO AFTER JOURNAL,
@@ -159,8 +124,6 @@ CREATE MULTISET TABLE store ,NO FALLBACK ,
       s_gmt_offset DECIMAL(5,2),
       s_tax_percentage DECIMAL(5,2))
 PRIMARY INDEX ( s_store_sk );
-
-
 CREATE MULTISET TABLE call_center ,NO FALLBACK ,
      NO BEFORE JOURNAL,
      NO AFTER JOURNAL,
@@ -200,7 +163,6 @@ CREATE MULTISET TABLE call_center ,NO FALLBACK ,
       cc_tax_percentage DECIMAL(5,2))
 UNIQUE PRIMARY INDEX ( cc_call_center_sk );
 
-
 CREATE MULTISET TABLE warehouse ,NO FALLBACK ,
      NO BEFORE JOURNAL,
      NO AFTER JOURNAL,
@@ -223,7 +185,6 @@ CREATE MULTISET TABLE warehouse ,NO FALLBACK ,
       w_gmt_offset DECIMAL(5,2))
 PRIMARY INDEX ( w_warehouse_sk );
 
-
 CREATE MULTISET TABLE catalog_page ,NO FALLBACK ,
      NO BEFORE JOURNAL,
      NO AFTER JOURNAL,
@@ -240,7 +201,6 @@ CREATE MULTISET TABLE catalog_page ,NO FALLBACK ,
       cp_description VARCHAR(100) CHARACTER SET LATIN NOT CASESPECIFIC,
       cp_type VARCHAR(100) CHARACTER SET LATIN NOT CASESPECIFIC)
 PRIMARY INDEX ( cp_catalog_page_sk );
-
 
 CREATE MULTISET TABLE item ,NO FALLBACK ,
      NO BEFORE JOURNAL,
@@ -272,7 +232,6 @@ CREATE MULTISET TABLE item ,NO FALLBACK ,
       i_product_name CHAR(50) CHARACTER SET LATIN NOT CASESPECIFIC)
 PRIMARY INDEX ( i_item_sk );
 
-
 CREATE MULTISET TABLE web_page ,NO FALLBACK ,
      NO BEFORE JOURNAL,
      NO AFTER JOURNAL,
@@ -294,7 +253,6 @@ CREATE MULTISET TABLE web_page ,NO FALLBACK ,
       wp_image_count INTEGER,
       wp_max_ad_count INTEGER)
 PRIMARY INDEX ( wp_web_page_sk );
-
 
 CREATE MULTISET TABLE catalog_returns ,NO FALLBACK ,
      NO BEFORE JOURNAL,
@@ -330,7 +288,6 @@ CREATE MULTISET TABLE catalog_returns ,NO FALLBACK ,
       cr_store_credit DECIMAL(7,2),
       cr_net_loss DECIMAL(7,2))
 PRIMARY INDEX ( cr_item_sk ,cr_order_number );
-
 
 CREATE MULTISET TABLE catalog_sales ,NO FALLBACK ,
      NO BEFORE JOURNAL,
@@ -375,7 +332,6 @@ CREATE MULTISET TABLE catalog_sales ,NO FALLBACK ,
 NO PRIMARY INDEX 
 PARTITION BY ( COLUMN ADD 10,RANGE_N(cs_sold_date_sk BETWEEN 2450815 AND 2452654 EACH 1, NO RANGE OR UNKNOWN) );
 
-
 CREATE MULTISET TABLE customer ,NO FALLBACK ,
      NO BEFORE JOURNAL,
      NO AFTER JOURNAL,
@@ -401,7 +357,6 @@ CREATE MULTISET TABLE customer ,NO FALLBACK ,
       c_email_address CHAR(50) CHARACTER SET LATIN NOT CASESPECIFIC,
       c_last_review_date CHAR(10) CHARACTER SET LATIN NOT CASESPECIFIC)
 PRIMARY INDEX ( c_customer_sk );
-
 
 CREATE MULTISET TABLE date_dim ,NO FALLBACK ,
      NO BEFORE JOURNAL,
@@ -439,7 +394,6 @@ CREATE MULTISET TABLE date_dim ,NO FALLBACK ,
       d_current_year CHAR(1) CHARACTER SET LATIN NOT CASESPECIFIC)
 PRIMARY INDEX ( d_date_sk );
 
-
 CREATE MULTISET TABLE income_band ,NO FALLBACK ,
      NO BEFORE JOURNAL,
      NO AFTER JOURNAL,
@@ -450,7 +404,6 @@ CREATE MULTISET TABLE income_band ,NO FALLBACK ,
       ib_lower_bound INTEGER,
       ib_upper_bound INTEGER)
 PRIMARY INDEX ( ib_income_band_sk );
-
 
 CREATE MULTISET TABLE store_returns ,NO FALLBACK ,
      NO BEFORE JOURNAL,
@@ -480,7 +433,6 @@ CREATE MULTISET TABLE store_returns ,NO FALLBACK ,
       sr_net_loss DECIMAL(7,2))
 PRIMARY INDEX ( sr_item_sk ,sr_ticket_number );
 
-
 CREATE MULTISET TABLE customer_demographics ,NO FALLBACK ,
      NO BEFORE JOURNAL,
      NO AFTER JOURNAL,
@@ -497,40 +449,6 @@ CREATE MULTISET TABLE customer_demographics ,NO FALLBACK ,
       cd_dep_employed_count INTEGER,
       cd_dep_college_count INTEGER)
 PRIMARY INDEX ( cd_demo_sk );
-
-
-CREATE MULTISET TABLE store_sales_raw ,NO FALLBACK ,
-     NO BEFORE JOURNAL,
-     NO AFTER JOURNAL,
-     CHECKSUM = DEFAULT,
-     DEFAULT MERGEBLOCKRATIO
-     (
-      ss_sold_date_sk INTEGER,
-      ss_sold_time_sk INTEGER,
-      ss_item_sk INTEGER NOT NULL,
-      ss_customer_sk INTEGER,
-      ss_cdemo_sk INTEGER,
-      ss_hdemo_sk INTEGER,
-      ss_addr_sk INTEGER,
-      ss_store_sk INTEGER,
-      ss_promo_sk INTEGER,
-      ss_ticket_number INTEGER NOT NULL,
-      ss_quantity INTEGER,
-      ss_wholesale_cost DECIMAL(7,2),
-      ss_list_price DECIMAL(7,2),
-      ss_sales_price DECIMAL(7,2),
-      ss_ext_discount_amt DECIMAL(7,2),
-      ss_ext_sales_price DECIMAL(7,2),
-      ss_ext_wholesale_cost DECIMAL(7,2),
-      ss_ext_list_price DECIMAL(7,2),
-      ss_ext_tax DECIMAL(7,2),
-      ss_coupon_amt DECIMAL(7,2),
-      ss_net_paid DECIMAL(7,2),
-      ss_net_paid_inc_tax DECIMAL(7,2),
-      ss_net_profit DECIMAL(7,2))
-PRIMARY INDEX ( ss_item_sk );
-
-
 CREATE MULTISET TABLE web_returns ,NO FALLBACK ,
      NO BEFORE JOURNAL,
      NO AFTER JOURNAL,
@@ -563,7 +481,6 @@ CREATE MULTISET TABLE web_returns ,NO FALLBACK ,
       wr_net_loss DECIMAL(7,2))
 PRIMARY INDEX ( wr_item_sk ,wr_order_number );
 
-
 CREATE MULTISET TABLE customer_address ,NO FALLBACK ,
      NO BEFORE JOURNAL,
      NO AFTER JOURNAL,
@@ -585,7 +502,6 @@ CREATE MULTISET TABLE customer_address ,NO FALLBACK ,
       ca_location_type CHAR(20) CHARACTER SET LATIN NOT CASESPECIFIC)
 PRIMARY INDEX ( ca_address_sk );
 
-
 CREATE MULTISET TABLE reason ,NO FALLBACK ,
      NO BEFORE JOURNAL,
      NO AFTER JOURNAL,
@@ -596,7 +512,6 @@ CREATE MULTISET TABLE reason ,NO FALLBACK ,
       r_reason_id CHAR(16) CHARACTER SET LATIN NOT CASESPECIFIC NOT NULL,
       r_reason_desc VARCHAR(100) CHARACTER SET LATIN NOT CASESPECIFIC)
 PRIMARY INDEX ( r_reason_sk );
-
 
 CREATE MULTISET TABLE store_sales ,NO FALLBACK ,
      NO BEFORE JOURNAL,
@@ -626,11 +541,10 @@ CREATE MULTISET TABLE store_sales ,NO FALLBACK ,
       ss_coupon_amt DECIMAL(7,2),
       ss_net_paid DECIMAL(7,2),
       ss_net_paid_inc_tax DECIMAL(7,2),
-      ss_net_profit DECIMAL(7,2), 
-     FOREIGN KEY ( ss_sold_date_sk ) REFERENCES WITH NO CHECK OPTION tpcds1000g.date_dim ( d_date_sk ))
+      ss_net_profit DECIMAL(7,2)
+    )
 NO PRIMARY INDEX 
 PARTITION BY ( COLUMN ADD 10,RANGE_N(ss_sold_date_sk BETWEEN 2450816 AND 2452642 EACH 1, NO RANGE OR UNKNOWN) );
-
 
 CREATE MULTISET TABLE promotion ,NO FALLBACK ,
      NO BEFORE JOURNAL,
@@ -658,7 +572,6 @@ CREATE MULTISET TABLE promotion ,NO FALLBACK ,
       p_purpose CHAR(15) CHARACTER SET LATIN NOT CASESPECIFIC,
       p_discount_active CHAR(1) CHARACTER SET LATIN NOT CASESPECIFIC)
 PRIMARY INDEX ( p_promo_sk );
-
 CREATE MULTISET TABLE web_sales ,NO FALLBACK ,
      NO BEFORE JOURNAL,
      NO AFTER JOURNAL,
@@ -701,4 +614,3 @@ CREATE MULTISET TABLE web_sales ,NO FALLBACK ,
       ws_net_profit DECIMAL(7,2))
 NO PRIMARY INDEX 
 PARTITION BY (COLUMN ADD 10,RANGE_N(ws_sold_date_sk BETWEEN 2450816  AND 2452642  EACH 1, NO RANGE OR UNKNOWN) );
-

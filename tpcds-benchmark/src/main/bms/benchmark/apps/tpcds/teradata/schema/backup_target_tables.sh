@@ -5,6 +5,7 @@ set -o nounset
 # Must source exports.sh in order to export global parameters defined in test properties
 . $BENCHMARK_PATH/exports.sh
 . $BENCHMARK_PATH/lib/lib.sh
+. $BENCHMARK_PATH/lib/teradata_lib.sh
 
 function print_help {
     echo "Usage:"
@@ -62,16 +63,17 @@ do
 EOF
     ;;
     move)
-        log_info "Moving table contents from ${table} into ${backup_table}"
+        log_info "Moving table contents (rename) from ${table} into ${backup_table}, keep empty source"
         bteq_output=$(mktemp)
+        remove_fastload_table_lock ${table}
         bteq <<EOF > $bteq_output
             .LOGON ${BMS_TERADATA_DB_HOST}/${BMS_TERADATA_DB_UID},${BMS_TERADATA_DB_PWD};
             DATABASE ${BMS_TERADATA_DBNAME_ETL1};
 
-            RENAME TABLE ${table} TO _bak_${tstamp}_${table};
+            RENAME TABLE ${table} TO ${backup_table};
             
             CREATE TABLE ${table} AS (
-                SELECT * FROM _bak_${tstamp}_${table}
+                SELECT * FROM ${backup_table}
             ) WITH NO DATA;
 
             .LOGOFF;

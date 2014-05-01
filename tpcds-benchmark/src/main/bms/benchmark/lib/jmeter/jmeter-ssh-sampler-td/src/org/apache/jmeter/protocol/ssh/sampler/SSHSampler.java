@@ -36,7 +36,6 @@ import com.jcraft.jsch.Session;
 /**
  * SSH Sampler that collects single lines of output and returns
  * them as samples.
- *
  */
 public class SSHSampler extends AbstractSampler implements TestBean {
 	private static final long serialVersionUID = -1644622213906052022L;
@@ -45,7 +44,7 @@ public class SSHSampler extends AbstractSampler implements TestBean {
 	
 	private static final int CONNECTION_TIMEOUT = 5000;
 	
-	private static final String VERSION = "1.3.035";
+	private static final String VERSION = "1.4.023";
 
 	private String hostname = "";
 	private int port = 22;
@@ -56,31 +55,49 @@ public class SSHSampler extends AbstractSampler implements TestBean {
 	private String command = "date";
 
 	private static final JSch jsch = new JSch();
+	private static long sampleCount = 0;
+	private static long instanceCount = 0;
+	private long instanceId;
 	private Session session = null;
 	
 	private String failureReason = "Unknown";
 	
 	public SSHSampler() {
 		super();
+		instanceCount++;
+		instanceId=instanceCount;
 		setName("Teradata SSH Sampler for JMeter  (v." + VERSION + ")");
 	}
 	
 	public SampleResult sample(Entry e) {
+		sampleCount++;
 		SampleResult res = new SampleResult();
 		//res.setSampleLabel(username + "@" + hostname + ":" + port);
 		res.setSampleLabel(getName());
-		
+		if (sampleCount == 1) {
+			log.info("Teradata SSH Sampler for JMeter  (v." + VERSION + ")");
+		}
+		final String ERROR_DESC="Runtime error while processing SSH request: ";
 		// Set up sampler return types
 		res.setSamplerData(command);
 		res.setDataType(SampleResult.TEXT);
 		res.setContentType("text/plain");
 		
 		String response;
-		if(session == null) {
-			log.info("Teradata SSH Sampler for JMeter  (v." + VERSION + ")");
-			log.info("Creating SSH connection to " +  getUsername() + "@" + getHostname() + ":" + getPort() +
-					" [sampler instance: '" + getName() + "']");
+		if (session == null) {
 			connect();
+		} else {
+		    try {
+		        if (!session.isConnected()) {
+		            log.debug("Session is disconnected. Creating new connection ");
+		            connect();
+		        }
+		    } catch (Exception e1) {
+				res.setSuccessful(false);
+				res.setResponseCode("Exception");
+				res.setResponseMessage(e1.getClass().getName() + ":" + e1.getMessage());
+				log.error(ERROR_DESC + e1.getClass().getName() + ":" + e1.getMessage());
+		    }
 		}
 		
 		try {
@@ -92,43 +109,30 @@ public class SSHSampler extends AbstractSampler implements TestBean {
 			}
 			response = doCommand(session, command, res);
 			res.setResponseData(response.getBytes());
-			
 			res.setSuccessful(true);
 			res.setResponseCodeOK();
 	        res.setResponseMessageOK();
-		} catch (JSchException e1) {
-			res.setSuccessful(false);
-			res.setResponseCode("JSchException");
-			res.setResponseMessage(e1.getMessage());
-			log.error(e1.getMessage());
-		} catch (IOException e1) {
-			res.setSuccessful(false);
-			res.setResponseCode("IOException");
-			res.setResponseMessage(e1.getMessage());
-			log.error(e1.getMessage());
-		} catch (NullPointerException e1) {
-			res.setSuccessful(false);
-			res.setResponseCode("Connection Failed");
-			res.setResponseMessage(e1.getMessage());
-			log.error(e1.getMessage());
 		} catch (Exception e1) {
 			res.setSuccessful(false);
 			res.setResponseCode("Exception");
-			res.setResponseMessage(e1.getMessage());
-			log.error(e1.getMessage());
-		}
-		if(session != null) {
-			log.info("Closing SSH connection to " +  getUsername() + "@" + getHostname() + ":" + getPort() +
-					" [sampler instance: '" + getName() + "']");
-			disconnect();
+			res.setResponseMessage(e1.getClass().getName() + ":" + e1.getMessage());
+			log.error(ERROR_DESC + e1.getClass().getName() + ":" + e1.getMessage());
 		}
 		return res;
 	}
 	
+	// Get synoptic string representation to avoid overflowing output logs
+	// Use ellipsis to signal truncation and include enough text from string's end
+	// to capture status tokens (e.g. BMS_TOKEN_OK='@@@OK@@@')
 	private String truncate(String string) {
-		final int SUBSTR_LENGTH = 8192;
-		if (string.length() > SUBSTR_LENGTH) {
-			return string.substring(0, SUBSTR_LENGTH) + "[...]";
+		final int BUFFER_LENGTH_KB = 8;
+		final int BUFFER_LENGTH = BUFFER_LENGTH_KB*1024;
+		final int EPILOG_LENGTH = 64;
+		if (string.length() > BUFFER_LENGTH) {
+			return string.substring(0, BUFFER_LENGTH - EPILOG_LENGTH) 
+					+ "\n[...]<Truncated by SSH sampler to fit in buffer (" + 
+					+ BUFFER_LENGTH_KB + "KB)>[...]\n"
+					+ string.substring(BUFFER_LENGTH - EPILOG_LENGTH + 1);
 		} else {
 			return string;
 		}
@@ -155,34 +159,42 @@ public class SSHSampler extends AbstractSampler implements TestBean {
 	 * @throws JSchException 
 	 * @throws IOException Error has occurred down in the network layer
 	 */
-	private String doCommand(Session session, String command, SampleResult res) throws JSchException, IOException {
+	private String doCommand(Session session, String command, SampleResult res) throws SSHCommandException, JSchException, IOException {
 
 		long startTime = System.nanoTime();
-		
 		ChannelExec channel = (ChannelExec) session.openChannel("exec");
-		log.info("[" + getName() + "][#" + channel.getId() + "]: executing command '" + truncate(command) + "'" );		
+		log.info(
+				String.format("Executing command [%s][%s][id:%d][channel:%d][sample:%d]:'%s'",
+					getName(), 
+					getThreadName(),
+					instanceId,
+					channel.getId(), 
+					sampleCount,
+					truncate(command)));
 		BufferedReader stdoutReader = new BufferedReader(new InputStreamReader(channel.getInputStream()));
 		BufferedReader stderrReader = new BufferedReader(new InputStreamReader(channel.getErrStream()));
 		channel.setCommand(command);
 		res.sampleStart();
 		channel.connect();
-		String stdout= readBufferString(stdoutReader);
-		String stderr= readBufferString(stderrReader);
+		String stdout = readBufferString(stdoutReader);
+		String stderr = readBufferString(stderrReader);
 		res.sampleEnd();
 		float elapsedTime = (System.nanoTime() - startTime)/(1.0e9f);
 		
 		log.info(
-			String.format("[%s][#%d][%.3fs] command response (stdout): '%s'",
-			getName(), 
-			channel.getId(), 
-			elapsedTime, 
-			stdout));
+			String.format("Command response (stdout) [%s][id:%d][t:%.3fs]:'%s'",
+				getName(), 
+				instanceId,
+				elapsedTime, 
+				stdout));
 		if (stderr.length() > 0) {
 			log.error(
-					String.format("[%s][#%d] command response (stderr): '%s'",
-					getName(), 
-					channel.getId(), 
-					stderr));
+					String.format("Command response (stderr) [%s][id:%d][t:%.3fs]:'%s'",
+						getName(),
+						instanceId,
+						elapsedTime, 
+						stderr));
+			throw new SSHCommandException("Runtime error in SSH sampler '" + this.getName() + "' [" + stderr +"]" );
 		}
 
 		channel.disconnect();
@@ -194,6 +206,8 @@ public class SSHSampler extends AbstractSampler implements TestBean {
 	 */
 	public void connect() {
 		try {
+			log.debug("Creating SSH connection to " +  getUsername() + "@" + getHostname() + ":" + getPort() +
+					" [sampler instance: '" + getName() + "']");
 			failureReason = "Unknown";
 			session = jsch.getSession(getUsername(), getHostname(), getPort());
 			session.setPassword(getPassword());
@@ -212,10 +226,6 @@ public class SSHSampler extends AbstractSampler implements TestBean {
 		float elapsedTime = (System.nanoTime() - startTime)/(1.0e9f);
 		System.out.println(String.format("[%.3fs]", elapsedTime));
 		//return 0;
-	}
-	
-	public void disconnect() {
-		if(session != null) session.disconnect();
 	}
 	
 	// Accessors
@@ -274,6 +284,8 @@ public class SSHSampler extends AbstractSampler implements TestBean {
 			
 		} finally {
 			if(session != null) {
+				log.debug("Closing SSH connection to " +  getUsername() + "@" + getHostname() + ":" + getPort() +
+						" [sampler instance: '" + getName() + "']");
 				session.disconnect();
 				session = null;
 			}

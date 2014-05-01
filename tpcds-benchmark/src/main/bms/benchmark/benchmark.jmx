@@ -4,9 +4,15 @@
     <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Aster/Hadoop Benchmark" enabled="true">
       <stringProp name="TestPlan.comments">Subject areas: Twitter sentiment analysis (SA), weblogs (WL), wikipedia (WP)</stringProp>
       <boolProp name="TestPlan.functional_mode">false</boolProp>
-      <boolProp name="TestPlan.serialize_threadgroups">true</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
       <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
-        <collectionProp name="Arguments.arguments"/>
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="VERSION" elementType="Argument">
+            <stringProp name="Argument.name">VERSION</stringProp>
+            <stringProp name="Argument.value">1.5.29</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
       </elementProp>
       <stringProp name="TestPlan.user_define_classpath"></stringProp>
     </TestPlan>
@@ -458,7 +464,7 @@ try {
       <hashTree>
         <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="--- Log banner: Main start" enabled="true">
           <stringProp name="BeanShellSampler.query">log.info(&quot;==================================&quot;);
-log.info(&quot;===  BMS Starting (r. 1.4.18)  ===&quot;);
+log.info(&quot;===  BMS Starting ${VERSION}  ===&quot;);
 log.info(&quot;==================================&quot;);</stringProp>
           <stringProp name="BeanShellSampler.filename"></stringProp>
           <stringProp name="BeanShellSampler.parameters"></stringProp>
@@ -482,8 +488,11 @@ log.info(&quot;&lt;  - - - - - - - - - - - - - - - V A R I A B L E S - - - - - -
         <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="DEBUG: show properties" enabled="true">
           <stringProp name="BeanShellSampler.query">import org.apache.jmeter.util.JMeterUtils;
 
+String[] keys = JMeterUtils.getJMeterProperties().keySet().toArray(new String[0]);
+Arrays.sort(keys);
+
 log.info(&quot;&gt; &gt; - - - - - - - - - - - - - - - P R OP E R T I E S - - - - - - - - - - - - - - -&quot;);
-for (prop : JMeterUtils.getJMeterProperties().propertyNames()) {
+for (prop : keys) {
     log.info(&quot;prop: &quot; + prop + &quot;=&quot; + JMeterUtils.getJMeterProperties().getProperty(prop));
 }
 log.info(&quot;&lt;  - - - - - - - - - - - - - - - P R OP E R T I E S - - - - - - - - - - - - - - -&quot;);
@@ -599,7 +608,7 @@ log.info(&quot;=================================================================
         </ResponseAssertion>
         <hashTree/>
       </hashTree>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="xSD (Stats debug)" enabled="true">
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="xSD (Stats debug)" enabled="false">
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
@@ -736,7 +745,7 @@ log.info(&quot;=================================================================
         <stringProp name="ThreadGroup.delay"></stringProp>
       </ThreadGroup>
       <hashTree>
-        <IfController guiclass="IfControllerPanel" testclass="IfController" testname="Aster" enabled="false">
+        <IfController guiclass="IfControllerPanel" testclass="IfController" testname="Aster" enabled="true">
           <stringProp name="IfController.condition">${__P(BMS_EXEC_PLATFORM_ASTER)}</stringProp>
           <boolProp name="IfController.evaluateAll">false</boolProp>
           <boolProp name="IfController.useExpression">true</boolProp>
@@ -2053,7 +2062,7 @@ if (!samplerOutput.contains(props.getProperty(&quot;BMS_TOKEN_EXIT_OK&quot;))) {
             </hashTree>
           </hashTree>
         </hashTree>
-        <IfController guiclass="IfControllerPanel" testclass="IfController" testname="Impala" enabled="false">
+        <IfController guiclass="IfControllerPanel" testclass="IfController" testname="Impala" enabled="true">
           <stringProp name="IfController.condition">${__P(BMS_EXEC_PLATFORM_IMPALA)}</stringProp>
           <boolProp name="IfController.evaluateAll">false</boolProp>
           <boolProp name="IfController.useExpression">true</boolProp>
@@ -3814,7 +3823,7 @@ echo &quot;Done loading wikipedia data into Aster, end time: $(date)&quot;
           <boolProp name="IfController.useExpression">true</boolProp>
         </IfController>
         <hashTree>
-          <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="WP UDVs" enabled="true">
+          <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="WP UDVs" enabled="false">
             <collectionProp name="Arguments.arguments">
               <elementProp name="HIVE_WP_CL_PREFIX" elementType="Argument">
                 <stringProp name="Argument.name">HIVE_WP_CL_PREFIX</stringProp>
@@ -3829,7 +3838,7 @@ echo &quot;Done loading wikipedia data into Aster, end time: $(date)&quot;
             </collectionProp>
           </Arguments>
           <hashTree/>
-          <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="WP Impala Queries" enabled="true">
+          <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="WP Impala Queries" enabled="false">
             <collectionProp name="Arguments.arguments">
               <elementProp name="IMPALA_WP_HQL_WP4" elementType="Argument">
                 <stringProp name="Argument.name">IMPALA_WP_HQL_WP4</stringProp>
@@ -7161,24 +7170,192 @@ JMeterUtils.setProperty(&quot;IMPALAD_HOST&quot;, IMPALAD[rand.nextInt(6)]);</st
           <hashTree/>
         </hashTree>
       </hashTree>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="ETL1" enabled="true">
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="ETL" enabled="true">
         <stringProp name="ThreadGroup.on_sample_error">stoptestnow</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
-          <stringProp name="LoopController.loops">${__P(BMS_ETL1_LOOP_COUNT)}</stringProp>
+          <stringProp name="LoopController.loops">${__P(BMS_ETL_LOOP_COUNT)}</stringProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">${__P(BMS_USER_COUNT)}</stringProp>
+        <stringProp name="ThreadGroup.num_threads">${__P(BMS_ETL_USER_COUNT)}</stringProp>
         <stringProp name="ThreadGroup.ramp_time">${__P(BMS_RAMP_UP_SEC)}</stringProp>
         <longProp name="ThreadGroup.start_time">1318848428000</longProp>
         <longProp name="ThreadGroup.end_time">1318848428000</longProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
         <stringProp name="ThreadGroup.duration"></stringProp>
         <stringProp name="ThreadGroup.delay"></stringProp>
-        <stringProp name="TestPlan.comments">Teradata/Hadoop ETL benchmark (Q1 2014)</stringProp>
+        <stringProp name="TestPlan.comments">Teradata/Hadoop ETL benchmark (LOAD)</stringProp>
       </ThreadGroup>
       <hashTree>
-        <IfController guiclass="IfControllerPanel" testclass="IfController" testname="TERADATA" enabled="true">
+        <IfController guiclass="IfControllerPanel" testclass="IfController" testname="Teradata" enabled="true">
           <stringProp name="IfController.condition">${__P(BMS_EXEC_PLATFORM_TERADATA)}</stringProp>
+          <boolProp name="IfController.evaluateAll">false</boolProp>
+          <boolProp name="IfController.useExpression">true</boolProp>
+        </IfController>
+        <hashTree>
+          <IfController guiclass="IfControllerPanel" testclass="IfController" testname="Load" enabled="true">
+            <stringProp name="IfController.condition">${__P(BMS_EXEC_MODE_LOAD)}</stringProp>
+            <boolProp name="IfController.evaluateAll">false</boolProp>
+            <boolProp name="IfController.useExpression">true</boolProp>
+          </IfController>
+          <hashTree>
+            <OnceOnlyController guiclass="OnceOnlyControllerGui" testclass="OnceOnlyController" testname="Intialization load (once only)" enabled="true"/>
+            <hashTree>
+              <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="Acquire query lock (ETL_SYNC_EUQ_LOCK)" enabled="true">
+                <stringProp name="TestPlan.comments">Acquire global property to hold execution of end user queryies (thread group ETLQ)</stringProp>
+                <stringProp name="BeanShellSampler.query">props.put(&quot;ETL_SYNC_EUQ_LOCK&quot;,&quot;true&quot;);
+log.info(ctx.getThread().getThreadName() + &quot;: Acquire query lock ETL_SYNC_EUQ_LOCK=&quot; + props.get(&quot;ETL_SYNC_EUQ_LOCK&quot;));</stringProp>
+                <stringProp name="BeanShellSampler.filename"></stringProp>
+                <stringProp name="BeanShellSampler.parameters"></stringProp>
+                <boolProp name="BeanShellSampler.resetInterpreter">false</boolProp>
+              </BeanShellSampler>
+              <hashTree/>
+              <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL00: Run initialization load" enabled="true">
+                <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
+                <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
+                <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
+                <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
+                <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/ingest/import_initial.sh 2&gt;&amp;1</stringProp>
+              </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
+              <hashTree>
+                <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
+                  <collectionProp name="Asserion.test_strings">
+                    <stringProp name="216552436">${BMS_TOKEN_EXIT_OK}</stringProp>
+                  </collectionProp>
+                  <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+                  <boolProp name="Assertion.assume_success">false</boolProp>
+                  <intProp name="Assertion.test_type">2</intProp>
+                  <stringProp name="Assertion.scope">all</stringProp>
+                </ResponseAssertion>
+                <hashTree/>
+              </hashTree>
+              <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL00: Validate initialization load" enabled="true">
+                <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
+                <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
+                <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
+                <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
+                <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/ingest/validate_initial.sh 2&gt;&amp;1</stringProp>
+              </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
+              <hashTree>
+                <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
+                  <collectionProp name="Asserion.test_strings">
+                    <stringProp name="216552436">${BMS_TOKEN_EXIT_OK}</stringProp>
+                  </collectionProp>
+                  <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+                  <boolProp name="Assertion.assume_success">false</boolProp>
+                  <intProp name="Assertion.test_type">2</intProp>
+                  <stringProp name="Assertion.scope">all</stringProp>
+                </ResponseAssertion>
+                <hashTree/>
+              </hashTree>
+              <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="Release query lock (ETL_SYNC_EUQ_LOCK)" enabled="true">
+                <stringProp name="TestPlan.comments">Release global property to hold execution of end user queryies (thread group ETLQ)</stringProp>
+                <stringProp name="BeanShellSampler.query">props.put(&quot;ETL_SYNC_EUQ_LOCK&quot;,&quot;false&quot;);
+log.info(ctx.getThread().getThreadName() + &quot;: Release query lock ETL_SYNC_EUQ_LOCK=&quot; + props.get(&quot;ETL_SYNC_EUQ_LOCK&quot;));</stringProp>
+                <stringProp name="BeanShellSampler.filename"></stringProp>
+                <stringProp name="BeanShellSampler.parameters"></stringProp>
+                <boolProp name="BeanShellSampler.resetInterpreter">false</boolProp>
+              </BeanShellSampler>
+              <hashTree/>
+            </hashTree>
+            <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="ETL_BATCH_COUNTER" enabled="true">
+              <stringProp name="CounterConfig.start">1</stringProp>
+              <stringProp name="CounterConfig.end"></stringProp>
+              <stringProp name="CounterConfig.incr">1</stringProp>
+              <stringProp name="CounterConfig.name">ETL_BATCH_COUNTER</stringProp>
+              <stringProp name="CounterConfig.format"></stringProp>
+              <boolProp name="CounterConfig.per_user">false</boolProp>
+            </CounterConfig>
+            <hashTree/>
+            <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="Echo update batch counter" enabled="true">
+              <stringProp name="BeanShellSampler.query">log.info(&quot;Processing update batch #&quot; + ${ETL_BATCH_COUNTER});</stringProp>
+              <stringProp name="BeanShellSampler.filename"></stringProp>
+              <stringProp name="BeanShellSampler.parameters"></stringProp>
+              <boolProp name="BeanShellSampler.resetInterpreter">false</boolProp>
+            </BeanShellSampler>
+            <hashTree/>
+            <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="Batch Update" enabled="true">
+              <boolProp name="TransactionController.includeTimers">false</boolProp>
+              <boolProp name="TransactionController.parent">false</boolProp>
+            </TransactionController>
+            <hashTree>
+              <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL_00: Import batch" enabled="true">
+                <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
+                <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
+                <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
+                <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
+                <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/ingest/import_data_batch.sh -b ${ETL_BATCH_COUNTER} 2&gt;&amp;1</stringProp>
+              </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
+              <hashTree/>
+              <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL_00: Validate batch" enabled="true">
+                <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
+                <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
+                <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
+                <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
+                <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/ingest/validate_batch.sh 2&gt;&amp;1</stringProp>
+              </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
+              <hashTree/>
+              <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL_00: Update customer" enabled="true">
+                <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
+                <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
+                <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
+                <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
+                <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/transform/update_customer.sh 2&gt;&amp;1</stringProp>
+              </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
+              <hashTree/>
+              <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL_00: Update store" enabled="true">
+                <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
+                <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
+                <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
+                <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
+                <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/transform/update_store.sh 2&gt;&amp;1</stringProp>
+              </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
+              <hashTree/>
+              <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL_00: Update store sales" enabled="true">
+                <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
+                <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
+                <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
+                <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
+                <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/transform/update_store_sales.sh 2&gt;&amp;1</stringProp>
+              </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
+              <hashTree/>
+              <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL_00: Update ledger" enabled="true">
+                <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
+                <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
+                <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
+                <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
+                <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/transform/update_ledger.sh 2&gt;&amp;1</stringProp>
+              </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
+              <hashTree/>
+              <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL_00: Update affinity" enabled="true">
+                <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
+                <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
+                <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
+                <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
+                <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/transform/update_affinity.sh 2&gt;&amp;1</stringProp>
+              </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
+              <hashTree/>
+              <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL_00: Validate update" enabled="true">
+                <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
+                <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
+                <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
+                <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
+                <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/transform/validate_update.sh 2&gt;&amp;1</stringProp>
+              </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
+              <hashTree/>
+              <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
+                <collectionProp name="Asserion.test_strings">
+                  <stringProp name="216552436">${BMS_TOKEN_EXIT_OK}</stringProp>
+                </collectionProp>
+                <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+                <boolProp name="Assertion.assume_success">false</boolProp>
+                <intProp name="Assertion.test_type">2</intProp>
+              </ResponseAssertion>
+              <hashTree/>
+            </hashTree>
+          </hashTree>
+        </hashTree>
+        <IfController guiclass="IfControllerPanel" testclass="IfController" testname="Hadoop" enabled="true">
+          <stringProp name="IfController.condition">${__P(BMS_EXEC_PLATFORM_HADOOP)}</stringProp>
           <boolProp name="IfController.evaluateAll">false</boolProp>
           <boolProp name="IfController.useExpression">true</boolProp>
         </IfController>
@@ -7207,6 +7384,296 @@ JMeterUtils.setProperty(&quot;IMPALAD_HOST&quot;, IMPALAD[rand.nextInt(6)]);</st
             <boolProp name="IfController.useExpression">true</boolProp>
           </IfController>
           <hashTree/>
+        </hashTree>
+      </hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="ETLQ" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">stoptestnow</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">${__P(BMS_ETLQ_LOOP_COUNT)}</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">${__P(BMS_ETLQ_USER_COUNT)}</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">${__P(BMS_RAMP_UP_SEC)}</stringProp>
+        <longProp name="ThreadGroup.start_time">1318848428000</longProp>
+        <longProp name="ThreadGroup.end_time">1318848428000</longProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+        <stringProp name="TestPlan.comments">Teradata/Hadoop ETL benchmark (QUERY)</stringProp>
+      </ThreadGroup>
+      <hashTree>
+        <IfController guiclass="IfControllerPanel" testclass="IfController" testname="Teradata" enabled="true">
+          <stringProp name="IfController.condition">${__P(BMS_EXEC_PLATFORM_TERADATA)}</stringProp>
+          <boolProp name="IfController.evaluateAll">false</boolProp>
+          <boolProp name="IfController.useExpression">true</boolProp>
+        </IfController>
+        <hashTree>
+          <IfController guiclass="IfControllerPanel" testclass="IfController" testname="Query" enabled="true">
+            <stringProp name="IfController.condition">${__P(BMS_EXEC_MODE_QUERY)}</stringProp>
+            <boolProp name="IfController.evaluateAll">false</boolProp>
+            <boolProp name="IfController.useExpression">true</boolProp>
+          </IfController>
+          <hashTree>
+            <GenericController guiclass="LogicControllerGui" testclass="GenericController" testname="Synchronize with ETL load" enabled="true">
+              <stringProp name="TestPlan.comments">Check lock state from ETL thread group. Hold query execution while initial load is in progress. Lock is released after initial load is completed so queries concurrent with ETL updates</stringProp>
+            </GenericController>
+            <hashTree>
+              <OnceOnlyController guiclass="OnceOnlyControllerGui" testclass="OnceOnlyController" testname="Once Only Controller" enabled="true"/>
+              <hashTree>
+                <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Wait" enabled="true">
+                  <stringProp name="TestPlan.comments">Small delay to avoid race condition on query thread lock</stringProp>
+                  <stringProp name="ConstantTimer.delay">1000</stringProp>
+                </ConstantTimer>
+                <hashTree/>
+                <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="Check query lock (ETL_SYNC_EUQ_LOCK)" enabled="true">
+                  <stringProp name="BeanShellSampler.query">if (props.get(&quot;ETL_SYNC_EUQ_LOCK&quot;) == &quot;false&quot;) {
+	log.info(ctx.getThread().getThreadName() + &quot;: ETL_SYNC_EUQ_LOCK=false already, lock released?&quot;);
+} else if (props.get(&quot;ETL_SYNC_EUQ_LOCK&quot;) == &quot;true&quot;) {
+	log.info(ctx.getThread().getThreadName() + &quot;: ETL_SYNC_EUQ_LOCK=true, load thread group is running&quot;);
+} else {
+	log.info(ctx.getThread().getThreadName() + &quot;: ETL_SYNC_EUQ_LOCK is unset (&quot; + props.get(&quot;ETL_SYNC_EUQ_LOCK&quot;) +&quot;)&quot;);
+	log.info(ctx.getThread().getThreadName() + &quot;: releasing lock to enable query threads&quot;);
+	props.put(&quot;ETL_SYNC_EUQ_LOCK&quot;,&quot;false&quot;);
+}</stringProp>
+                  <stringProp name="BeanShellSampler.filename"></stringProp>
+                  <stringProp name="BeanShellSampler.parameters"></stringProp>
+                  <boolProp name="BeanShellSampler.resetInterpreter">false</boolProp>
+                </BeanShellSampler>
+                <hashTree/>
+                <WhileController guiclass="WhileControllerGui" testclass="WhileController" testname="While (ETL_SYNC_EUQ_LOCK != false)" enabled="true">
+                  <stringProp name="WhileController.condition">${__P(ETL_SYNC_EUQ_LOCK)}</stringProp>
+                </WhileController>
+                <hashTree>
+                  <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Wait" enabled="true">
+                    <stringProp name="ConstantTimer.delay">5000</stringProp>
+                  </ConstantTimer>
+                  <hashTree/>
+                  <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="Echo sync wait message" enabled="true">
+                    <stringProp name="BeanShellSampler.query">log.debug(ctx.getThread().getThreadName() + &quot;: Waiting for ETL_SYNC_EUQ_LOCK: &quot; + props.get(&quot;ETL_SYNC_EUQ_LOCK&quot;));</stringProp>
+                    <stringProp name="BeanShellSampler.filename"></stringProp>
+                    <stringProp name="BeanShellSampler.parameters"></stringProp>
+                    <boolProp name="BeanShellSampler.resetInterpreter">false</boolProp>
+                  </BeanShellSampler>
+                  <hashTree/>
+                </hashTree>
+                <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="Echo EUQ start message" enabled="true">
+                  <stringProp name="BeanShellSampler.query">log.info(&quot;Starting dispatch of end user query threads&quot;);</stringProp>
+                  <stringProp name="BeanShellSampler.filename"></stringProp>
+                  <stringProp name="BeanShellSampler.parameters"></stringProp>
+                  <boolProp name="BeanShellSampler.resetInterpreter">false</boolProp>
+                </BeanShellSampler>
+                <hashTree/>
+              </hashTree>
+            </hashTree>
+            <ForeachController guiclass="ForeachControlPanel" testclass="ForeachController" testname="End User Query dispatch loop (foreach)" enabled="true">
+              <stringProp name="ForeachController.inputVal">ETLQ_QUERY</stringProp>
+              <stringProp name="ForeachController.returnVal">ETLQ_QUERY_NAME</stringProp>
+              <boolProp name="ForeachController.useSeparator">true</boolProp>
+            </ForeachController>
+            <hashTree>
+              <Arguments guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="ETLQ_QUERY_1" elementType="Argument">
+                    <stringProp name="Argument.name">ETLQ_QUERY_1</stringProp>
+                    <stringProp name="Argument.value">Q25-03</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="ETLQ_QUERY_2" elementType="Argument">
+                    <stringProp name="Argument.name">ETLQ_QUERY_2</stringProp>
+                    <stringProp name="Argument.value">Q25-04</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="ETLQ_QUERY_3" elementType="Argument">
+                    <stringProp name="Argument.name">ETLQ_QUERY_3</stringProp>
+                    <stringProp name="Argument.value">Q25-10</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="ETLQ_QUERY_4" elementType="Argument">
+                    <stringProp name="Argument.name">ETLQ_QUERY_4</stringProp>
+                    <stringProp name="Argument.value">Q25-16</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="ETLQ_QUERY_5" elementType="Argument">
+                    <stringProp name="Argument.name">ETLQ_QUERY_5</stringProp>
+                    <stringProp name="Argument.value">Q25-24</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="ETLQ_QUERY_6" elementType="Argument">
+                    <stringProp name="Argument.name">ETLQ_QUERY_6</stringProp>
+                    <stringProp name="Argument.value">Q25-27</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="ETLQ_QUERY_7" elementType="Argument">
+                    <stringProp name="Argument.name">ETLQ_QUERY_7</stringProp>
+                    <stringProp name="Argument.value">Q25-29</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="ETLQ_QUERY_8" elementType="Argument">
+                    <stringProp name="Argument.name">ETLQ_QUERY_8</stringProp>
+                    <stringProp name="Argument.value">Q25-32</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="ETLQ_QUERY_9" elementType="Argument">
+                    <stringProp name="Argument.name">ETLQ_QUERY_9</stringProp>
+                    <stringProp name="Argument.value">Q25-34</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="ETLQ_QUERY_10" elementType="Argument">
+                    <stringProp name="Argument.name">ETLQ_QUERY_10</stringProp>
+                    <stringProp name="Argument.value">Q25-39</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="ETLQ_QUERY_11" elementType="Argument">
+                    <stringProp name="Argument.name">ETLQ_QUERY_11</stringProp>
+                    <stringProp name="Argument.value">Q25-42</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="ETLQ_QUERY_12" elementType="Argument">
+                    <stringProp name="Argument.name">ETLQ_QUERY_12</stringProp>
+                    <stringProp name="Argument.value">Q25-45</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="ETLQ_QUERY_13" elementType="Argument">
+                    <stringProp name="Argument.name">ETLQ_QUERY_13</stringProp>
+                    <stringProp name="Argument.value">Q25-49</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="ETLQ_QUERY_14" elementType="Argument">
+                    <stringProp name="Argument.name">ETLQ_QUERY_14</stringProp>
+                    <stringProp name="Argument.value">Q25-50</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="ETLQ_QUERY_15" elementType="Argument">
+                    <stringProp name="Argument.name">ETLQ_QUERY_15</stringProp>
+                    <stringProp name="Argument.value">Q25-51</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="ETLQ_QUERY_16" elementType="Argument">
+                    <stringProp name="Argument.name">ETLQ_QUERY_16</stringProp>
+                    <stringProp name="Argument.value">Q25-62</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="ETLQ_QUERY_17" elementType="Argument">
+                    <stringProp name="Argument.name">ETLQ_QUERY_17</stringProp>
+                    <stringProp name="Argument.value">Q25-66</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="ETLQ_QUERY_18" elementType="Argument">
+                    <stringProp name="Argument.name">ETLQ_QUERY_18</stringProp>
+                    <stringProp name="Argument.value">Q25-68</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="ETLQ_QUERY_19" elementType="Argument">
+                    <stringProp name="Argument.name">ETLQ_QUERY_19</stringProp>
+                    <stringProp name="Argument.value">Q25-78</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="ETLQ_QUERY_20" elementType="Argument">
+                    <stringProp name="Argument.name">ETLQ_QUERY_20</stringProp>
+                    <stringProp name="Argument.value">Q25-80</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="ETLQ_QUERY_21" elementType="Argument">
+                    <stringProp name="Argument.name">ETLQ_QUERY_21</stringProp>
+                    <stringProp name="Argument.value">Q25-82</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="ETLQ_QUERY_22" elementType="Argument">
+                    <stringProp name="Argument.name">ETLQ_QUERY_22</stringProp>
+                    <stringProp name="Argument.value">Q25-88</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="ETLQ_QUERY_23" elementType="Argument">
+                    <stringProp name="Argument.name">ETLQ_QUERY_23</stringProp>
+                    <stringProp name="Argument.value">Q25-92</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="ETLQ_QUERY_24" elementType="Argument">
+                    <stringProp name="Argument.name">ETLQ_QUERY_24</stringProp>
+                    <stringProp name="Argument.value">Q25-95</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                  <elementProp name="ETLQ_QUERY_25" elementType="Argument">
+                    <stringProp name="Argument.name">ETLQ_QUERY_25</stringProp>
+                    <stringProp name="Argument.value">Q25-97</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </Arguments>
+              <hashTree/>
+              <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETLQ_${ETLQ_QUERY_NAME}" enabled="true">
+                <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
+                <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
+                <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
+                <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
+                <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/query/run_sql.sh -s ${__P(BMS_ETL_SCALE_TAG)} -q ${ETLQ_QUERY_NAME} -u ${__threadNum} &gt;&amp;1</stringProp>
+              </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
+              <hashTree/>
+            </hashTree>
+            <TransactionController guiclass="TransactionControllerGui" testclass="TransactionController" testname="End User Queries" enabled="true">
+              <boolProp name="TransactionController.includeTimers">false</boolProp>
+              <boolProp name="TransactionController.parent">false</boolProp>
+            </TransactionController>
+            <hashTree>
+              <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL_01: Run QF-a" enabled="true">
+                <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
+                <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
+                <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
+                <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
+                <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/query/run_sql.sh -q QF-a 2&gt;&amp;1</stringProp>
+              </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
+              <hashTree/>
+              <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL_02: Run QF-b" enabled="true">
+                <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
+                <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
+                <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
+                <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
+                <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/query/run_sql.sh -q QF-b 2&gt;&amp;1</stringProp>
+              </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
+              <hashTree/>
+              <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL_03: Run QF-c" enabled="true">
+                <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
+                <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
+                <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
+                <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
+                <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/query/run_sql.sh -q QF-c 2&gt;&amp;1</stringProp>
+              </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
+              <hashTree/>
+              <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL_04: Run QF-d" enabled="true">
+                <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
+                <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
+                <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
+                <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
+                <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/query/run_sql.sh -q QF-d 2&gt;&amp;1</stringProp>
+              </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
+              <hashTree/>
+              <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL_05: Run QF-e" enabled="true">
+                <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
+                <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
+                <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
+                <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
+                <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/query/run_sql.sh -q QF-e 2&gt;&amp;1</stringProp>
+              </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
+              <hashTree/>
+              <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="ETL_06: Run QF-f" enabled="true">
+                <stringProp name="hostname">${__P(BMS_TARGET_HOST)}</stringProp>
+                <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
+                <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
+                <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
+                <stringProp name="command">${__P(BENCHMARK_PATH)}/apps/tpcds/teradata/query/run_sql.sh -q QF-f 2&gt;&amp;1</stringProp>
+              </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
+              <hashTree/>
+            </hashTree>
+            <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="false">
+              <collectionProp name="Asserion.test_strings">
+                <stringProp name="216552436">${BMS_TOKEN_EXIT_OK}</stringProp>
+              </collectionProp>
+              <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
+              <boolProp name="Assertion.assume_success">false</boolProp>
+              <intProp name="Assertion.test_type">2</intProp>
+            </ResponseAssertion>
+            <hashTree/>
+          </hashTree>
         </hashTree>
         <IfController guiclass="IfControllerPanel" testclass="IfController" testname="Hadoop" enabled="true">
           <stringProp name="IfController.condition">${__P(BMS_EXEC_PLATFORM_HADOOP)}</stringProp>

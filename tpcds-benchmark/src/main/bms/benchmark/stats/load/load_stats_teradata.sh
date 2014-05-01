@@ -30,46 +30,165 @@ function stage_csv_data {
     HEADER_CSV="$1"
     DETAIL_CSV="$2"
     echo "Import CSV test data"
-    "$DB_CLI" -e <<EOF
-\set ON_ERROR_STOP
-TRUNCATE TABLE stage_jmeter_log_summary;
-TRUNCATE TABLE stage_jmeter_log;
-COPY stage_jmeter_log_summary FROM '$HEADER_CSV' WITH DELIMITER ',' CSV;
-COPY stage_jmeter_log FROM '$DETAIL_CSV' WITH DELIMITER ',' CSV;
+LOG_FILE=$BMS_OUTPUT_PATH/stage_jmeter_log_summary.$RUN_ID.log
+
+log_info "Staging jmeter log summary data(detail log at $LOG_FILE)"
+
+fastload 2>&1 > $LOG_FILE <<EOF
+
+.LOGON localhost/dbc,dbc;
+
+DATABASE benchmark;
+
+DROP TABLE stage_jmeter_log_summary;
+
+CREATE TABLE stage_jmeter_log_summary,
+    NO FALLBACK ,
+    NO BEFORE JOURNAL,
+    NO AFTER JOURNAL,
+    CHECKSUM = DEFAULT (
+    tstamp_epoch BIGINT,
+    elapsed_ms BIGINT,
+    label VARCHAR(2000),
+    response_code INT,
+    response_message VARCHAR(1000),
+    thread_name VARCHAR(100),
+    data_type VARCHAR(100),
+    success VARCHAR(10),
+    _bytes INT,
+    latency INT
+);
+
+.ERRLIMIT 1;
+
+.SET RECORD VARTEXT ',';
+DEFINE
+    in_tstamp_epoch (VARCHAR(30))
+    ,in_elapsed_ms (VARCHAR(30))
+    ,in_label (VARCHAR(100))
+    ,in_response_code (VARCHAR(10))
+    ,in_response_message (VARCHAR(30))
+    ,in_thread_name (VARCHAR(30))
+    ,in_data_type (VARCHAR(30))
+    ,in_success (VARCHAR(30))
+    ,in__bytes (VARCHAR(30))
+    ,in_latency (VARCHAR(30))
+FILE=$HEADER_CSV;
+
+SHOW;
+
+.BEGIN LOADING benchmark.stage_jmeter_log_summary ERRORFILES benchmark.ERR1, benchmark.ERR2;
+
+INSERT INTO benchmark.stage_jmeter_log_summary VALUES (
+    :in_tstamp_epoch
+    ,:in_elapsed_ms
+    ,:in_label
+    ,:in_response_code
+    ,:in_response_message
+    ,:in_thread_name
+    ,:in_data_type
+    ,:in_success
+    ,:in__bytes
+    ,:in_latency
+);
+
+.END LOADING;
+.LOGOFF;
 EOF
-    rc=$?
-    if [[ $rc -ne 0 ]]; then
-        echo "Error importing CSV data"
-        return $rc
-    fi
-    echo "Loaded CSV test data"
+
+rc=$?
+if [ $rc -ne 0 ]
+then
+    log "ERROR: unable to stage jmeter log summary data(code: $rc)"
+    exit 1
+fi
+
+
+LOG_FILE=$BMS_OUTPUT_PATH/stage_jmeter_log.$RUN_ID.log
+
+log_info "Staging jmeter log detail data(detail log at $LOG_FILE)"
+
+fastload 2>&1 > $LOG_FILE <<EOF
+
+.LOGON localhost/dbc,dbc;
+
+DATABASE benchmark;
+
+DROP TABLE stage_jmeter_log;
+CREATE TABLE stage_jmeter_log,
+    NO FALLBACK ,
+    NO BEFORE JOURNAL,
+    NO AFTER JOURNAL,
+    CHECKSUM = DEFAULT (
+    tstamp_epoch BIGINT,
+    elapsed_ms BIGINT,
+    label VARCHAR(2000),
+    response_code INT,
+    response_message VARCHAR(1000),
+    thread_name VARCHAR(100),
+    data_type VARCHAR(100),
+    success VARCHAR(10),
+    _bytes INT,
+    latency INT
+);
+
+.ERRLIMIT 1;
+
+.SET RECORD VARTEXT ',';
+DEFINE
+    in_tstamp_epoch (VARCHAR(30))
+    ,in_elapsed_ms (VARCHAR(30))
+    ,in_label (VARCHAR(30))
+    ,in_response_code (VARCHAR(10))
+    ,in_response_message (VARCHAR(30))
+    ,in_thread_name (VARCHAR(30))
+    ,in_data_type (VARCHAR(30))
+    ,in_success (VARCHAR(30))
+    ,in__bytes (VARCHAR(30))
+    ,in_latency (VARCHAR(30))
+FILE=$DETAIL_CSV;
+
+SHOW;
+
+.BEGIN LOADING benchmark.stage_jmeter_log ERRORFILES benchmark.ERR1, benchmark.ERR2;
+
+INSERT INTO benchmark.stage_jmeter_log VALUES (
+    :in_tstamp_epoch
+    ,:in_elapsed_ms
+    ,:in_label
+    ,:in_response_code
+    ,:in_response_message
+    ,:in_thread_name
+    ,:in_data_type
+    ,:in_success
+    ,:in__bytes
+    ,:in_latency
+);
+
+.END LOADING;
+.LOGOFF;
+EOF
+
+rc=$?
+if [ $rc -ne 0 ]
+then
+    log "ERROR: unable to stage jmeter log data(code: $rc)"
+    exit 1
+fi
+
 }
 
 function load_test_headers {
     RUN_ID=$1
     echo "Load test definition data for run ID $RUN_ID"
-    "$DB_CLI" -e <<EOF
-\set ON_ERROR_STOP
-DELETE FROM perf_test WHERE run_id=${RUN_ID};
 
-INSERT INTO perf_test (run_id, name, test_plan, test_tag, start_tstamp)
-SELECT ${RUN_ID}, 
-(SELECT (REGEXP_MATCHES(label,'.*BENCHMARK_TEST_NAME="([^"]*)".*'))[1] FROM stage_jmeter_log_summary WHERE label LIKE 'Setup suite (BENCHMARK_TEST_TAG=%'),
-'aster_hadoop.jmx',
-(SELECT (REGEXP_MATCHES(label,'.*BENCHMARK_TEST_TAG=([^,]*), '))[1] FROM stage_jmeter_log_summary WHERE label LIKE 'Setup suite (BENCHMARK_TEST_TAG=%'),
-TIMESTAMP WITH TIME ZONE 'epoch' + (${RUN_ID} / 1000) * INTERVAL '1 second'
-;
+START_EPOCH_EXPR="CAST(DATE '1970-01-01' + (tstamp_epoch / 86400000) AS TIMESTAMP(6))
++ ((tstamp_epoch MOD 86400000) * INTERVAL '00:00:01.000000' HOUR TO SECOND)"
+run_sql "DELETE FROM ${BMS_STATS_DB_NAME}.perf_test WHERE run_id=${RUN_ID};" 2>&1 >> $SQL_DETAIL_LOG
 
-UPDATE perf_test SET 
-user_count=CAST((SELECT (REGEXP_MATCHES(label,'.*USER_COUNT=([^,]*)'))[1] FROM stage_jmeter_log_summary WHERE label LIKE 'Setup suite (RUN_ID=%') AS INT),
-loop_count=-1, -- *** TODO: normalize loop counts
-runtime_sec=CAST((SELECT (REGEXP_MATCHES(label,'.*RUNTIME=([^,]*)'))[1] FROM stage_jmeter_log_summary WHERE label LIKE 'Setup suite (RUN_ID=%') AS INT),
-ramp_up_sec=CAST((SELECT (REGEXP_MATCHES(label,'.*RAMP_UP_SEC=([^,)]*)'))[1] FROM stage_jmeter_log_summary WHERE label LIKE 'Setup suite (RUN_ID=%') AS INT),
-test_desc='DESC!',
-end_tstamp=(start_tstamp + 2 * INTERVAL '1 hour')
-WHERE run_id=${RUN_ID};
-
-EOF
+run_sql "INSERT INTO ${BMS_STATS_DB_NAME}.perf_test (run_id, name, test_plan, test_tag, start_tstamp, end_tstamp)
+SELECT ${RUN_ID}, '$BMS_TEST_TAG','aster_hadoop.jmx', 't_name',
+(SELECT $START_EPOCH_EXPR FROM ${BMS_STATS_DB_NAME}.stage_jmeter_log_summary WHERE label LIKE '%--- Log banner:%'), (SELECT $START_EPOCH_EXPR FROM ${BMS_STATS_DB_NAME}.stage_jmeter_log_summary WHERE label LIKE '%EXIT%');" 2>&1 >> $SQL_DETAIL_LOG
 
     rc=$?
     if [[ $rc -ne 0 ]]; then
@@ -82,23 +201,23 @@ EOF
 function load_test_detail {
     RUN_ID=$1
     echo "Load test detail data"
-    "$DB_CLI" -e <<EOF
-\set ON_ERROR_STOP
-DELETE FROM perf_test_case WHERE run_id=${RUN_ID};
 
-INSERT INTO perf_test_case (run_id, case_name, sampler_type, request_text, response_bytes, response_text, thread_id, thread_group_name, start_tstamp, end_tstamp, elapsed_ms)
-SELECT ${RUN_ID} run_id, label, 'SSH sampler', 'TODO', bytes, 'TODO', -1, thread_name, 
-TIMESTAMP WITH TIME ZONE 'epoch' + (tstamp_epoch * INTERVAL '1 millisecond') start_tstamp,
-TIMESTAMP WITH TIME ZONE 'epoch' + (tstamp_epoch * INTERVAL '1 millisecond') + (elapsed_ms * INTERVAL '1 millisecond') end_tstamp,
-elapsed_ms
-FROM stage_jmeter_log
-WHERE label NOT LIKE 'Stop on runtime%'
+START_EPOCH_EXPR="CAST(DATE '1970-01-01' + (tstamp_epoch / 86400000) AS TIMESTAMP(6))
++ ((tstamp_epoch MOD 86400000) * INTERVAL '00:00:01.000000' HOUR TO SECOND) AS start_tstamp"
+END_EPOCH_EXPR="CAST(DATE '1970-01-01' + ((tstamp_epoch + elapsed_ms) / 86400000) AS TIMESTAMP(6))
++ (((tstamp_epoch + elapsed_ms) MOD 86400000) * INTERVAL '00:00:01.000000' HOUR TO SECOND) AS end_tstamp"
 
-EOF
+run_sql "DELETE FROM ${BMS_STATS_DB_NAME}.perf_test_case WHERE run_id=${RUN_ID};" 2>&1 >> $SQL_DETAIL_LOG
+
+run_sql "INSERT INTO ${BMS_STATS_DB_NAME}.perf_test_case (run_id, case_name, sampler_type, request_text, response_bytes, response_text, thread_id, thread_group_name, start_tstamp, end_tstamp, elapsed_ms)
+SELECT ${RUN_ID} run_id, label, 'SSH sampler', 'TODO', _bytes, 'TODO', -1, thread_name, 
+$START_EPOCH_EXPR, $END_EPOCH_EXPR, elapsed_ms
+FROM ${BMS_STATS_DB_NAME}.stage_jmeter_log
+WHERE label NOT LIKE 'Stop on runtime%';" 2>&1 >> $SQL_DETAIL_LOG
 
     rc=$?
     if [[ $rc -ne 0 ]]; then
-        echo "Error loading test detail data"
+        echo "Error loading test detail data , please check the logs is $SQL_DETAIL_LOG"
         return $rc
     fi
     echo "Loaded test detail data"
@@ -194,7 +313,7 @@ EOF
 
 log_info "Loading staged iostat data"
 run_sql "DELETE FROM ${BMS_STATS_DB_NAME}.iostat WHERE run_id=${RUN_ID};" 2>&1 >> $SQL_DETAIL_LOG
-run_sql "INSERT INTO ${BMS_STATS_DB_NAME}.iostat (run_id, node_id, device, tstamp, rrqms, wrqms, rs, ws, rmbs, wmbs, avgrqsz, avgqusz, await, svctm, util) SELECT ${RUN_ID}, node_id, device, ${EPOCH_EXPR}, rrqms, wrqms, rs, ws, rmbs, wmbs, avgrqsz, avgqusz, await, svctm, util FROM stage_iostat;" 2>&1 >> $SQL_DETAIL_LOG
+run_sql "INSERT INTO ${BMS_STATS_DB_NAME}.iostat (run_id, node_id, device, tstamp, rrqms, wrqms, rs, ws, rmbs, wmbs, avgrqsz, avgqusz, await, svctm, util) SELECT ${RUN_ID}, node_id, device, ${EPOCH_EXPR}, rrqms, wrqms, rs, ws, rmbs, wmbs, avgrqsz, avgqusz, await, svctm, util FROM ${BMS_STATS_DB_NAME}.stage_iostat;" 2>&1 >> $SQL_DETAIL_LOG
 
 rc=$?
 if [[ $rc -eq 0 ]]
@@ -214,7 +333,7 @@ echo "," >> $SUMMARY_REPORT
 
 log_info "Loading staged sar data"
 run_sql "DELETE FROM ${BMS_STATS_DB_NAME}.sarstat WHERE run_id=${RUN_ID};" 2>&1 >> $SQL_DETAIL_LOG
-run_sql "INSERT INTO sarstat (run_id, node_id, tstamp, iface, rxpcks, txpcks, rxkbs, txkbs, rxcmps, txmcsts, rxmcsts) SELECT ${RUN_ID}, node_id, ${EPOCH_EXPR}, iface, rxpcks, txpcks, rxkbs, txkbs, rxcmps, txmcsts, rxmcsts FROM stage_sarstat;" 2>&1 >> $SQL_DETAIL_LOG
+run_sql "INSERT INTO ${BMS_STATS_DB_NAME}.sarstat (run_id, node_id, tstamp, iface, rxpcks, txpcks, rxkbs, txkbs, rxcmps, txmcsts, rxmcsts) SELECT ${RUN_ID}, node_id, ${EPOCH_EXPR}, iface, rxpcks, txpcks, rxkbs, txkbs, rxcmps, txmcsts, rxmcsts FROM ${BMS_STATS_DB_NAME}.stage_sarstat;" 2>&1 >> $SQL_DETAIL_LOG
 
 rc=$?
 if [[ $rc -eq 0 ]]
@@ -233,10 +352,10 @@ echo "," >> $SUMMARY_REPORT
 # ==========================================================================
 
 log_info "Loading staged vmstat data"
-run_sql "DELETE FROM vmstat WHERE run_id=${RUN_ID};" 2>&1 >> $SQL_DETAIL_LOG
-run_sql "INSERT INTO vmstat (run_id, node_id, tstamp, procs_r, procs_b, mem_swpd, mem_free, mem_buff, mem_cache, swap_si, swap_so, io_bi, io_bo, sys_in,sys_cs, cpu_us, cpu_sy, cpu_id, cpu_wa, cpu_st) 
+run_sql "DELETE FROM ${BMS_STATS_DB_NAME}.vmstat WHERE run_id=${RUN_ID};" 2>&1 >> $SQL_DETAIL_LOG
+run_sql "INSERT INTO ${BMS_STATS_DB_NAME}.vmstat (run_id, node_id, tstamp, procs_r, procs_b, mem_swpd, mem_free, mem_buff, mem_cache, swap_si, swap_so, io_bi, io_bo, sys_in,sys_cs, cpu_us, cpu_sy, cpu_id, cpu_wa, cpu_st) 
     SELECT ${RUN_ID}, node_id, ${EPOCH_EXPR}, procs_r, procs_b, mem_swpd, mem_free, mem_buff, mem_cache, swap_si, swap_so, io_bi, io_bo, sys_in,sys_cs, cpu_us, cpu_sy, cpu_id, cpu_wa, cpu_st
-    FROM stage_vmstat;" 2>&1 >> $SQL_DETAIL_LOG
+    FROM ${BMS_STATS_DB_NAME}.stage_vmstat;" 2>&1 >> $SQL_DETAIL_LOG
 
 rc=$?
 if [[ $rc -eq 0 ]]
@@ -262,7 +381,8 @@ echo -----------------------------------------------
 #set -o pipefail
 
 
-
-
-    
-
+JMX_LOG="$BMS_OUTPUT_PATH/bms-${RUN_ID}-ALL.xml"
+parse_xml_log "$JMX_LOG"
+stage_csv_data "$JMX_LOG-header.csv" "$JMX_LOG-detail.csv"
+load_test_headers $RUN_ID
+load_test_detail $RUN_ID

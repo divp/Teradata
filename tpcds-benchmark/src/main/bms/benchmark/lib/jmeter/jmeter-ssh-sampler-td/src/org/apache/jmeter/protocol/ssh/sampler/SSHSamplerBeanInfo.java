@@ -47,7 +47,7 @@ public class SSHSamplerBeanInfo extends BeanInfoSupport {
 		});
 		
 		PropertyDescriptor p;
-		p = property("Wsername"); // $NON-NLS-1$
+		p = property("Username"); // $NON-NLS-1$
 		p.setValue(NOT_UNDEFINED, Boolean.TRUE);
 		p.setValue(DEFAULT, "");
 		

@@ -18,13 +18,12 @@ do
     if [ -f \$pid_file ];
     then
         pid=\$(cat \$pid_file);
-        echo 'Found ${subsys} pid file '\$pid;
         ps \$pid >/dev/null;
         rc=\$?;
         if [ \$rc -eq 0  ];
         then
             kill \$pid;
-            echo 'Sent kill signal to PID '\$pid;
+            echo 'Sent kill signal to PID '\$pid $subsys;
         else
             echo 'Process '\$pid'is no longer running';
         fi;

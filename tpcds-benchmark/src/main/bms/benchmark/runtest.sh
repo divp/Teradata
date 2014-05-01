@@ -5,7 +5,7 @@ function error_handler() {
   echo "Line exited with status: ${2}"
 }
 
-trap 'error_handler ${LINENO} $?' ERR
+#trap 'error_handler ${LINENO} $?' ERR
 
 # Example command line:
 # /opt/benchmark/runtest.sh -j esg_benchmark.jmx -p /opt/benchmark/config/sample/test.properties
@@ -29,7 +29,7 @@ fi
 
 JMETER_BIN=${JMETER_HOME}/bin/jmeter.sh
 
-VERSION="1.0.152"
+VERSION="1.0.154"
 log_info "Starting Benchmark Management System test driver (v. $VERSION)"
 
 function print_help {
@@ -81,6 +81,25 @@ function check_cli_options {
 
 function check_jmeter {
     required_jars=($JMETER_HOME/lib/jsch-0.1.48.jar $JMETER_HOME/lib/ext/jmeter-ssh-sampler-td-0.1.0.jar)
+    log_info "Checking Java runtime environment"
+    which java
+    if [ $? -ne 0 ]
+    then
+        log_error "Error locating Java runtime environment. Please locate a Java 1.7.x installation or higher and add to the system path"
+        exit 1
+    fi
+    java -version
+    rc=$?
+    if [ $rc -ne 0 ]
+    then
+        log_error "Error while verifying Java runtime environment"
+        exit 1
+    fi
+    if [ ! -x $JMETER_BIN ]
+    then
+        log_error "Error while verifying JMeter executable at $JMETER_BIN. Ensure the installation exists and has execution permissions"
+        exit 1
+    fi
     for jar in $required_jars
     do
         if [ ! -r $jar ]
@@ -181,21 +200,34 @@ function check_config {
 
 function ssh_passwordless_help {
     cat <<EOF
-    Must enable passwordless SSH access from this host to all nodes in the cluster for user $(whoami).
+    Must enable passwordless SSH access from this host to all nodes in the cluster for user $BMS_TARGET_UID.
     Typical procedure:
     # on client:
     # Generate public SSH key
     [[ ! -f ~/.ssh/id_rsa.pub ]] && ssh-keygen
 
-    # then for each node in cluster, copy public key into remote authorized keys file 
-    cat ~/.ssh/id_rsa.pub | ssh ${h} 'cat >> ~/.ssh/authorized_keys'
+    # then for each node in cluster, copy public key into remote authorized keys file
+    for node in \$CLUSTER_NODES
+    do
+        ssh root@\${node} "id $BMS_TARGET_UID"
+        if [ \$? -ne 0 ]
+        then
+            echo "User $BMS_TARGET_UID does not exist on \${node}"
+            ssh root@\${node} "useradd -d /home/$BMS_TARGET_UID $BMS_TARGET_UID"
+            ssh root@\${node} "passwd $BMS_TARGET_PWD"
+            ssh $BMS_TARGET_UID@\$node "[[ ! -f ~/.ssh/id_rsa.pub ]] && ssh-keygen"
+            #for node in ${CLUSTER_NODES[@]}; do ssh root@${node} 'mkdir -p /data/benchmark; chown bms:root /data/benchmark; chmod 755 /data/benchmark'; done
+        fi
+        ssh-copy-id -i ~/.ssh/id_rsa.pub $BMS_USER@{node}
+        cat ~/.ssh/id_rsa.pub | ssh \${node} 'cat >> ~/.ssh/authorized_keys'
 
-    # and adjust permissions. SSH will refuse passwordless connections if these persmissions are
-    # not set correctly
-    chmod go-w ~/
-    chmod 700 ~/.ssh
-    chmod 600 ~/.ssh/authorized_keys ~/.ssh/id_rsa
-    chmod 644 ~/.ssh/id_rsa.pub ~/.ssh/known_hosts
+        # and adjust permissions. SSH will refuse passwordless connections if these persmissions are
+        # not set correctly
+        chmod go-w ~/
+        chmod 700 ~/.ssh
+        chmod 600 ~/.ssh/authorized_keys ~/.ssh/id_rsa
+        chmod 644 ~/.ssh/id_rsa.pub ~/.ssh/known_hosts
+    done
 EOF
 }
 
@@ -274,14 +306,13 @@ function check_cluster {
             log_info "Filesystem write check to $host:/$BMS_OUTPUT_PATH OK"
         else
             log_error "Filesystem write test to output directory \$BMS_OUTPUT_PATH=$BMS_OUTPUT_PATH failed on host $host."
-            log_info "Check that directory exists and has read+write access for user $BMS_TARGET_UID"
             exit 1
         fi
 
     done
 }
 
-function start_stats {
+function stop_stats {
     $BENCHMARK_PATH/stats/collect/stop_stats_collection.sh
     if [ $? -ne 0 ]
     then
@@ -290,7 +321,7 @@ function start_stats {
     fi
 }
 
-function stop_stats {
+function start_stats {
     $BENCHMARK_PATH/stats/collect/start_stats_collection.sh $BENCHMARK_RUN_ID 
     if [ $? -ne 0 ]
     then
@@ -341,9 +372,9 @@ function get_node_system_data {
 DEBUG=0
 STATS='full'
 JMETER_OPTIONS=''
-DRY_RUN=0
+RESOLVE_EXPORTS=0
 CHECK_CONFIG=1
-while getopts "gj:J:np:s:" opt
+while getopts "egj:J:np:s:" opt
 do
     case $opt in
         g) DEBUG=1 ;;
@@ -351,6 +382,7 @@ do
         J) JMETER_OPTIONS=$JMETER_OPTIONS' -J'$OPTARG ;;
         n) CHECK_CONFIG=0 ; STATS='nostats';;
         p) BMS_PROPS_FILE=$OPTARG ;;
+        e) RESOLVE_EXPORTS=1 ;;
         s) STATS=$OPTARG ;;
         \?)
             print_help >&2
@@ -375,6 +407,12 @@ then
     log_error "Error generating exports. Stopping test."
     exit 1
 fi
+
+if [ $RESOLVE_EXPORTS -eq 1 ]
+then
+    log_info "Exiting after resolving runtime exports (-e option found). This mode resolves the supplied properties file and generates $BENCHMARK_PATH/exports.sh for use outside JMeter"
+    exit 0
+fi    
 
 . $BENCHMARK_PATH/exports.sh
 
@@ -464,10 +502,9 @@ run_test
 
 if [ $STATS == 'full' ]
 then
+    log_info "Stopping statistics collection"
     stop_stats
 fi
-
-echo "TODO: Build teardown logic"
 
 #cd ${BENCHMARK_OUTPUT_PATH}; ${BENCHMARK_STATS_PATH}/collect/master/get_logs.sh ${__P(BENCHMARK_RUN_ID)}
 #jmeter.sh -n -tesg_benchmark_aster.jmx -JBENCHMARK_USER_COUNT=5 -JBENCHMARK_TEST_TAG=${TAG} -JBENCHMARK_SA_LOOP_COUNT=1 -JBENCHMARK_WL_LOOP_COUNT=1 -JBENCHMARK_WP_LOOP_COUNT=1 JBENCHMARK_ADW_LOOP_COUNT=1
