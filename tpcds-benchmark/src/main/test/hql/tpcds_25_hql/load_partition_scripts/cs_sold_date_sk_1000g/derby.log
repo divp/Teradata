@@ -1,0 +1,60 @@
+----------------------------------------------------------------
+2014-04-17 16:31:45.753 GMT:
+ Booting Derby version The Apache Software Foundation - Apache Derby - 10.4.2.0 - (689064): instance a816c00e-0145-7087-9740-00006af09150
+on database directory /data/tpcds/qrydriver/cs_sold_date_sk_1000g/TempStatsStore  
+
+Database Class Loader started - derby.database.classpath=''
+
+2014-04-17 16:31:46.615 GMT:
+Shutting down instance a816c00e-0145-7087-9740-00006af09150
+----------------------------------------------------------------
+----------------------------------------------------------------
+2014-04-17 16:34:46.337 GMT:
+ Booting Derby version The Apache Software Foundation - Apache Derby - 10.4.2.0 - (689064): instance 23ce809c-0145-7087-9740-00006af09150
+on database directory /data/tpcds/qrydriver/cs_sold_date_sk_1000g/TempStatsStore  
+
+Database Class Loader started - derby.database.classpath=''
+
+2014-04-17 16:34:46.459 GMT:
+Shutting down instance 23ce809c-0145-7087-9740-00006af09150
+----------------------------------------------------------------
+----------------------------------------------------------------
+2014-04-17 16:36:11.373 GMT:
+ Booting Derby version The Apache Software Foundation - Apache Derby - 10.4.2.0 - (689064): instance 8c9400a1-0145-7087-9740-00006af09150
+on database directory /data/tpcds/qrydriver/cs_sold_date_sk_1000g/TempStatsStore  
+
+Database Class Loader started - derby.database.classpath=''
+
+2014-04-17 16:36:11.394 GMT:
+Shutting down instance 8c9400a1-0145-7087-9740-00006af09150
+----------------------------------------------------------------
+----------------------------------------------------------------
+2014-04-17 16:39:09.013 GMT:
+ Booting Derby version The Apache Software Foundation - Apache Derby - 10.4.2.0 - (689064): instance 4d3680a5-0145-7087-9740-00006af09150
+on database directory /data/tpcds/qrydriver/cs_sold_date_sk_1000g/TempStatsStore  
+
+Database Class Loader started - derby.database.classpath=''
+
+2014-04-17 16:39:09.102 GMT:
+Shutting down instance 4d3680a5-0145-7087-9740-00006af09150
+----------------------------------------------------------------
+----------------------------------------------------------------
+2014-04-17 16:40:53.128 GMT:
+ Booting Derby version The Apache Software Foundation - Apache Derby - 10.4.2.0 - (689064): instance 560740aa-0145-7087-9740-00006af09150
+on database directory /data/tpcds/qrydriver/cs_sold_date_sk_1000g/TempStatsStore  
+
+Database Class Loader started - derby.database.classpath=''
+
+2014-04-17 16:40:53.146 GMT:
+Shutting down instance 560740aa-0145-7087-9740-00006af09150
+----------------------------------------------------------------
+----------------------------------------------------------------
+2014-04-17 16:45:42.821 GMT:
+ Booting Derby version The Apache Software Foundation - Apache Derby - 10.4.2.0 - (689064): instance b6b2c0ae-0145-7087-9740-00006af09150
+on database directory /data/tpcds/qrydriver/cs_sold_date_sk_1000g/TempStatsStore  
+
+Database Class Loader started - derby.database.classpath=''
+
+2014-04-17 16:45:42.900 GMT:
+Shutting down instance b6b2c0ae-0145-7087-9740-00006af09150
+----------------------------------------------------------------
