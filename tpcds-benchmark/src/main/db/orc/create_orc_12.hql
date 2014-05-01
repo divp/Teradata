@@ -520,7 +520,6 @@ create  table catalog_sales
 drop table if exists store_sales;
 create  table store_sales
  (
-    ss_sold_date_sk           int                       ,
     ss_sold_time_sk           int                       ,
     ss_item_sk                int               ,
     ss_customer_sk            int                       ,
@@ -543,5 +542,7 @@ create  table store_sales
     ss_net_paid               double                  ,
     ss_net_paid_inc_tax       double                  ,
     ss_net_profit             double                  
-)  STORED AS orc  tblproperties ("orc.compress"="SNAPPY");
+)
+PARTITIONED BY (ss_sold_date_sk INT)
+STORED AS orc  tblproperties ("orc.compress"="SNAPPY");
 

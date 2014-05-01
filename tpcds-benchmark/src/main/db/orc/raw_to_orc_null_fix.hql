@@ -1,4 +1,4 @@
-use tpcds1000g;
+use orc_tpcds1000g;
 
 insert into table customer_address
 select
@@ -15,7 +15,7 @@ case when ca_zip='' then null else ca_zip end,
 case when ca_country='' then null else ca_country end,
 ca_gmt_offset,
 case when ca_location_type='' then null else ca_location_type end
-from customer_address_raw;
+from raw_tpcds1000g.customer_address;
 
 insert into table customer_demographics
 select
@@ -28,7 +28,7 @@ case when cd_credit_rating='' then null else cd_credit_rating end,
 cd_dep_count,
 cd_dep_employed_count,
 cd_dep_college_count
-from customer_demographics_raw;
+from raw_tpcds1000g.customer_demographics;
 
 insert into table date_dim
 select
@@ -60,7 +60,7 @@ case when d_current_week='' then null else d_current_week end,
 case when d_current_month='' then null else d_current_month end,
 case when d_current_quarter='' then null else d_current_quarter end,
 case when d_current_year='' then null else d_current_year end
-from date_dim_raw;
+from raw_tpcds1000g.date_dim;
 
 insert into table warehouse
 select
@@ -78,7 +78,7 @@ case when w_state='' then null else w_state end,
 case when w_zip='' then null else w_zip end,
 case when w_country='' then null else w_country end,
 w_gmt_offset
-from warehouse_raw;
+from raw_tpcds1000g.warehouse;
 
 insert into table ship_mode
 select
@@ -88,7 +88,7 @@ case when sm_type='' then null else sm_type end,
 case when sm_code='' then null else sm_code end,
 case when sm_carrier='' then null else sm_carrier end,
 case when sm_contract='' then null else sm_contract end
-from ship_mode_raw;
+from raw_tpcds1000g.ship_mode;
 
 insert into table time_dim
 select
@@ -102,21 +102,21 @@ case when t_am_pm='' then null else t_am_pm end,
 case when t_shift='' then null else t_shift end,
 case when t_sub_shift='' then null else t_sub_shift end,
 case when t_meal_time='' then null else t_meal_time end
-from time_dim_raw;
+from raw_tpcds1000g.time_dim;
 
 insert into table reason
 select
 r_reason_sk,
 case when r_reason_id='' then null else r_reason_id end,
 case when r_reason_desc='' then null else r_reason_desc end
-from reason_raw;
+from raw_tpcds1000g.reason;
 
 insert into table income_band
 select
 ib_income_band_sk,
 ib_lower_bound,
 ib_upper_bound
-from income_band_raw;
+from raw_tpcds1000g.income_band;
 
 insert into table item
 select
@@ -142,7 +142,7 @@ case when i_units='' then null else i_units end,
 case when i_container='' then null else i_container end,
 i_manager_id,
 case when i_product_name='' then null else i_product_name end
-from item_raw;
+from raw_tpcds1000g.item;
 
 insert into table store
 select
@@ -175,7 +175,7 @@ case when s_zip='' then null else s_zip end,
 case when s_country='' then null else s_country end,
 s_gmt_offset,
 s_tax_percentage
-from store_raw;
+from raw_tpcds1000g.store;
 
 insert into table call_center
 select
@@ -210,7 +210,7 @@ case when cc_zip='' then null else cc_zip end,
 case when cc_country='' then null else cc_country end,
 cc_gmt_offset,
 cc_tax_percentage
-from call_center_raw;
+from raw_tpcds1000g.call_center;
 
 
 insert into table customer
@@ -232,7 +232,7 @@ case when c_birth_country='' then null else c_birth_country end,
 case when c_login='' then null else c_login end,
 case when c_email_address='' then null else c_email_address end,
 case when c_last_review_date='' then null else c_last_review_date end
-from customer_raw;
+from raw_tpcds1000g.customer;
 
 insert into table web_site
 select
@@ -262,7 +262,7 @@ case when web_zip='' then null else web_zip end,
 case when web_country='' then null else web_country end,
 web_gmt_offset,
 web_tax_percentage
-from web_site_raw;
+from raw_tpcds1000g.web_site;
 
 insert into table store_returns
 select
@@ -286,7 +286,7 @@ sr_refunded_cash,
 sr_reversed_charge,
 sr_store_credit,
 sr_net_loss
-from store_returns_raw;
+from raw_tpcds1000g.store_returns;
 
 insert into table household_demographics
 select
@@ -295,7 +295,7 @@ hd_income_band_sk,
 case when hd_buy_potential='' then null else hd_buy_potential end,
 hd_dep_count,
 hd_vehicle_count
-from household_demographics_raw;
+from raw_tpcds1000g.household_demographics;
 
 insert into table web_page
 select
@@ -313,7 +313,7 @@ wp_char_count,
 wp_link_count,
 wp_image_count,
 wp_max_ad_count
-from web_page_raw;
+from raw_tpcds1000g.web_page;
 
 insert into table promotion
 select
@@ -336,7 +336,7 @@ case when p_channel_demo='' then null else p_channel_demo end,
 case when p_channel_details='' then null else p_channel_details end,
 case when p_purpose='' then null else p_purpose end,
 case when p_discount_active='' then null else p_discount_active end
-from promotion_raw;
+from raw_tpcds1000g.promotion;
 
 insert into table catalog_page
 select
@@ -349,7 +349,7 @@ cp_catalog_number,
 cp_catalog_page_number,
 case when cp_description='' then null else cp_description end,
 case when cp_type='' then null else cp_type end
-from catalog_page_raw;
+from raw_tpcds1000g.catalog_page;
 
 insert into table inventory
 select
@@ -357,7 +357,7 @@ inv_date_sk,
 inv_item_sk,
 inv_warehouse_sk,
 inv_quantity_on_hand
-from inventory_raw;
+from raw_tpcds1000g.inventory;
 
 insert into table catalog_returns
 select
@@ -388,7 +388,7 @@ cr_refunded_cash,
 cr_reversed_charge,
 cr_store_credit,
 cr_net_loss
-from catalog_returns_raw;
+from raw_tpcds1000g.catalog_returns;
 
 insert into table web_returns
 select
@@ -416,7 +416,7 @@ wr_refunded_cash,
 wr_reversed_charge,
 wr_account_credit,
 wr_net_loss
-from web_returns_raw;
+from raw_tpcds1000g.web_returns;
 
 insert into table web_sales
 select
@@ -454,7 +454,7 @@ ws_net_paid_inc_tax,
 ws_net_paid_inc_ship,
 ws_net_paid_inc_ship_tax,
 ws_net_profit
-from web_sales_raw;
+from raw_tpcds1000g.web_sales;
 
 insert into table catalog_sales
 select
@@ -492,7 +492,7 @@ cs_net_paid_inc_tax,
 cs_net_paid_inc_ship,
 cs_net_paid_inc_ship_tax,
 cs_net_profit
-from catalog_sales_raw;
+from raw_tpcds1000g.catalog_sales;
 
 insert into table store_sales
 select
@@ -519,6 +519,6 @@ ss_coupon_amt,
 ss_net_paid,
 ss_net_paid_inc_tax,
 ss_net_profit
-from store_sales_raw;
+from raw_tpcds1000g.store_sales;
 
 
