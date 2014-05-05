@@ -14,14 +14,14 @@ function parse_xml_log {
     echo "Parse header test data"
     grep '<sample t=' $JMX_LOG | 
         sed 's/^\s\s*//' | 
-        grep -vE 'lb="(S|WL|WP|R)(([0-9][0-9]")|(00:[^"]+"))' | 
+        grep -vE 'lb="(S|WL|WP|R|ETLQ)(([0-9][0-9]")|(00:[^"]+"))' | 
         perl -ne 'if (/sample t="([0-9]+)".*ts="([0-9]+)".*lb="([^"]+)".*rc="([^"]+)".*rm="([^"]+)".*tn="([^"]+)".*dt="([^"]*)".*by="([0-9]+)".*/) { print "$2,$1,\"$3\",$4,\"$5\",\"$6\",\"$7\",\"true\",$8,0\n" }' |
         grep -v "^0,0," > $JMX_LOG-header.csv
 
     echo "Parse detail test data"    
     grep '<sample t=' $JMX_LOG | 
         sed 's/^\s\s*//' | 
-        grep -E 'lb="(S|WL|WP|R)(([0-9][0-9]")|(00:[^"]+"))' | 
+        grep -E 'lb="(S|WL|WP|R|ETLQ)(([0-9][0-9]")|(00:[^"]+"))' | 
         perl -ne 'if (/sample t="([0-9]+)".*ts="([0-9]+)".*lb="([^"]+)".*rc="([^"]*)".*rm="([^"]+)".*tn="([^"]+)".*dt="([^"]*)".*by="([0-9]+)".*/) { print "$2,$1,\"$3\",$4,\"$5\",\"$6\",\"$7\",\"true\",$8,0\n" }' |
         grep -v "^0,0," 2>&1 > $JMX_LOG-detail.csv
 }
@@ -36,11 +36,14 @@ log_info "Staging jmeter log summary data(detail log at $LOG_FILE)"
 
 fastload 2>&1 > $LOG_FILE <<EOF
 
-.LOGON localhost/dbc,dbc;
+.LOGON $BMS_TERADATA_DB_HOST/dbc,dbc;
 
 DATABASE benchmark;
 
 DROP TABLE stage_jmeter_log_summary;
+
+DROP TABLE ERR1;
+DROP TABLE ERR2;
 
 CREATE TABLE stage_jmeter_log_summary,
     NO FALLBACK ,
@@ -51,7 +54,7 @@ CREATE TABLE stage_jmeter_log_summary,
     elapsed_ms BIGINT,
     label VARCHAR(2000),
     response_code INT,
-    response_message VARCHAR(1000),
+    response_message VARCHAR(3000),
     thread_name VARCHAR(100),
     data_type VARCHAR(100),
     success VARCHAR(10),
@@ -59,16 +62,16 @@ CREATE TABLE stage_jmeter_log_summary,
     latency INT
 );
 
-.ERRLIMIT 1;
+.ERRLIMIT 10;
 
 .SET RECORD VARTEXT ',';
 DEFINE
     in_tstamp_epoch (VARCHAR(30))
     ,in_elapsed_ms (VARCHAR(30))
     ,in_label (VARCHAR(100))
-    ,in_response_code (VARCHAR(10))
-    ,in_response_message (VARCHAR(30))
-    ,in_thread_name (VARCHAR(30))
+    ,in_response_code (VARCHAR(50))
+    ,in_response_message (VARCHAR(50))
+    ,in_thread_name (VARCHAR(50))
     ,in_data_type (VARCHAR(30))
     ,in_success (VARCHAR(30))
     ,in__bytes (VARCHAR(30))
@@ -103,16 +106,18 @@ then
     exit 1
 fi
 
-
 LOG_FILE=$BMS_OUTPUT_PATH/stage_jmeter_log.$RUN_ID.log
 
 log_info "Staging jmeter log detail data(detail log at $LOG_FILE)"
 
 fastload 2>&1 > $LOG_FILE <<EOF
 
-.LOGON localhost/dbc,dbc;
+.LOGON $BMS_TERADATA_DB_HOST/dbc,dbc;
 
 DATABASE benchmark;
+
+DROP TABLE ERR1;
+DROP TABLE ERR2;
 
 DROP TABLE stage_jmeter_log;
 CREATE TABLE stage_jmeter_log,
@@ -183,7 +188,7 @@ function load_test_headers {
     echo "Load test definition data for run ID $RUN_ID"
 
 START_EPOCH_EXPR="CAST(DATE '1970-01-01' + (tstamp_epoch / 86400000) AS TIMESTAMP(6))
-+ ((tstamp_epoch MOD 86400000) * INTERVAL '00:00:01.000000' HOUR TO SECOND)"
++ ((tstamp_epoch MOD 86400000/1000) * INTERVAL '00:00:01.000000' HOUR TO SECOND)"
 run_sql "DELETE FROM ${BMS_STATS_DB_NAME}.perf_test WHERE run_id=${RUN_ID};" 2>&1 >> $SQL_DETAIL_LOG
 
 run_sql "INSERT INTO ${BMS_STATS_DB_NAME}.perf_test (run_id, name, test_plan, test_tag, start_tstamp, end_tstamp)
@@ -203,9 +208,9 @@ function load_test_detail {
     echo "Load test detail data"
 
 START_EPOCH_EXPR="CAST(DATE '1970-01-01' + (tstamp_epoch / 86400000) AS TIMESTAMP(6))
-+ ((tstamp_epoch MOD 86400000) * INTERVAL '00:00:01.000000' HOUR TO SECOND) AS start_tstamp"
++ ((tstamp_epoch MOD 86400000/1000) * INTERVAL '00:00:01.000000' HOUR TO SECOND) AS start_tstamp"
 END_EPOCH_EXPR="CAST(DATE '1970-01-01' + ((tstamp_epoch + elapsed_ms) / 86400000) AS TIMESTAMP(6))
-+ (((tstamp_epoch + elapsed_ms) MOD 86400000) * INTERVAL '00:00:01.000000' HOUR TO SECOND) AS end_tstamp"
++ (((tstamp_epoch + elapsed_ms) MOD 86400000/1000) * INTERVAL '00:00:01.000000' HOUR TO SECOND) AS end_tstamp"
 
 run_sql "DELETE FROM ${BMS_STATS_DB_NAME}.perf_test_case WHERE run_id=${RUN_ID};" 2>&1 >> $SQL_DETAIL_LOG
 
@@ -213,7 +218,7 @@ run_sql "INSERT INTO ${BMS_STATS_DB_NAME}.perf_test_case (run_id, case_name, sam
 SELECT ${RUN_ID} run_id, label, 'SSH sampler', 'TODO', _bytes, 'TODO', -1, thread_name, 
 $START_EPOCH_EXPR, $END_EPOCH_EXPR, elapsed_ms
 FROM ${BMS_STATS_DB_NAME}.stage_jmeter_log
-WHERE label NOT LIKE 'Stop on runtime%';" 2>&1 >> $SQL_DETAIL_LOG
+WHERE label NOT LIKE '%Stop on runtime%';" 2>&1 >> $SQL_DETAIL_LOG
 
     rc=$?
     if [[ $rc -ne 0 ]]; then

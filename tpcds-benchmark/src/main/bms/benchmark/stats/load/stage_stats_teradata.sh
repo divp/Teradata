@@ -64,7 +64,7 @@ log_info "Staging iostat data (detail log at $LOG_FILE)"
 
 fastload 2>&1 > $LOG_FILE <<EOF
 
-.LOGON localhost/dbc,dbc;
+.LOGON $BMS_TERADATA_DB_HOST/dbc,dbc;
 
 DATABASE benchmark;
 
@@ -156,7 +156,7 @@ log_info "Staging vmstat data (detail log at $LOG_FILE)"
 
 fastload 2>&1 > $LOG_FILE <<EOF
 
-LOGON localhost/dbc,dbc;
+.LOGON $BMS_TERADATA_DB_HOST/dbc,dbc;
 
 DATABASE benchmark;
 
@@ -263,7 +263,7 @@ log_info "Staging sar data (detail log at $LOG_FILE)"
 
 fastload 2>&1 > $LOG_FILE <<EOF
 
-.LOGON localhost/dbc,dbc;
+.LOGON $BMS_TERADATA_DB_HOST/dbc,dbc;
 
 DATABASE benchmark;
 
