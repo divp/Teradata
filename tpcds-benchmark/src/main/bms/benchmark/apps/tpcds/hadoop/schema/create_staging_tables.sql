@@ -34,3 +34,23 @@ CREATE TABLE s_purchase
 row format delimited fields terminated by '|' lines terminated by '\n'
 stored as textfile
 location '/data/benchmark/tpcds/sf1000/001/s_purchase';
+
+
+DROP TABLE IF EXISTS s_store;
+CREATE TABLE s_store
+	(
+    stor_store_id STRING,
+    stor_closed_date  STRING,
+    stor_name STRING,
+    stor_employees INT,
+    stor_floor_space   INT,
+    stor_hours    STRING,
+    stor_store_manager  STRING,
+    stor_market_id  INT,
+    stor_geography_class   STRING,
+    stor_market_manager   STRING,
+    stor_tax_percentage  DOUBLE
+)
+row format delimited fields terminated by '|' lines terminated by '\n'
+stored as textfile
+location '/data/benchmark/tpcds/sf1000/001/s_store';
