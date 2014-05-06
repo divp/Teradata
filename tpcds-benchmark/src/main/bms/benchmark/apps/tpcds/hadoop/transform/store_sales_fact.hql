@@ -22,6 +22,10 @@ SET hive.exec.max.dynamic.partitions.pernode=20000;
 SET hive.exec.max.dynamic.partitions=20000;
 SET hive.exec.max.created.files=150000;
 
+-- Sort size parameters
+-- SET mapreduce.task.io.sort.factor=100;
+-- SET mapreduce.task.io.sort.mb=512;
+
 -- use store_sales_t1 to ease re-setting test, should be identical performance to appending to table.
 DROP TABLE IF EXISTS store_sales_t1;
 CREATE TABLE store_sales_t1 LIKE store_sales;
