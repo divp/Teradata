@@ -30,6 +30,13 @@ function get_fastload_script  {
         .EXIT;
 EOF
 
+    if [ $? -ne 0 ]
+    then
+        tail $log
+        log_error "Error generating fastload script. See detail log: $log"
+        exit 1
+    fi
+    
     out_script=$(mktemp)
 
     cat <<EOF >$out_script
@@ -138,7 +145,6 @@ else
 fi
 
 $BENCHMARK_PATH/apps/tpcds/teradata/schema/backup_target_tables.sh move
-
 rc=$?
 if [ $rc -ne 0 ]
 then
@@ -152,7 +158,6 @@ do
     input_file=$BMS_SOURCE_DATA_PATH/tpcds/$BMS_ETL_SCALE_TAG/000/${table}.dat
     script=$(mktemp /tmp/$(basename $0).fastload.script.XXXXXXXXXX)
     get_fastload_script $table $input_file > $script
-    [ $? -ne 0 ] && (tail $log; log_error "Error generating fastload script. See detail log: $log"; exit 1)
     
     log_info "Running fastload script ($script)" | tee -a $log
     fastload <$script >> $log

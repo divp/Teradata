@@ -61,6 +61,7 @@ do
             .LOGOFF;
             .EXIT;
 EOF
+    rc=$?
     ;;
     move)
         log_info "Moving table contents (rename) from ${table} into ${backup_table}, keep empty source"
@@ -79,9 +80,15 @@ EOF
             .LOGOFF;
             .EXIT;
 EOF
+    rc=$?
     ;;
     esac
     
+    if [ $rc -ne 0 ]
+    then
+        log_error "Error executing table backup"
+        exit 1
+    fi  
     log_info "Done"
     
 done
