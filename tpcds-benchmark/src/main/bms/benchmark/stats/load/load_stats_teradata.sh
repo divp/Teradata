@@ -1,29 +1,43 @@
 #!/bin/bash
 
 set -o nounset
-set -o errexit
 
+. $BENCHMARK_PATH/exports.sh
 . $BENCHMARK_PATH/lib/lib.sh
+. $BENCHMARK_PATH/stats/load/lib.sh
+. $BENCHMARK_PATH/lib/teradata_lib.sh
 
 #===========================================
 
 function parse_xml_log {
     JMX_LOG="$1"
-    echo "Processing JMeter output file at $JMX_LOG"
+    log_info "Processing JMeter output file at $JMX_LOG - output at $JMX_LOG-header.csv, $JMX_LOG-detail.csv"
     # Parse original JMeter XML logs into CSV
-    echo "Parse header test data"
+    log_info "Parse test header data"
     grep '<sample t=' $JMX_LOG | 
         sed 's/^\s\s*//' | 
-        grep -vE 'lb="(S|WL|WP|R|ETLQ)(([0-9][0-9]")|(00:[^"]+"))' | 
-        perl -ne 'if (/sample t="([0-9]+)".*ts="([0-9]+)".*lb="([^"]+)".*rc="([^"]+)".*rm="([^"]+)".*tn="([^"]+)".*dt="([^"]*)".*by="([0-9]+)".*/) { print "$2,$1,\"$3\",$4,\"$5\",\"$6\",\"$7\",\"true\",$8,0\n" }' |
+        grep -E 'lb="[A-Z]+[0-9]+:.*"' |
+        perl -ne 'if (/sample t="([0-9]+)".*ts="([0-9]+)".*lb="([^"]+)".*rc="([^"]+)".*rm="([^"]+)".*tn="([^"]+)".*dt="([^"]*)".*by="([0-9]+)".*/) { print "$2|$1|$3|$4|$5|$6|$7|true|$8|0\n" }' |
         grep -v "^0,0," > $JMX_LOG-header.csv
+    rc=$?
+    if [ $rc -ne 0 ]
+    then
+        log "ERROR: unable to parse test header data (code: $rc, ${BASH_SOURCE}:${LINENO})"
+        exit 1
+    fi
 
-    echo "Parse detail test data"    
+    log_info "Parse detail test data"    
     grep '<sample t=' $JMX_LOG | 
         sed 's/^\s\s*//' | 
-        grep -E 'lb="(S|WL|WP|R|ETLQ)(([0-9][0-9]")|(00:[^"]+"))' | 
-        perl -ne 'if (/sample t="([0-9]+)".*ts="([0-9]+)".*lb="([^"]+)".*rc="([^"]*)".*rm="([^"]+)".*tn="([^"]+)".*dt="([^"]*)".*by="([0-9]+)".*/) { print "$2,$1,\"$3\",$4,\"$5\",\"$6\",\"$7\",\"true\",$8,0\n" }' |
-        grep -v "^0,0," 2>&1 > $JMX_LOG-detail.csv
+        grep -E 'lb="[A-Z]+[0-9]+:.*"' |
+        perl -ne 'if (/sample t="([0-9]+)".*ts="([0-9]+)".*lb="([^"]+)".*rc="([^"]*)".*rm="([^"]+)".*tn="([^"]+)".*dt="([^"]*)".*by="([0-9]+)".*/) { print "$2|$1|$3|$4|$5|$6|$7|true|$8|0\n" }' |
+        grep -v "^0,0," > $JMX_LOG-detail.csv
+    rc=$?
+    if [ $rc -ne 0 ]
+    then
+        log "ERROR: unable to parse test detail data (code: $rc, ${BASH_SOURCE}:${LINENO})"
+        exit 1
+    fi        
 }
 
 function stage_csv_data {
@@ -36,9 +50,9 @@ log_info "Staging jmeter log summary data(detail log at $LOG_FILE)"
 
 fastload 2>&1 > $LOG_FILE <<EOF
 
-.LOGON $BMS_TERADATA_DB_HOST/dbc,dbc;
+.LOGON ${BMS_STATS_DB_HOST}/${BMS_STATS_DB_UID},${BMS_STATS_DB_PWD};
 
-DATABASE benchmark;
+DATABASE ${BMS_STATS_DB_NAME};
 
 DROP TABLE stage_jmeter_log_summary;
 
@@ -62,19 +76,19 @@ CREATE TABLE stage_jmeter_log_summary,
     latency INT
 );
 
-.ERRLIMIT 10;
+.ERRLIMIT 1;
 
-.SET RECORD VARTEXT ',';
+.SET RECORD VARTEXT '|';
 DEFINE
     in_tstamp_epoch (VARCHAR(30))
     ,in_elapsed_ms (VARCHAR(30))
     ,in_label (VARCHAR(100))
     ,in_response_code (VARCHAR(50))
-    ,in_response_message (VARCHAR(50))
+    ,in_response_message (VARCHAR(3000))
     ,in_thread_name (VARCHAR(50))
     ,in_data_type (VARCHAR(30))
     ,in_success (VARCHAR(30))
-    ,in__bytes (VARCHAR(30))
+    ,in_bytes (VARCHAR(30))
     ,in_latency (VARCHAR(30))
 FILE=$HEADER_CSV;
 
@@ -91,7 +105,7 @@ INSERT INTO benchmark.stage_jmeter_log_summary VALUES (
     ,:in_thread_name
     ,:in_data_type
     ,:in_success
-    ,:in__bytes
+    ,:in_bytes
     ,:in_latency
 );
 
@@ -112,9 +126,9 @@ log_info "Staging jmeter log detail data(detail log at $LOG_FILE)"
 
 fastload 2>&1 > $LOG_FILE <<EOF
 
-.LOGON $BMS_TERADATA_DB_HOST/dbc,dbc;
+.LOGON ${BMS_STATS_DB_HOST}/${BMS_STATS_DB_UID},${BMS_STATS_DB_PWD};
 
-DATABASE benchmark;
+DATABASE ${BMS_STATS_DB_NAME};
 
 DROP TABLE ERR1;
 DROP TABLE ERR2;
@@ -139,7 +153,7 @@ CREATE TABLE stage_jmeter_log,
 
 .ERRLIMIT 1;
 
-.SET RECORD VARTEXT ',';
+.SET RECORD VARTEXT '|';
 DEFINE
     in_tstamp_epoch (VARCHAR(30))
     ,in_elapsed_ms (VARCHAR(30))
@@ -149,7 +163,7 @@ DEFINE
     ,in_thread_name (VARCHAR(30))
     ,in_data_type (VARCHAR(30))
     ,in_success (VARCHAR(30))
-    ,in__bytes (VARCHAR(30))
+    ,in_bytes (VARCHAR(30))
     ,in_latency (VARCHAR(30))
 FILE=$DETAIL_CSV;
 
@@ -166,7 +180,7 @@ INSERT INTO benchmark.stage_jmeter_log VALUES (
     ,:in_thread_name
     ,:in_data_type
     ,:in_success
-    ,:in__bytes
+    ,:in_bytes
     ,:in_latency
 );
 
@@ -192,7 +206,7 @@ START_EPOCH_EXPR="CAST(DATE '1970-01-01' + (tstamp_epoch / 86400000) AS TIMESTAM
 run_sql "DELETE FROM ${BMS_STATS_DB_NAME}.perf_test WHERE run_id=${RUN_ID};" 2>&1 >> $SQL_DETAIL_LOG
 
 run_sql "INSERT INTO ${BMS_STATS_DB_NAME}.perf_test (run_id, name, test_plan, test_tag, start_tstamp, end_tstamp)
-SELECT ${RUN_ID}, '$BMS_TEST_TAG','aster_hadoop.jmx', 't_name',
+SELECT ${RUN_ID}, '$BMS_TEST_TAG','benchmark.jmx', 't_name',
 (SELECT $START_EPOCH_EXPR FROM ${BMS_STATS_DB_NAME}.stage_jmeter_log_summary WHERE label LIKE '%--- Log banner:%'), (SELECT $START_EPOCH_EXPR FROM ${BMS_STATS_DB_NAME}.stage_jmeter_log_summary WHERE label LIKE '%EXIT%');" 2>&1 >> $SQL_DETAIL_LOG
 
     rc=$?
@@ -289,10 +303,6 @@ function print_help {
     echo "Usage: $0 RUN_ID"
     echo "e.g. $0 1392843882"
 }
-
-. $BENCHMARK_PATH/exports.sh
-
-. $BENCHMARK_PATH/stats/load/lib.sh
 
 if [ $# -lt 1 ]
 then

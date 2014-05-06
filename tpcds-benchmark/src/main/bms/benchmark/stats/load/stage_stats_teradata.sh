@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -o nounset
+
 . $BENCHMARK_PATH/exports.sh
 . $BENCHMARK_PATH/lib/lib.sh
 . $BENCHMARK_PATH/stats/load/lib.sh
@@ -34,39 +36,15 @@ RUN_ID=$1
 
 log_info "Staging statistics for run $RUN_ID"
 
-log_info "Searching locally for previously downloaded logs"
-if [ $(ls $BMS_OUTPUT_PATH/{iostat,sarDEV,vmstat}_${RUN_ID}_allnodes.log 2>/dev/null| wc -l) -eq 3 ]
-then
-    log_info "Complete compiled statistics found locally for run $RUN_ID. Bypassing download from cluster"
-else
-    log_info "No complete compiled statistics found locally for run $RUN_ID. Starting download from cluster"
-
-    log_info "Connecting to cluster head node ($BMS_TARGET_UID@$BMS_TARGET_HOST)"
-    LOG_FILE=$BMS_OUTPUT_PATH/$(basename $0).worker.download.log
-    log_info "Compiling worker statistics on head node (detail log at $LOG_FILE)"
-    ssh $BMS_TARGET_UID@$BMS_TARGET_HOST "$BENCHMARK_PATH/stats/load/download_stats.sh $RUN_ID" > $LOG_FILE
-    rc=$?
-    if [ $? -lt 1 ]
-    then
-        log "ERROR: ($0) Runtime error compiling statistics on head node:"
-        tail $LOG_FILE
-        exit 1
-    fi
-
-    log_info "Downloading compiled statistics from head node"
-    scp $BMS_TARGET_UID@$BMS_TARGET_HOST:$BMS_OUTPUT_PATH/bms-${RUN_ID}-ALL.* $BMS_OUTPUT_PATH 
-    scp $BMS_TARGET_UID@$BMS_TARGET_HOST:$BMS_OUTPUT_PATH/\*_${RUN_ID}_allnodes.log $BMS_OUTPUT_PATH
-fi
-
 INPUT_FILE=$BMS_OUTPUT_PATH/iostat_${RUN_ID}_allnodes.log
 LOG_FILE=$BMS_OUTPUT_PATH/stage_stats_teradata.iostat.$RUN_ID.log
 log_info "Staging iostat data (detail log at $LOG_FILE)"
 
 fastload 2>&1 > $LOG_FILE <<EOF
 
-.LOGON $BMS_TERADATA_DB_HOST/dbc,dbc;
+.LOGON ${BMS_STATS_DB_HOST}/${BMS_STATS_DB_UID},${BMS_STATS_DB_PWD};
 
-DATABASE benchmark;
+DATABASE ${BMS_STATS_DB_NAME};
 
 DROP TABLE stage_iostat;
 
@@ -156,9 +134,9 @@ log_info "Staging vmstat data (detail log at $LOG_FILE)"
 
 fastload 2>&1 > $LOG_FILE <<EOF
 
-.LOGON $BMS_TERADATA_DB_HOST/dbc,dbc;
+.LOGON ${BMS_STATS_DB_HOST}/${BMS_STATS_DB_UID},${BMS_STATS_DB_PWD};
 
-DATABASE benchmark;
+DATABASE ${BMS_STATS_DB_NAME};
 
 DROP TABLE stage_vmstat;
 
@@ -263,9 +241,9 @@ log_info "Staging sar data (detail log at $LOG_FILE)"
 
 fastload 2>&1 > $LOG_FILE <<EOF
 
-.LOGON $BMS_TERADATA_DB_HOST/dbc,dbc;
+.LOGON ${BMS_STATS_DB_HOST}/${BMS_STATS_DB_UID},${BMS_STATS_DB_PWD};
 
-DATABASE benchmark;
+DATABASE ${BMS_STATS_DB_NAME};
 
 DROP TABLE stage_sarstat;
 
