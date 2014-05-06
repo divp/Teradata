@@ -118,265 +118,12 @@ ASTER:
         <collectionProp name="Arguments.arguments">
           <elementProp name="OUTPUT_FILENAME_STEM" elementType="Argument">
             <stringProp name="Argument.name">OUTPUT_FILENAME_STEM</stringProp>
-            <stringProp name="Argument.value">${BMS_OUTPUT_PATH}/${__TestPlanName}_${TESTSTART.MS}</stringProp>
+            <stringProp name="Argument.value">${BENCHMARK_OUTPUT_PATH}/${__TestPlanName}_${TESTSTART.MS}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
         </collectionProp>
       </Arguments>
       <hashTree/>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="# SANDBOX" enabled="false">
-        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
-        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
-          <boolProp name="LoopController.continue_forever">false</boolProp>
-          <stringProp name="LoopController.loops">1</stringProp>
-        </elementProp>
-        <stringProp name="ThreadGroup.num_threads">1</stringProp>
-        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
-        <longProp name="ThreadGroup.start_time">1355812644000</longProp>
-        <longProp name="ThreadGroup.end_time">1355812644000</longProp>
-        <boolProp name="ThreadGroup.scheduler">false</boolProp>
-        <stringProp name="ThreadGroup.duration"></stringProp>
-        <stringProp name="ThreadGroup.delay"></stringProp>
-      </ThreadGroup>
-      <hashTree>
-        <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="BeanShell Sampler" enabled="true">
-          <stringProp name="BeanShellSampler.query">import org.apache.jmeter.samplers.SampleResult;
-
-SampleResult s;
-for (int i=0; i&lt;5;i++) {
-    s = SampleResult.createTestSample((long)100);
-    s.setResponseData(&quot;GEB: &quot; + i);
-    s.setResponseOK();
-   //log.info(&quot;GEB: &quot; + i);
-}
-    s.setResponseData(&quot;XEB: &quot; + i);
-    s.setResponseOK();
-
-    s.setResponseData(&quot;XEB: &quot; + i);
-    s.setResponseOK();
-return new Integer[4];</stringProp>
-          <stringProp name="BeanShellSampler.filename"></stringProp>
-          <stringProp name="BeanShellSampler.parameters"></stringProp>
-          <boolProp name="BeanShellSampler.resetInterpreter">false</boolProp>
-        </BeanShellSampler>
-        <hashTree>
-          <RegexExtractor guiclass="RegexExtractorGui" testclass="RegexExtractor" testname="e2" enabled="true">
-            <stringProp name="RegexExtractor.useHeaders">false</stringProp>
-            <stringProp name="RegexExtractor.refname">idem</stringProp>
-            <stringProp name="RegexExtractor.regex">GEB: ([0-9]+)</stringProp>
-            <stringProp name="RegexExtractor.template">@$1$@</stringProp>
-            <stringProp name="RegexExtractor.default">?</stringProp>
-            <stringProp name="RegexExtractor.match_number">1</stringProp>
-            <stringProp name="Sample.scope">all</stringProp>
-          </RegexExtractor>
-          <hashTree/>
-          <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report" enabled="true">
-            <boolProp name="ResultCollector.error_logging">false</boolProp>
-            <objProp>
-              <name>saveConfig</name>
-              <value class="SampleSaveConfiguration">
-                <time>true</time>
-                <latency>true</latency>
-                <timestamp>true</timestamp>
-                <success>true</success>
-                <label>true</label>
-                <code>true</code>
-                <message>true</message>
-                <threadName>true</threadName>
-                <dataType>true</dataType>
-                <encoding>false</encoding>
-                <assertions>true</assertions>
-                <subresults>true</subresults>
-                <responseData>false</responseData>
-                <samplerData>false</samplerData>
-                <xml>true</xml>
-                <fieldNames>false</fieldNames>
-                <responseHeaders>false</responseHeaders>
-                <requestHeaders>false</requestHeaders>
-                <responseDataOnError>false</responseDataOnError>
-                <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
-                <assertionsResultsToSave>0</assertionsResultsToSave>
-                <bytes>true</bytes>
-              </value>
-            </objProp>
-            <stringProp name="filename"></stringProp>
-          </ResultCollector>
-          <hashTree/>
-        </hashTree>
-        <ForeachController guiclass="ForeachControlPanel" testclass="ForeachController" testname="ForEach Controller" enabled="true">
-          <stringProp name="ForeachController.inputVal">idem</stringProp>
-          <stringProp name="ForeachController.returnVal">eOut</stringProp>
-          <boolProp name="ForeachController.useSeparator">false</boolProp>
-        </ForeachController>
-        <hashTree>
-          <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
-            <boolProp name="ResultCollector.error_logging">false</boolProp>
-            <objProp>
-              <name>saveConfig</name>
-              <value class="SampleSaveConfiguration">
-                <time>true</time>
-                <latency>true</latency>
-                <timestamp>true</timestamp>
-                <success>true</success>
-                <label>true</label>
-                <code>true</code>
-                <message>true</message>
-                <threadName>true</threadName>
-                <dataType>true</dataType>
-                <encoding>false</encoding>
-                <assertions>true</assertions>
-                <subresults>true</subresults>
-                <responseData>false</responseData>
-                <samplerData>false</samplerData>
-                <xml>true</xml>
-                <fieldNames>false</fieldNames>
-                <responseHeaders>false</responseHeaders>
-                <requestHeaders>false</requestHeaders>
-                <responseDataOnError>false</responseDataOnError>
-                <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
-                <assertionsResultsToSave>0</assertionsResultsToSave>
-                <bytes>true</bytes>
-              </value>
-            </objProp>
-            <stringProp name="filename"></stringProp>
-          </ResultCollector>
-          <hashTree/>
-        </hashTree>
-        <ResultCollector guiclass="TableVisualizer" testclass="ResultCollector" testname="View Results in Table" enabled="true">
-          <boolProp name="ResultCollector.error_logging">false</boolProp>
-          <objProp>
-            <name>saveConfig</name>
-            <value class="SampleSaveConfiguration">
-              <time>true</time>
-              <latency>true</latency>
-              <timestamp>true</timestamp>
-              <success>true</success>
-              <label>true</label>
-              <code>true</code>
-              <message>true</message>
-              <threadName>true</threadName>
-              <dataType>true</dataType>
-              <encoding>false</encoding>
-              <assertions>true</assertions>
-              <subresults>true</subresults>
-              <responseData>false</responseData>
-              <samplerData>false</samplerData>
-              <xml>true</xml>
-              <fieldNames>false</fieldNames>
-              <responseHeaders>false</responseHeaders>
-              <requestHeaders>false</requestHeaders>
-              <responseDataOnError>false</responseDataOnError>
-              <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
-              <assertionsResultsToSave>0</assertionsResultsToSave>
-              <bytes>true</bytes>
-            </value>
-          </objProp>
-          <stringProp name="filename"></stringProp>
-        </ResultCollector>
-        <hashTree/>
-        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
-          <boolProp name="ResultCollector.error_logging">false</boolProp>
-          <objProp>
-            <name>saveConfig</name>
-            <value class="SampleSaveConfiguration">
-              <time>true</time>
-              <latency>true</latency>
-              <timestamp>true</timestamp>
-              <success>true</success>
-              <label>true</label>
-              <code>true</code>
-              <message>true</message>
-              <threadName>true</threadName>
-              <dataType>true</dataType>
-              <encoding>false</encoding>
-              <assertions>true</assertions>
-              <subresults>true</subresults>
-              <responseData>false</responseData>
-              <samplerData>false</samplerData>
-              <xml>true</xml>
-              <fieldNames>false</fieldNames>
-              <responseHeaders>false</responseHeaders>
-              <requestHeaders>false</requestHeaders>
-              <responseDataOnError>false</responseDataOnError>
-              <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
-              <assertionsResultsToSave>0</assertionsResultsToSave>
-              <bytes>true</bytes>
-            </value>
-          </objProp>
-          <stringProp name="filename"></stringProp>
-        </ResultCollector>
-        <hashTree/>
-        <BeanShellListener guiclass="TestBeanGUI" testclass="BeanShellListener" testname="e3" enabled="true">
-          <stringProp name="filename"></stringProp>
-          <stringProp name="parameters"></stringProp>
-          <boolProp name="resetInterpreter">false</boolProp>
-          <stringProp name="script">log.info(&quot;=========== :001):\n&quot; + sampleResult.getResponseDataAsString());
-log.info(&quot;=========== 002)&quot; + vars.get(&quot;idem1&quot;));</stringProp>
-        </BeanShellListener>
-        <hashTree/>
-        <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="e4" enabled="true">
-          <stringProp name="BeanShellSampler.query">log.info(&quot;====&quot; + SampleResult.getResponseDataAsString());</stringProp>
-          <stringProp name="BeanShellSampler.filename"></stringProp>
-          <stringProp name="BeanShellSampler.parameters"></stringProp>
-          <boolProp name="BeanShellSampler.resetInterpreter">false</boolProp>
-        </BeanShellSampler>
-        <hashTree/>
-        <TestAction guiclass="TestActionGui" testclass="TestAction" testname="&gt;&gt;&gt; EXIT SANDBOX (Stop threads)" enabled="true">
-          <intProp name="ActionProcessor.action">2</intProp>
-          <intProp name="ActionProcessor.target">2</intProp>
-          <stringProp name="ActionProcessor.duration"></stringProp>
-        </TestAction>
-        <hashTree/>
-        <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="STOP" enabled="true">
-          <stringProp name="BeanShellSampler.query">log.info(&quot;&gt;&gt;&gt; STOPPING ENGINE&quot;);
-org.apache.jmeter.engine.StandardJMeterEngine.stopEngine();
-</stringProp>
-          <stringProp name="BeanShellSampler.filename"></stringProp>
-          <stringProp name="BeanShellSampler.parameters"></stringProp>
-          <boolProp name="BeanShellSampler.resetInterpreter">false</boolProp>
-        </BeanShellSampler>
-        <hashTree/>
-        <SystemSampler guiclass="SystemSamplerGui" testclass="SystemSampler" testname="OS Process Sampler debug" enabled="true">
-          <boolProp name="SystemSampler.checkReturnCode">true</boolProp>
-          <stringProp name="SystemSampler.expectedReturnCode">0</stringProp>
-          <stringProp name="SystemSampler.command">find</stringProp>
-          <elementProp name="SystemSampler.arguments" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
-            <collectionProp name="Arguments.arguments">
-              <elementProp name="" elementType="Argument">
-                <stringProp name="Argument.name"></stringProp>
-                <stringProp name="Argument.value">${__P(BENCHMARK_PATH)}</stringProp>
-                <stringProp name="Argument.metadata">=</stringProp>
-              </elementProp>
-              <elementProp name="" elementType="Argument">
-                <stringProp name="Argument.name"></stringProp>
-                <stringProp name="Argument.value"> -name \*.sh </stringProp>
-                <stringProp name="Argument.metadata">=</stringProp>
-              </elementProp>
-              <elementProp name="" elementType="Argument">
-                <stringProp name="Argument.name"></stringProp>
-                <stringProp name="Argument.value">-exec </stringProp>
-                <stringProp name="Argument.metadata">=</stringProp>
-              </elementProp>
-              <elementProp name="" elementType="Argument">
-                <stringProp name="Argument.name"></stringProp>
-                <stringProp name="Argument.value">chmod 755 {} </stringProp>
-                <stringProp name="Argument.metadata">=</stringProp>
-              </elementProp>
-              <elementProp name="" elementType="Argument">
-                <stringProp name="Argument.name"></stringProp>
-                <stringProp name="Argument.value">\;</stringProp>
-                <stringProp name="Argument.metadata">=</stringProp>
-              </elementProp>
-            </collectionProp>
-          </elementProp>
-          <elementProp name="SystemSampler.environment" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables" enabled="true">
-            <collectionProp name="Arguments.arguments"/>
-          </elementProp>
-          <stringProp name="SystemSampler.directory"></stringProp>
-          <longProp name="SystemSampler.timeout">1000</longProp>
-        </SystemSampler>
-        <hashTree/>
-      </hashTree>
       <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Utilities" enabled="false">
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
@@ -1296,7 +1043,7 @@ CREATE TABLE dmoz_rdf_class_train (
                 <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
                 <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
                 <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-                <stringProp name="command">echo &quot;${ASTER_SA_SQL_CREATE_DB}&quot; | ${ASTER_ACT_EXEC} -e -d beehive -U ${ASTER_ACT_UID} -w ${ASTER_ACT_PWD} ${CL_STDERR_REDIR} | tee -a ${BMS_OUTPUT_PATH}/create.db.${ASTER_DBNAME_SA}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
+                <stringProp name="command">echo &quot;${ASTER_SA_SQL_CREATE_DB}&quot; | ${ASTER_ACT_EXEC} -e -d beehive -U ${ASTER_ACT_UID} -w ${ASTER_ACT_PWD} ${CL_STDERR_REDIR} | tee -a ${BENCHMARK_OUTPUT_PATH}/create.db.${ASTER_DBNAME_SA}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
               </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
               <hashTree/>
               <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="Create tables (${ASTER_DBNAME_SA})" enabled="true">
@@ -1304,7 +1051,7 @@ CREATE TABLE dmoz_rdf_class_train (
                 <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
                 <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
                 <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-                <stringProp name="command">echo &quot;${ASTER_SA_SQL_CREATE_TABLES}&quot; | ${ASTER_ACT_SA_CL_PREFIX} -e ${CL_STDERR_REDIR} | tee -a ${BMS_OUTPUT_PATH}/create.tables.${ASTER_DBNAME_SA}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
+                <stringProp name="command">echo &quot;${ASTER_SA_SQL_CREATE_TABLES}&quot; | ${ASTER_ACT_SA_CL_PREFIX} -e ${CL_STDERR_REDIR} | tee -a ${BENCHMARK_OUTPUT_PATH}/create.tables.${ASTER_DBNAME_SA}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
               </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
               <hashTree/>
               <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="Install functions (${ASTER_DBNAME_SA})" enabled="true">
@@ -1312,7 +1059,7 @@ CREATE TABLE dmoz_rdf_class_train (
                 <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
                 <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
                 <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-                <stringProp name="command">echo &quot;${ASTER_SA_SQL_INSTALL_FUNCTIONS}&quot; | ${ASTER_ACT_SA_CL_PREFIX} -e ${CL_STDERR_REDIR} | tee -a ${BMS_OUTPUT_PATH}/install.functions.${ASTER_DBNAME_SA}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
+                <stringProp name="command">echo &quot;${ASTER_SA_SQL_INSTALL_FUNCTIONS}&quot; | ${ASTER_ACT_SA_CL_PREFIX} -e ${CL_STDERR_REDIR} | tee -a ${BENCHMARK_OUTPUT_PATH}/install.functions.${ASTER_DBNAME_SA}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
               </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
               <hashTree/>
               <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="Stopwords (${ASTER_DBNAME_SA})" enabled="true">
@@ -1320,7 +1067,7 @@ CREATE TABLE dmoz_rdf_class_train (
                 <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
                 <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
                 <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-                <stringProp name="command">${BENCHMARK_PATH}/apps/twitter/aster/stopwords.sh ${CL_STDERR_REDIR}  | tee -a ${BMS_OUTPUT_PATH}/stopwords.${ASTER_DBNAME_SA}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
+                <stringProp name="command">${BENCHMARK_PATH}/apps/twitter/aster/stopwords.sh ${CL_STDERR_REDIR}  | tee -a ${BENCHMARK_OUTPUT_PATH}/stopwords.${ASTER_DBNAME_SA}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
               </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
               <hashTree/>
             </hashTree>
@@ -1348,7 +1095,7 @@ CREATE TABLE dmoz_rdf_class_train (
                 <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
                 <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
                 <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-                <stringProp name="command">${BENCHMARK_PATH}/apps/twitter/aster/load_files.sh ${ASTER_INPUT_FILE_DIR}/twitter ${CL_STDERR_REDIR}  | tee -a ${BMS_OUTPUT_PATH}/load_files.${ASTER_DBNAME_SA}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
+                <stringProp name="command">${BENCHMARK_PATH}/apps/twitter/aster/load_files.sh ${ASTER_INPUT_FILE_DIR}/twitter ${CL_STDERR_REDIR}  | tee -a ${BENCHMARK_OUTPUT_PATH}/load_files.${ASTER_DBNAME_SA}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
               </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
               <hashTree/>
               <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="S00:Parse (${ASTER_DBNAME_SA})" enabled="true">
@@ -1356,7 +1103,7 @@ CREATE TABLE dmoz_rdf_class_train (
                 <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
                 <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
                 <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-                <stringProp name="command">${BENCHMARK_PATH}/apps/twitter/aster/parse_content.sh ${CL_STDERR_REDIR}  | tee -a ${BMS_OUTPUT_PATH}/parse_content.${ASTER_DBNAME_SA}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
+                <stringProp name="command">${BENCHMARK_PATH}/apps/twitter/aster/parse_content.sh ${CL_STDERR_REDIR}  | tee -a ${BENCHMARK_OUTPUT_PATH}/parse_content.${ASTER_DBNAME_SA}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
               </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
               <hashTree/>
               <IfController guiclass="IfControllerPanel" testclass="IfController" testname="Train topic classifier" enabled="true">
@@ -1369,7 +1116,7 @@ CREATE TABLE dmoz_rdf_class_train (
                   <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
                   <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
                   <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-                  <stringProp name="command">${BENCHMARK_PATH}/apps/twitter/aster/load_topic_training_set.sh ${ASTER_INPUT_FILE_DIR}/twitter ${CL_STDERR_REDIR}  | tee -a ${BMS_OUTPUT_PATH}/load_topic_training_set.${ASTER_DBNAME_SA}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
+                  <stringProp name="command">${BENCHMARK_PATH}/apps/twitter/aster/load_topic_training_set.sh ${ASTER_INPUT_FILE_DIR}/twitter ${CL_STDERR_REDIR}  | tee -a ${BENCHMARK_OUTPUT_PATH}/load_topic_training_set.${ASTER_DBNAME_SA}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
                 </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
                 <hashTree/>
                 <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="S00:Resample topic training set (${ASTER_DBNAME_SA})" enabled="true">
@@ -1377,7 +1124,7 @@ CREATE TABLE dmoz_rdf_class_train (
                   <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
                   <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
                   <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-                  <stringProp name="command">${BENCHMARK_PATH}/apps/twitter/aster/resample_topic_training_set.sh ${CL_STDERR_REDIR}  | tee -a ${BMS_OUTPUT_PATH}/resample_topic_training_set.${ASTER_DBNAME_SA}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
+                  <stringProp name="command">${BENCHMARK_PATH}/apps/twitter/aster/resample_topic_training_set.sh ${CL_STDERR_REDIR}  | tee -a ${BENCHMARK_OUTPUT_PATH}/resample_topic_training_set.${ASTER_DBNAME_SA}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
                 </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
                 <hashTree/>
                 <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="S00:Train topic classifier (${ASTER_DBNAME_SA})" enabled="true">
@@ -1385,7 +1132,7 @@ CREATE TABLE dmoz_rdf_class_train (
                   <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
                   <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
                   <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-                  <stringProp name="command">${BENCHMARK_PATH}/apps/twitter/aster/train_topic_classifier.sh ${CL_STDERR_REDIR}  | tee -a ${BMS_OUTPUT_PATH}/train_topic_classifier.${ASTER_DBNAME_SA}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
+                  <stringProp name="command">${BENCHMARK_PATH}/apps/twitter/aster/train_topic_classifier.sh ${CL_STDERR_REDIR}  | tee -a ${BENCHMARK_OUTPUT_PATH}/train_topic_classifier.${ASTER_DBNAME_SA}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
                 </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
                 <hashTree/>
               </hashTree>
@@ -1394,7 +1141,7 @@ CREATE TABLE dmoz_rdf_class_train (
                 <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
                 <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
                 <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-                <stringProp name="command">${BENCHMARK_PATH}/apps/twitter/aster/train_polarity_classifier.sh ${CL_STDERR_REDIR}  | tee -a ${BMS_OUTPUT_PATH}/train_polarity_classifier.${ASTER_DBNAME_SA}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
+                <stringProp name="command">${BENCHMARK_PATH}/apps/twitter/aster/train_polarity_classifier.sh ${CL_STDERR_REDIR}  | tee -a ${BENCHMARK_OUTPUT_PATH}/train_polarity_classifier.${ASTER_DBNAME_SA}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
               </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
               <hashTree/>
               <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="S00:Evaluate classifier (${ASTER_DBNAME_SA})" enabled="true">
@@ -1402,7 +1149,7 @@ CREATE TABLE dmoz_rdf_class_train (
                 <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
                 <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
                 <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-                <stringProp name="command">${BENCHMARK_PATH}/apps/twitter/aster/eval_classifier.sh &quot;${STORAGE_SA_LAYOUT}&quot; ${CL_STDERR_REDIR}  | tee -a ${BMS_OUTPUT_PATH}/eval_classifier.${ASTER_DBNAME_SA}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
+                <stringProp name="command">${BENCHMARK_PATH}/apps/twitter/aster/eval_classifier.sh &quot;${STORAGE_SA_LAYOUT}&quot; ${CL_STDERR_REDIR}  | tee -a ${BENCHMARK_OUTPUT_PATH}/eval_classifier.${ASTER_DBNAME_SA}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
               </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
               <hashTree/>
               <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Runtime error" enabled="true">
@@ -3204,7 +2951,7 @@ PARTITION BY RANGE(ymd) (
                 <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
                 <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
                 <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-                <stringProp name="command">echo &quot;${ASTER_WP_SQL_CREATE_DB}&quot; | ${ASTER_ACT_EXEC} -e -d beehive -U ${ASTER_ACT_UID} -w ${ASTER_ACT_PWD} ${CL_STDERR_REDIR} | tee -a ${BMS_OUTPUT_PATH}/create.db.${ASTER_DBNAME_WP}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
+                <stringProp name="command">echo &quot;${ASTER_WP_SQL_CREATE_DB}&quot; | ${ASTER_ACT_EXEC} -e -d beehive -U ${ASTER_ACT_UID} -w ${ASTER_ACT_PWD} ${CL_STDERR_REDIR} | tee -a ${BENCHMARK_OUTPUT_PATH}/create.db.${ASTER_DBNAME_WP}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
               </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
               <hashTree/>
               <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="Create tables (${ASTER_DBNAME_WP})" enabled="true">
@@ -3212,7 +2959,7 @@ PARTITION BY RANGE(ymd) (
                 <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
                 <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
                 <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-                <stringProp name="command">echo &quot;${ASTER_WP_SQL_CREATE_TABLES}&quot; | ${ASTER_ACT_WP_CL_PREFIX} -e ${CL_STDERR_REDIR} | tee -a ${BMS_OUTPUT_PATH}/create.tables.${ASTER_DBNAME_WP}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
+                <stringProp name="command">echo &quot;${ASTER_WP_SQL_CREATE_TABLES}&quot; | ${ASTER_ACT_WP_CL_PREFIX} -e ${CL_STDERR_REDIR} | tee -a ${BENCHMARK_OUTPUT_PATH}/create.tables.${ASTER_DBNAME_WP}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
               </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
               <hashTree/>
               <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="Install functions (${ASTER_DBNAME_WP})" enabled="true">
@@ -3220,7 +2967,7 @@ PARTITION BY RANGE(ymd) (
                 <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
                 <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
                 <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-                <stringProp name="command">echo &quot;${ASTER_WP_SQL_INSTALL_FUNCTIONS}&quot; | ${ASTER_ACT_WP_CL_PREFIX} -e ${CL_STDERR_REDIR} |  tee -a ${BMS_OUTPUT_PATH}/install.functions.${ASTER_DBNAME_WP}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
+                <stringProp name="command">echo &quot;${ASTER_WP_SQL_INSTALL_FUNCTIONS}&quot; | ${ASTER_ACT_WP_CL_PREFIX} -e ${CL_STDERR_REDIR} |  tee -a ${BENCHMARK_OUTPUT_PATH}/install.functions.${ASTER_DBNAME_WP}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
               </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
               <hashTree/>
             </hashTree>
@@ -3349,7 +3096,7 @@ echo &quot;Done loading wikipedia data into Aster, end time: $(date)&quot;
                 <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
                 <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
                 <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-                <stringProp name="command">(echo &apos;${ASTER_WP_SH_LOAD}&apos; &gt; ${BENCHMARK_PATH}/apps/wikipedia/load_files.sh; chmod +x  ${BENCHMARK_PATH}/apps/wikipedia/load_files.sh) ${CL_STDERR_REDIR}  | tee -a ${BMS_OUTPUT_PATH}/inject.${ASTER_DBNAME_WP}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
+                <stringProp name="command">(echo &apos;${ASTER_WP_SH_LOAD}&apos; &gt; ${BENCHMARK_PATH}/apps/wikipedia/load_files.sh; chmod +x  ${BENCHMARK_PATH}/apps/wikipedia/load_files.sh) ${CL_STDERR_REDIR}  | tee -a ${BENCHMARK_OUTPUT_PATH}/inject.${ASTER_DBNAME_WP}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
               </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
               <hashTree/>
               <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="WP00: Load files (${ASTER_DBNAME_WP})" enabled="true">
@@ -3357,7 +3104,7 @@ echo &quot;Done loading wikipedia data into Aster, end time: $(date)&quot;
                 <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
                 <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
                 <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-                <stringProp name="command">${BENCHMARK_PATH}/apps/wikipedia/load_files.sh ${ASTER_INPUT_FILE_DIR}/wikipedia ${CL_STDERR_REDIR}  | tee -a ${BMS_OUTPUT_PATH}/load_files.${ASTER_DBNAME_WP}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
+                <stringProp name="command">${BENCHMARK_PATH}/apps/wikipedia/load_files.sh ${ASTER_INPUT_FILE_DIR}/wikipedia ${CL_STDERR_REDIR}  | tee -a ${BENCHMARK_OUTPUT_PATH}/load_files.${ASTER_DBNAME_WP}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
               </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
               <hashTree/>
               <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Runtime error" enabled="true">
@@ -4545,7 +4292,7 @@ DROP TABLE IF EXISTS td_unique_visitors;
                 <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
                 <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
                 <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-                <stringProp name="command">echo &quot;${ASTER_WL_SQL_CREATE_DB}&quot; | ${ASTER_ACT_EXEC} -d beehive -U ${ASTER_ACT_UID} -w ${ASTER_ACT_PWD} -e ${CL_STDERR_REDIR}  |  tee -a ${BMS_OUTPUT_PATH}/create.db.${ASTER_DBNAME_WL}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
+                <stringProp name="command">echo &quot;${ASTER_WL_SQL_CREATE_DB}&quot; | ${ASTER_ACT_EXEC} -d beehive -U ${ASTER_ACT_UID} -w ${ASTER_ACT_PWD} -e ${CL_STDERR_REDIR}  |  tee -a ${BENCHMARK_OUTPUT_PATH}/create.db.${ASTER_DBNAME_WL}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
               </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
               <hashTree/>
               <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="Create tables (${ASTER_DBNAME_WL})" enabled="true">
@@ -4553,7 +4300,7 @@ DROP TABLE IF EXISTS td_unique_visitors;
                 <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
                 <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
                 <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-                <stringProp name="command">echo &quot;${ASTER_WL_SQL_CREATE_TABLES}&quot; | ${ASTER_ACT_WL_CL_PREFIX} -e ${CL_STDERR_REDIR}  | tee -a ${BMS_OUTPUT_PATH}/create.tables.${ASTER_DBNAME_WL}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
+                <stringProp name="command">echo &quot;${ASTER_WL_SQL_CREATE_TABLES}&quot; | ${ASTER_ACT_WL_CL_PREFIX} -e ${CL_STDERR_REDIR}  | tee -a ${BENCHMARK_OUTPUT_PATH}/create.tables.${ASTER_DBNAME_WL}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
               </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
               <hashTree/>
               <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="Install functions (${ASTER_DBNAME_WL})" enabled="true">
@@ -4561,7 +4308,7 @@ DROP TABLE IF EXISTS td_unique_visitors;
                 <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
                 <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
                 <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-                <stringProp name="command">echo &quot;${ASTER_WL_SQL_INSTALL_FUNCTIONS}&quot; | ${ASTER_ACT_WL_CL_PREFIX} -e ${CL_STDERR_REDIR}  |  tee -a ${BMS_OUTPUT_PATH}/install.functions.${ASTER_DBNAME_WL}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
+                <stringProp name="command">echo &quot;${ASTER_WL_SQL_INSTALL_FUNCTIONS}&quot; | ${ASTER_ACT_WL_CL_PREFIX} -e ${CL_STDERR_REDIR}  |  tee -a ${BENCHMARK_OUTPUT_PATH}/install.functions.${ASTER_DBNAME_WL}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
               </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
               <hashTree/>
             </hashTree>
@@ -4937,7 +4684,7 @@ analyze TDcom_all_sessions300;
                 <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
                 <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
                 <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-                <stringProp name="command">(echo &apos;${ASTER_WL_SH_LOAD_SCRIPT}&apos; &gt; ${BENCHMARK_PATH}/apps/weblogs/load_files.sh; chmod +x  ${BENCHMARK_PATH}/apps/weblogs/load_files.sh) ${CL_STDERR_REDIR}  | tee -a ${BMS_OUTPUT_PATH}/inject.${ASTER_DBNAME_WL}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
+                <stringProp name="command">(echo &apos;${ASTER_WL_SH_LOAD_SCRIPT}&apos; &gt; ${BENCHMARK_PATH}/apps/weblogs/load_files.sh; chmod +x  ${BENCHMARK_PATH}/apps/weblogs/load_files.sh) ${CL_STDERR_REDIR}  | tee -a ${BENCHMARK_OUTPUT_PATH}/inject.${ASTER_DBNAME_WL}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
               </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
               <hashTree/>
               <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="WL00: Load files (${ASTER_DBNAME_WL})" enabled="true">
@@ -4945,7 +4692,7 @@ analyze TDcom_all_sessions300;
                 <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
                 <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
                 <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-                <stringProp name="command">${BENCHMARK_PATH}/apps/weblogs/load_files.sh ${CL_STDERR_REDIR}  | tee -a ${BMS_OUTPUT_PATH}/load_files.${ASTER_DBNAME_WL}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
+                <stringProp name="command">${BENCHMARK_PATH}/apps/weblogs/load_files.sh ${CL_STDERR_REDIR}  | tee -a ${BENCHMARK_OUTPUT_PATH}/load_files.${ASTER_DBNAME_WL}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
               </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
               <hashTree/>
               <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="WL00: Parse (${ASTER_DBNAME_WL})" enabled="true">
@@ -4953,7 +4700,7 @@ analyze TDcom_all_sessions300;
                 <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
                 <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
                 <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-                <stringProp name="command">echo &quot;${ASTER_WL_SH_PARSE_SCRIPT}&quot; | ${ASTER_ACT_WL_CL_PREFIX} -e ${CL_STDERR_REDIR}  | tee -a ${BMS_OUTPUT_PATH}/parse.${ASTER_DBNAME_WL}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
+                <stringProp name="command">echo &quot;${ASTER_WL_SH_PARSE_SCRIPT}&quot; | ${ASTER_ACT_WL_CL_PREFIX} -e ${CL_STDERR_REDIR}  | tee -a ${BENCHMARK_OUTPUT_PATH}/parse.${ASTER_DBNAME_WL}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
               </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
               <hashTree/>
               <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="WL00: Sessionize (${ASTER_DBNAME_WL})" enabled="true">
@@ -4961,7 +4708,7 @@ analyze TDcom_all_sessions300;
                 <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
                 <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
                 <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-                <stringProp name="command">echo &quot;${ASTER_WL_SH_SESSIONIZE_SCRIPT}&quot; | ${ASTER_ACT_WL_CL_PREFIX} -e ${CL_STDERR_REDIR}  | tee -a ${BMS_OUTPUT_PATH}/sessionize.${ASTER_DBNAME_WL}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
+                <stringProp name="command">echo &quot;${ASTER_WL_SH_SESSIONIZE_SCRIPT}&quot; | ${ASTER_ACT_WL_CL_PREFIX} -e ${CL_STDERR_REDIR}  | tee -a ${BENCHMARK_OUTPUT_PATH}/sessionize.${ASTER_DBNAME_WL}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
               </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
               <hashTree/>
             </hashTree>
@@ -5895,7 +5642,7 @@ PARTITION BY RANGE (tran_line_date NULLS FIRST)
                 <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
                 <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
                 <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-                <stringProp name="command">echo &quot;${ASTER_ADW_SQL_CREATE_DB}&quot; | ${ASTER_ACT_EXEC} -d beehive -U ${ASTER_ACT_UID} -w ${ASTER_ACT_PWD} ${CL_STDERR_REDIR} | tee -a ${BMS_OUTPUT_PATH}/install.functions.${ASTER_DBNAME_ADW}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
+                <stringProp name="command">echo &quot;${ASTER_ADW_SQL_CREATE_DB}&quot; | ${ASTER_ACT_EXEC} -d beehive -U ${ASTER_ACT_UID} -w ${ASTER_ACT_PWD} ${CL_STDERR_REDIR} | tee -a ${BENCHMARK_OUTPUT_PATH}/install.functions.${ASTER_DBNAME_ADW}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
               </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
               <hashTree/>
               <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="Create tables (${ASTER_DBNAME_ADW})" enabled="true">
@@ -5903,7 +5650,7 @@ PARTITION BY RANGE (tran_line_date NULLS FIRST)
                 <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
                 <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
                 <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-                <stringProp name="command">echo &quot;${ASTER_ADW_SQL_CREATE_TABLES}&quot; | ${ASTER_ACT_ADW_CL_PREFIX} ${CL_STDERR_REDIR}  | tee -a ${BMS_OUTPUT_PATH}/create.tables.${ASTER_DBNAME_ADW}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
+                <stringProp name="command">echo &quot;${ASTER_ADW_SQL_CREATE_TABLES}&quot; | ${ASTER_ACT_ADW_CL_PREFIX} ${CL_STDERR_REDIR}  | tee -a ${BENCHMARK_OUTPUT_PATH}/create.tables.${ASTER_DBNAME_ADW}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
               </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
               <hashTree/>
               <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="Install functions (${ASTER_DBNAME_ADW})" enabled="true">
@@ -5911,7 +5658,7 @@ PARTITION BY RANGE (tran_line_date NULLS FIRST)
                 <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
                 <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
                 <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-                <stringProp name="command">echo &quot;${ASTER_ADW_SQL_INSTALL_FUNCTIONS}&quot; | ${ASTER_ACT_ADW_CL_PREFIX} ${CL_STDERR_REDIR}  |  tee -a ${BMS_OUTPUT_PATH}/install.functions.${ASTER_DBNAME_ADW}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
+                <stringProp name="command">echo &quot;${ASTER_ADW_SQL_INSTALL_FUNCTIONS}&quot; | ${ASTER_ACT_ADW_CL_PREFIX} ${CL_STDERR_REDIR}  |  tee -a ${BENCHMARK_OUTPUT_PATH}/install.functions.${ASTER_DBNAME_ADW}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
               </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
               <hashTree/>
               <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Runtime error" enabled="true">
@@ -5936,7 +5683,7 @@ PARTITION BY RANGE (tran_line_date NULLS FIRST)
               <collectionProp name="Arguments.arguments">
                 <elementProp name="ASTER_ADW_SH_LOAD_SCRIPT" elementType="Argument">
                   <stringProp name="Argument.name">ASTER_ADW_SH_LOAD_SCRIPT</stringProp>
-                  <stringProp name="Argument.value">cat &lt;&lt;EOF3 &gt; ${BENCHMARK_PATH}/apps/adw/load_files.sh ${CL_STDERR_REDIR}  | tee -a ${BMS_OUTPUT_PATH}/inject.${ASTER_DBNAME_ADW}.${__P(BENCHMARK_RUN_ID)}.log
+                  <stringProp name="Argument.value">cat &lt;&lt;EOF3 &gt; ${BENCHMARK_PATH}/apps/adw/load_files.sh ${CL_STDERR_REDIR}  | tee -a ${BENCHMARK_OUTPUT_PATH}/inject.${ASTER_DBNAME_ADW}.${__P(BENCHMARK_RUN_ID)}.log
 # migrated from load8tables.sh
 set -o nounset
 set -o pipefail
@@ -6055,7 +5802,7 @@ echo &quot;[\\$(date)] end ETL&quot;
 #/data/retail/clearcache.sh
 EOF3
 
-chmod +x  ${BENCHMARK_PATH}/apps/adw/load_files.sh ${CL_STDERR_REDIR}  | tee -a ${BMS_OUTPUT_PATH}/inject.${ASTER_DBNAME_ADW}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
+chmod +x  ${BENCHMARK_PATH}/apps/adw/load_files.sh ${CL_STDERR_REDIR}  | tee -a ${BENCHMARK_OUTPUT_PATH}/inject.${ASTER_DBNAME_ADW}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                 </elementProp>
               </collectionProp>
@@ -6076,7 +5823,7 @@ chmod +x  ${BENCHMARK_PATH}/apps/adw/load_files.sh ${CL_STDERR_REDIR}  | tee -a 
                 <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
                 <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
                 <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-                <stringProp name="command">${BENCHMARK_PATH}/apps/adw/load_files.sh ${CL_STDERR_REDIR}  | tee -a ${BMS_OUTPUT_PATH}/load_files.${ASTER_DBNAME_ADW}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
+                <stringProp name="command">${BENCHMARK_PATH}/apps/adw/load_files.sh ${CL_STDERR_REDIR}  | tee -a ${BENCHMARK_OUTPUT_PATH}/load_files.${ASTER_DBNAME_ADW}.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
               </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
               <hashTree/>
               <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Runtime error" enabled="true">
@@ -6472,7 +6219,7 @@ DISTRIBUTE BY TRAN_DATE_P
                 <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
                 <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
                 <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-                <stringProp name="command">. ${BENCHMARK_PATH}/exports.sh; ${BENCHMARK_PATH}/apps/adw/hadoop/load_small_tables.sh ${HADOOP_SOURCE_DATA_PATH}/adw ${HADOOP_HDFS_ROOT}/raw/retail ${CL_STDERR_REDIR}  | tee -a ${BMS_OUTPUT_PATH}/load_small_tables.sh.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
+                <stringProp name="command">. ${BENCHMARK_PATH}/exports.sh; ${BENCHMARK_PATH}/apps/adw/hadoop/load_small_tables.sh ${HADOOP_SOURCE_DATA_PATH}/adw ${HADOOP_HDFS_ROOT}/raw/retail ${CL_STDERR_REDIR}  | tee -a ${BENCHMARK_OUTPUT_PATH}/load_small_tables.sh.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
               </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
               <hashTree>
                 <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="HDFS put error" enabled="true">
@@ -6491,7 +6238,7 @@ DISTRIBUTE BY TRAN_DATE_P
                 <stringProp name="port">${__P(BMS_TARGET_SSH_PORT)}</stringProp>
                 <stringProp name="username">${__P(BMS_TARGET_UID)}</stringProp>
                 <stringProp name="password">${__P(BMS_TARGET_PWD)}</stringProp>
-                <stringProp name="command">. ${BENCHMARK_PATH}/exports.sh; ${BENCHMARK_PATH}/apps/adw/hadoop/load_sales_transaction_line.sh &quot;${HADOOP_SOURCE_DATA_PATH}/adw/sales_transaction_line.csv&quot; &quot;${HADOOP_SOURCE_DATA_PATH}/temp/stage&quot; ${ADW_FILE_SPLIT_CHUNK_SIZE} ${HADOOP_HDFS_ROOT}/raw/retail ${ADW_MAX_LOADER_PROCS} ${CL_STDERR_REDIR} | tee -a ${BMS_OUTPUT_PATH}/load_sales_transaction_line.sh.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
+                <stringProp name="command">. ${BENCHMARK_PATH}/exports.sh; ${BENCHMARK_PATH}/apps/adw/hadoop/load_sales_transaction_line.sh &quot;${HADOOP_SOURCE_DATA_PATH}/adw/sales_transaction_line.csv&quot; &quot;${HADOOP_SOURCE_DATA_PATH}/temp/stage&quot; ${ADW_FILE_SPLIT_CHUNK_SIZE} ${HADOOP_HDFS_ROOT}/raw/retail ${ADW_MAX_LOADER_PROCS} ${CL_STDERR_REDIR} | tee -a ${BENCHMARK_OUTPUT_PATH}/load_sales_transaction_line.sh.${__P(BENCHMARK_RUN_ID)}.log</stringProp>
               </org.apache.jmeter.protocol.ssh.sampler.SSHSampler>
               <hashTree/>
               <org.apache.jmeter.protocol.ssh.sampler.SSHSampler guiclass="TestBeanGUI" testclass="org.apache.jmeter.protocol.ssh.sampler.SSHSampler" testname="R00: Hive insert into sales_transaction" enabled="true">
@@ -7172,7 +6919,7 @@ log.info(ctx.getThread().getThreadName() + &quot;: Acquire query lock ETL_SYNC_E
               <hashTree>
                 <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
                   <collectionProp name="Asserion.test_strings">
-                    <stringProp name="216552436">${BMS_TOKEN_EXIT_OK}</stringProp>
+                    <stringProp name="-1064932443">${__P(BMS_TOKEN_EXIT_OK)}</stringProp>
                   </collectionProp>
                   <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
                   <boolProp name="Assertion.assume_success">false</boolProp>
@@ -7191,7 +6938,7 @@ log.info(ctx.getThread().getThreadName() + &quot;: Acquire query lock ETL_SYNC_E
               <hashTree>
                 <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
                   <collectionProp name="Asserion.test_strings">
-                    <stringProp name="216552436">${BMS_TOKEN_EXIT_OK}</stringProp>
+                    <stringProp name="-1064932443">${__P(BMS_TOKEN_EXIT_OK)}</stringProp>
                   </collectionProp>
                   <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
                   <boolProp name="Assertion.assume_success">false</boolProp>
@@ -7297,7 +7044,7 @@ log.info(ctx.getThread().getThreadName() + &quot;: Release query lock ETL_SYNC_E
               <hashTree/>
               <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="true">
                 <collectionProp name="Asserion.test_strings">
-                  <stringProp name="216552436">${BMS_TOKEN_EXIT_OK}</stringProp>
+                  <stringProp name="-1064932443">${__P(BMS_TOKEN_EXIT_OK)}</stringProp>
                 </collectionProp>
                 <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
                 <boolProp name="Assertion.assume_success">false</boolProp>
@@ -7619,7 +7366,7 @@ log.info(ctx.getThread().getThreadName() + &quot;: Release query lock ETL_SYNC_E
             </hashTree>
             <ResponseAssertion guiclass="AssertionGui" testclass="ResponseAssertion" testname="Response Assertion" enabled="false">
               <collectionProp name="Asserion.test_strings">
-                <stringProp name="216552436">${BMS_TOKEN_EXIT_OK}</stringProp>
+                <stringProp name="-1064932443">${__P(BMS_TOKEN_EXIT_OK)}</stringProp>
               </collectionProp>
               <stringProp name="Assertion.test_field">Assertion.response_data</stringProp>
               <boolProp name="Assertion.assume_success">false</boolProp>
