@@ -29,7 +29,7 @@ fi
 
 JMETER_BIN=${JMETER_HOME}/bin/jmeter.sh
 
-VERSION="1.0.154"
+VERSION="1.0.271"
 log_info "Starting Benchmark Management System test driver (v. $VERSION)"
 
 function print_help {
