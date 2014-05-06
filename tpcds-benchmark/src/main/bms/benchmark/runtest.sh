@@ -505,15 +505,3 @@ then
     log_info "Stopping statistics collection"
     stop_stats
 fi
-
-#cd ${BENCHMARK_OUTPUT_PATH}; ${BENCHMARK_STATS_PATH}/collect/master/get_logs.sh ${__P(BENCHMARK_RUN_ID)}
-#jmeter.sh -n -tesg_benchmark_aster.jmx -JBENCHMARK_USER_COUNT=5 -JBENCHMARK_TEST_TAG=${TAG} -JBENCHMARK_SA_LOOP_COUNT=1 -JBENCHMARK_WL_LOOP_COUNT=1 -JBENCHMARK_WP_LOOP_COUNT=1 JBENCHMARK_ADW_LOOP_COUNT=1
-#mv ${BENCHMARK_OUTPUT_PATH}/jmeter.log ${BENCHMARK_OUTPUT_PATH}/jmeter.${__P(BENCHMARK_RUN_ID)}.log 2>&1
-#cd ${BENCHMARK_OUTPUT_PATH}; tar cvzf output.${__P(BENCHMARK_RUN_ID)}.tgz *${__P(BENCHMARK_RUN_ID)}* 2>&1
-# Capture exports.sh and properties file
-
-#TAG=aster5.0_seq_5x_ADWu1-SAu1-WLu1-WPu1
-#BENCHMARK_USER_COUNT=5
-#BENCHMARK_TEST_TAG=5-thr-seq-hdp1.1-fixedorder-1ADu_1SAu_1WLu_1WPu
-#run_test
-
