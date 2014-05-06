@@ -75,7 +75,7 @@ $BENCHMARK_PATH/sysinfo.sh
 
 $BENCHMARK_PATH/set_security.sh
 
-[[ ! -d ${BENCHMARK_OUTPUT_PATH} ]] && mkdir -p ${BENCHMARK_OUTPUT_PATH} 2>&1
+[[ ! -d ${BMS_OUTPUT_PATH} ]] && mkdir -p ${BMS_OUTPUT_PATH} 2>&1
 
 sudo mkdir -p /var/opt/benchmark
 sudo chmod 666 /var/opt/benchmark
