@@ -504,4 +504,6 @@ if [ $STATS == 'full' ]
 then
     log_info "Stopping statistics collection"
     stop_stats
+    log_info "Retrieving statistics from cluster nodes"
+    $BENCHMARK_PATH/stats/load/get_stats.sh ${BENCHMARK_RUN_ID}
 fi
