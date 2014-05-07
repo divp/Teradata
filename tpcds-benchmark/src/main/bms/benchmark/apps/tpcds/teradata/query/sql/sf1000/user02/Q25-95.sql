@@ -1,7 +1,7 @@
 -- start query 24 in stream 0 using template q95.tpl and seed 893040711
 
-.set retlimit 100
-.set retcancel on
+
+
 with ws_wh(ws_order_number,wh1,wh2) as
 (select ws1.ws_order_number,ws1.ws_warehouse_sk wh1,ws2.ws_warehouse_sk wh2
  from web_sales ws1,web_sales ws2

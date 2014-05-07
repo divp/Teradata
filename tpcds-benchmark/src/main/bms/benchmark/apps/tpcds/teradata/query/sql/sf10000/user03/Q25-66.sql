@@ -1,7 +1,7 @@
 -- start query 17 in stream 0 using template q66.tpl and seed 836352754
 
-.set retlimit 100
-.set retcancel on
+
+
 select top 100
          w_warehouse_name
         ,w_warehouse_sq_ft

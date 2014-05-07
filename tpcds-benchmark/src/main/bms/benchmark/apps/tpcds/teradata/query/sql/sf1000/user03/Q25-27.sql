@@ -1,7 +1,7 @@
 -- start query 6 in stream 0 using template q27.tpl and seed 12802980
 
-.set retlimit 100
-.set retcancel on
+
+
 select top 100 i_item_id,
         s_state, grouping(s_state) g_state,
         avg(ss_quantity) agg1,

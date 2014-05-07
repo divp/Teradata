@@ -1,7 +1,7 @@
 -- start query 15 in stream 0 using template q51.tpl and seed 788945321
 
-.set retlimit 100
-.set retcancel on
+
+
 WITH web_v1(item_sk, d_date,cume_sales) as (
 select
   ws_item_sk item_sk, d_date,

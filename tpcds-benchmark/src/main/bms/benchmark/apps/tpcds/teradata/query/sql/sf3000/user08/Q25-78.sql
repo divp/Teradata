@@ -1,7 +1,7 @@
 -- start query 19 in stream 0 using template q78.tpl and seed 574139553
 
-.set retlimit 100
-.set retcancel on
+
+
 with ws(ws_sold_year,ws_item_sk,ws_customer_sk,ws_qty,ws_wc,ws_sp)  as
   (select d_year AS ws_sold_year, ws_item_sk,
     ws_bill_customer_sk ws_customer_sk,

@@ -1,7 +1,7 @@
 -- start query 12 in stream 0 using template q45.tpl and seed 395681133
 
-.set retlimit 100
-.set retcancel on
+
+
 select top 100 ca_zip, ca_city, sum(ws_sales_price)
  from web_sales, customer, customer_address, date_dim, item
  where ws_bill_customer_sk = c_customer_sk

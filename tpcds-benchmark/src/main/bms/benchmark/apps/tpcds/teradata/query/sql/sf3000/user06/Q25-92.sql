@@ -1,7 +1,7 @@
 -- start query 23 in stream 0 using template q92.tpl and seed 2012161295
 
-.set retlimit 100
-.set retcancel on
+
+
 select top 100
    cast(sum(ws_ext_discount_amt) as decimal(18,2))  as "Excess Discount Amount"
 from

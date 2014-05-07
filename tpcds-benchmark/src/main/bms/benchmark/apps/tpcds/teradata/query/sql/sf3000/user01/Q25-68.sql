@@ -1,7 +1,7 @@
 -- start query 18 in stream 0 using template q68.tpl and seed 1648468944
 
-.set retlimit 100
-.set retcancel on
+
+
 select top 100 c_last_name
        ,c_first_name
        ,ca_city

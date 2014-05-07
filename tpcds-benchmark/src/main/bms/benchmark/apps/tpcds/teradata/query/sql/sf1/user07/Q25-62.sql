@@ -1,7 +1,7 @@
 -- start query 16 in stream 0 using template q62.tpl and seed 390294656
 
-.set retlimit 100
-.set retcancel on
+
+
 select top 100
    substr(w_warehouse_name,1,20)
   ,sm_type

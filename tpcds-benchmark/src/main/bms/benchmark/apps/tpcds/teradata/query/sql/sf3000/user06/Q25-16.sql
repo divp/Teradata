@@ -1,7 +1,7 @@
 -- start query 4 in stream 0 using template q16.tpl and seed 500260252
 
-.set retlimit 100
-.set retcancel on
+
+
 select top 100
    count(distinct cs_order_number) as "order count"
   ,cast(sum(cs_ext_ship_cost) as decimal(18,2)) as "total shipping cost"

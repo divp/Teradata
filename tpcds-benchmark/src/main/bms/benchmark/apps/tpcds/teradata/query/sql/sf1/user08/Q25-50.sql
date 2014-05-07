@@ -1,7 +1,7 @@
 -- start query 14 in stream 0 using template q50.tpl and seed 633211443
 
-.set retlimit 100
-.set retcancel on
+
+
 select top 100
    s_store_name
   ,s_company_id

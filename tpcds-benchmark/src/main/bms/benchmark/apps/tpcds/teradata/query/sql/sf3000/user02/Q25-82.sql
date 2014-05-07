@@ -1,7 +1,7 @@
 -- start query 21 in stream 0 using template q82.tpl and seed 1014286657
 
-.set retlimit 100
-.set retcancel on
+
+
 select  top 100 i_item_id
        ,i_item_desc
        ,i_current_price

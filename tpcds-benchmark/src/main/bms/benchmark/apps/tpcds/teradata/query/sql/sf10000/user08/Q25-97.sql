@@ -1,7 +1,7 @@
 -- start query 25 in stream 0 using template q97.tpl and seed 2005671273
 
-.set retlimit 100
-.set retcancel on
+
+
 with ssci ( customer_sk,  item_sk) as (
 select ss_customer_sk customer_sk
       ,ss_item_sk item_sk

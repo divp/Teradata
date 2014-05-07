@@ -1,7 +1,7 @@
 -- start query 1 in stream 0 using template q3.tpl and seed 932805149
 
-.set retlimit 100
-.set retcancel on
+
+
 select top 100 dt.d_year 
        ,item.i_brand_id brand_id 
        ,item.i_brand brand

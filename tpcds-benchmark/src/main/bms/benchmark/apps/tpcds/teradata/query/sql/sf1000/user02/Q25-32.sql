@@ -1,7 +1,7 @@
 -- start query 8 in stream 0 using template q32.tpl and seed 1036658498
 
-.set retlimit 100
-.set retcancel on
+
+
 select top 100 sum(cs_ext_discount_amt) (dec(18,2))  as "excess discount amount" 
 from 
    catalog_sales 

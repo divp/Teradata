@@ -1,7 +1,7 @@
 -- start query 2 in stream 0 using template q4.tpl and seed 1499041701
 
-.set retlimit 100
-.set retcancel on
+
+
 with year_total (customer_id, customer_first_name, customer_last_name, customer_preferred_cust_flag, customer_birth_country, customer_login, customer_email_address, dyear, year_total, sale_type) as (
  select c_customer_id customer_id
        ,c_first_name customer_first_name

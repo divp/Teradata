@@ -1,7 +1,7 @@
 -- start query 3 in stream 0 using template q10.tpl and seed 74449986
 
-.set retlimit 100
-.set retcancel on
+
+
 select top 100
   cd_gender,
   cd_marital_status,

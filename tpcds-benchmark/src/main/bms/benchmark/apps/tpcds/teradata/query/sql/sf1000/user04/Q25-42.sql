@@ -1,7 +1,7 @@
 -- start query 11 in stream 0 using template q42.tpl and seed 1045223248
 
-.set retlimit 100
-.set retcancel on
+
+
 select top 100 dt.d_year
         ,item.i_category_id
         ,item.i_category

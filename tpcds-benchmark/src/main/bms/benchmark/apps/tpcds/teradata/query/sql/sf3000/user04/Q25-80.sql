@@ -1,7 +1,7 @@
 -- start query 20 in stream 0 using template q80.tpl and seed 1170645093
 
-.set retlimit 100
-.set retcancel on
+
+
 with ssr(store_id,sales,returns1,profit) as
  (select  s_store_id as store_id,
           cast(sum(ss_ext_sales_price) as decimal(18,2)) as sales,

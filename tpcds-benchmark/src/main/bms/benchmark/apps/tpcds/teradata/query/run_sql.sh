@@ -31,6 +31,12 @@ done
 
 # Resolve physical query file from input arguments
 
+if [[ $SCALE_TAG == 'sf20' ]]
+then
+    log_warning "Rerouting sf20 to sf1!"
+    SCALE_TAG=sf1
+fi
+
 if [[ -n $SCALE_TAG && -n $QUERY_TAG && -n $USER_ID ]]
 then
     query_file=$(dirname $0)/sql/${SCALE_TAG}/user$(printf "%02d" $USER_ID)/${QUERY_TAG}.sql
@@ -51,7 +57,7 @@ then
 fi
 
 LOG_FILE=$(get_script_log_name $0.${SCALE_TAG}.user$(printf "%02d" $USER_ID).${QUERY_TAG})
-exec > >(tee -a $LOG_FILE) 2> >(tee -a $LOG_FILE >&2)
+#exec > >(tee -a $LOG_FILE) 2> >(tee -a $LOG_FILE >&2)
 
 echo "Running SQL query from file $query_file (output log: $LOG_FILE):"
 # Read query SQL and expand any variable references
@@ -61,23 +67,24 @@ echo "Running SQL query from file $query_file (output log: $LOG_FILE):"
 # query_text="$(echo "$(eval echo \"$(cat $query_file)\")")"
 
 query_text="$(cat $query_file)"
-echo "$query_text"
 
 echo
 
 bteq_output=$(mktemp)
-stderr_output=$(mktemp)
 
-log_info "Logging in as ${BMS_TERADATA_DB_HOST}/${BMS_TERADATA_DB_UID},${BMS_TERADATA_DB_PWD};"
+log_info "Logging in as ${BMS_TERADATA_DB_HOST}/${BMS_TERADATA_DB_UID}"
 
-bteq <<EOF >/dev/null 2>$stderr_output
+bteq <<EOF 2>&1 >$LOG_FILE 
     .LOGON ${BMS_TERADATA_DB_HOST}/${BMS_TERADATA_DB_UID},${BMS_TERADATA_DB_PWD};
     .EXPORT FILE=${bteq_output}
     .SET SEPARATOR '|'
+    .SET RETLIMIT 100
+    .SET RETCANCEL ON
+
     DATABASE ${BMS_TERADATA_DBNAME_ETL1};
     
-    --LOCKING ROW FOR ACCESS
-    SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
+    LOCKING ROW FOR ACCESS
+    --SET SESSION CHARACTERISTICS AS TRANSACTION ISOLATION LEVEL READ UNCOMMITTED;
     ${query_text}
 
     .LOGOFF;
@@ -85,13 +92,13 @@ bteq <<EOF >/dev/null 2>$stderr_output
 EOF
 rc=$?
 
-echo "---"
+echo "--- Reading BTEQ output from $bteq_output"
 cat $bteq_output
-rm $bteq_output
+#rm $bteq_output
 
 if [ $rc -ne 0 ]
 then
-  log_error "($0) Runtime error [$(cat $stderr_output)]"
+  log_error "($0) Runtime error. See $LOG_FILE for details"
   exit $rc
 fi
 
