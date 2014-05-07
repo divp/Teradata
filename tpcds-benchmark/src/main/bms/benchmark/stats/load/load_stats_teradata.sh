@@ -82,10 +82,10 @@ CREATE TABLE stage_jmeter_log_summary,
 DEFINE
     in_tstamp_epoch (VARCHAR(30))
     ,in_elapsed_ms (VARCHAR(30))
-    ,in_label (VARCHAR(100))
-    ,in_response_code (VARCHAR(50))
-    ,in_response_message (VARCHAR(3000))
-    ,in_thread_name (VARCHAR(50))
+    ,in_label (VARCHAR(2000))
+    ,in_response_code (VARCHAR(10))
+    ,in_response_message (VARCHAR(2000))
+    ,in_thread_name (VARCHAR(500))
     ,in_data_type (VARCHAR(30))
     ,in_success (VARCHAR(30))
     ,in_bytes (VARCHAR(30))
@@ -143,9 +143,9 @@ CREATE TABLE stage_jmeter_log,
     elapsed_ms BIGINT,
     label VARCHAR(2000),
     response_code INT,
-    response_message VARCHAR(1000),
+    response_message VARCHAR(2000),
     thread_name VARCHAR(100),
-    data_type VARCHAR(100),
+    data_type VARCHAR(500),
     success VARCHAR(10),
     _bytes INT,
     latency INT
@@ -157,10 +157,10 @@ CREATE TABLE stage_jmeter_log,
 DEFINE
     in_tstamp_epoch (VARCHAR(30))
     ,in_elapsed_ms (VARCHAR(30))
-    ,in_label (VARCHAR(30))
+    ,in_label (VARCHAR(2000))
     ,in_response_code (VARCHAR(10))
-    ,in_response_message (VARCHAR(30))
-    ,in_thread_name (VARCHAR(30))
+    ,in_response_message (VARCHAR(2000))
+    ,in_thread_name (VARCHAR(500))
     ,in_data_type (VARCHAR(30))
     ,in_success (VARCHAR(30))
     ,in_bytes (VARCHAR(30))
