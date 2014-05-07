@@ -40,22 +40,23 @@ CREATE TABLE perf_test ,
     NO BEFORE JOURNAL,
     NO AFTER JOURNAL,
     CHECKSUM = DEFAULT (
-	run_id BIGINT,
-	name VARCHAR(100),
-	test_plan VARCHAR(200),
-	test_tag VARCHAR(100),
-	user_count INT, -- per thread group
-	loop_count INT,
-	runtime_sec INT,
-	ramp_up_sec INT,
-	test_desc VARCHAR(1024),
-	start_tstamp TIMESTAMP WITH TIME ZONE,
-	end_tstamp TIMESTAMP WITH TIME ZONE
+    run_id BIGINT,
+    name VARCHAR(100),
+    test_plan VARCHAR(200),
+    test_tag VARCHAR(100),
+    user_count INT, -- per thread group
+    loop_count INT,
+    runtime_sec INT,
+    ramp_up_sec INT,
+    test_desc VARCHAR(1024),
+    start_tstamp TIMESTAMP WITH TIME ZONE,
+    end_tstamp TIMESTAMP WITH TIME ZONE
 )
 UNIQUE PRIMARY INDEX (run_id);
 
 CREATE VIEW perf_test_v AS
-SELECT run_id, name, test_plan, test_tag, user_count, loop_count, runtime_sec,
+SELECT  run_id, name, test_plan, test_tag, user_count, loop_count,
+        runtime_sec,
 ramp_up_sec, start_tstamp, end_tstamp
 FROM perf_test;
 
@@ -67,23 +68,23 @@ CREATE TABLE perf_test_case,
     NO BEFORE JOURNAL,
     NO AFTER JOURNAL,
     CHECKSUM = DEFAULT (
-	run_id BIGINT,
-	case_instance_id INT GENERATED ALWAYS AS IDENTITY,
-	case_name VARCHAR(100),
+    run_id BIGINT,
+    case_instance_id INT GENERATED ALWAYS AS IDENTITY,
+    case_name VARCHAR(100),
     sampler_type VARCHAR(100),
     request_text VARCHAR(2000),
     response_bytes INT,
     response_text VARCHAR(2000),
-	thread_id INT,
-	thread_group_name VARCHAR(100),
-	start_tstamp TIMESTAMP WITH TIME ZONE,
-	end_tstamp TIMESTAMP WITH TIME ZONE,
-	elapsed_ms BIGINT
+    thread_id INT,
+    thread_group_name VARCHAR(100),
+    start_tstamp TIMESTAMP WITH TIME ZONE,
+    end_tstamp TIMESTAMP WITH TIME ZONE,
+    elapsed_ms BIGINT
 )
 UNIQUE PRIMARY INDEX (case_instance_id);
 
 CREATE VIEW perf_test_case_v AS
-SELECT run_id, case_instance_id, case_name, response_bytes thread_id,
+SELECT  run_id, case_instance_id, case_name, response_bytes thread_id,
 thread_group_name, start_tstamp, end_tstamp, elapsed_ms
 FROM perf_test_case;
 
@@ -167,16 +168,19 @@ UNIQUE PRIMARY INDEX (run_id,tstamp,node_id);
 
 DROP INDEX iostat_tstamp_idx;
 CREATE INDEX iostat_tstamp_idx ON iostat (tstamp);
+
 DROP INDEX iostat_run_id_idx;
 CREATE INDEX iostat_run_id_idx ON iostat (run_id);
 
 DROP INDEX vmstat_tstamp_idx;
 CREATE INDEX vmstat_tstamp_idx ON vmstat (tstamp);
+
 DROP INDEX vmstat_run_id_idx;
 CREATE INDEX vmstat_run_id_idx ON vmstat (run_id);
 
 DROP INDEX sarstat_tstamp_idx;
 CREATE INDEX sarstat_tstamp_idx ON sarstat (tstamp);
+
 DROP INDEX sarstat_run_id_idx;
 CREATE INDEX sarstat_run_id_idx ON sarstat (run_id);
 
@@ -221,90 +225,103 @@ CREATE TABLE stage_jmeter_log,
 DROP VIEW agg_iostat_v;
 
 CREATE VIEW agg_iostat_v AS
-select 
+SELECT  
     t1.run_id, t1.case_instance_id, t1.case_name,
-    avg(rmbs) rmbs, avg(wmbs) wmbs,  avg(util) util
-from
-    (select run_id, tstamp, sum(rmbs) rmbs, sum(wmbs) wmbs, avg(util) util
-    from iostat group by run_id, tstamp) t0
-inner join 
-perf_test_case t1
-on
-	t0.run_id = t1.run_id
-and
-	t0.tstamp >= t1.start_tstamp
-and
-	t0.tstamp <= t1.end_tstamp
-group by 1,2,3;
-
+    AVG(rmbs) rmbs, AVG(wmbs) wmbs,  AVG(util) util
+FROM 
+    perf_test_case t1
+LEFT OUTER JOIN   
+    (
+SELECT  run_id, tstamp, SUM(rmbs) rmbs, SUM(wmbs) wmbs, AVG(util) util
+    FROM iostat 
+GROUP   BY run_id, tstamp) t0
+    ON   
+    t0.run_id = t1.run_id
+    AND 
+    t0.tstamp >= t1.start_tstamp
+    AND 
+    t0.tstamp <= t1.end_tstamp
+GROUP   BY 1,2,3;
 
 DROP VIEW agg_vmstat_v;
 
-CREATE VIEW agg_vmstat_v as
-select 
+CREATE VIEW agg_vmstat_v AS
+SELECT  
     t1.run_id, t1.case_instance_id, t1.case_name,
-    avg(cpu_id) cpu_id, avg(cpu_sy) cpu_sy, avg(cpu_us) cpu_us, avg(mem_free) mem_free, avg(swap_si) swap_si, avg(swap_so) swap_so
-from
-    (select run_id, tstamp, sum(cpu_id) cpu_id, sum(cpu_sy) cpu_sy, sum(cpu_us) cpu_us, sum(mem_free) mem_free, sum(swap_si) swap_si, sum(swap_so) swap_so
-    from vmstat group by run_id, tstamp) t0
-inner join 
-perf_test_case t1
-on
-	t0.run_id = t1.run_id
-and
-	t0.tstamp >= t1.start_tstamp
-and
-	t0.tstamp <= t1.end_tstamp
-group by 1,2,3;
+    AVG(cpu_id) cpu_id, AVG(cpu_sy) cpu_sy, AVG(cpu_us) cpu_us, AVG(mem_free) mem_free,
+        AVG(swap_si) swap_si, AVG(swap_so) swap_so
+FROM
+    perf_test_case t1
+LEFT OUTER JOIN    
+    (
+SELECT  run_id, tstamp, SUM(cpu_id) cpu_id, SUM(cpu_sy) cpu_sy,
+        SUM(cpu_us) cpu_us, SUM(mem_free) mem_free, SUM(swap_si) swap_si,
+        SUM(swap_so) swap_so
+    FROM vmstat 
+GROUP   BY run_id, tstamp) t0
+    ON   
+    t0.run_id = t1.run_id
+    AND 
+    t0.tstamp >= t1.start_tstamp
+    AND 
+    t0.tstamp <= t1.end_tstamp
+GROUP   BY 1,2,3;
 
 DROP VIEW agg_sarstat_v;
 
-CREATE VIEW agg_sarstat_v as
-select 
+CREATE VIEW agg_sarstat_v AS
+SELECT  
     t1.run_id, t1.case_instance_id, t1.case_name,
-    avg(txkbs) txkbs, avg(rxkbs) rxkbs
-from
-    (select run_id, tstamp, sum(txkbs) txkbs, sum(rxkbs) rxkbs
-    from sarstat group by run_id, tstamp) t0
-inner join 
+    AVG(txkbs) txkbs, AVG(rxkbs) rxkbs
+FROM
     perf_test_case t1
-on
-	t0.run_id = t1.run_id
-and
-	t0.tstamp >= t1.start_tstamp
-and
-	t0.tstamp <= t1.end_tstamp
-group by 1,2,3;
+LEFT OUTER JOIN    
+    (
+SELECT  run_id, tstamp, SUM(txkbs) txkbs, SUM(rxkbs) rxkbs
+    FROM sarstat 
+GROUP   BY run_id, tstamp) t0
+    ON   
+    t0.run_id = t1.run_id
+    AND 
+    t0.tstamp >= t1.start_tstamp
+    AND 
+    t0.tstamp <= t1.end_tstamp
+GROUP   BY 1,2,3;
 
 DROP VIEW agg_stat_seq_v;
 
 CREATE VIEW agg_stat_seq_v AS
-SELECT ttc.run_id, ttc.case_instance_id, ttc.case_name, ttc.start_tstamp, ttc.end_tstamp, elapsed_ms,
+SELECT  ttc.run_id, ttc.case_instance_id, ttc.case_name, ttc.start_tstamp,
+        ttc.end_tstamp, elapsed_ms,
 AVG(rmbs) rmbs, AVG(wmbs) wmbs, AVG(util) util, 
 AVG(cpu_id)/MAX(tc.node_count) cpu_id, 
 AVG(cpu_sy)/MAX(tc.node_count) cpu_sy, 
 AVG(cpu_us)/MAX(tc.node_count) cpu_us,
 AVG(txkbs)/1024 txMBs, AVG(rxkbs)/1024 rxMBs,
-AVG(swap_si) swap_si, AVG(swap_so) swap_so, AVG(mem_free/1024) mem_free_GB, AVG(mem_free/1024) / (48*2+96*6) * 100 mem_free_pct
+AVG(swap_si) swap_si, AVG(swap_so) swap_so, AVG(mem_free/1024) mem_free_GB,
+        AVG(mem_free/1024) / (48*2+96*6) * 100 mem_free_pct
 FROM 
 perf_test_case_v ttc
 FULL OUTER JOIN
 agg_iostat_v tio
-ON ttc.case_instance_id  = tio.case_instance_id
+    ON   ttc.case_instance_id  = tio.case_instance_id
 FULL OUTER JOIN
 agg_vmstat_v tvm
-ON ttc.case_instance_id = tvm.case_instance_id
+    ON   ttc.case_instance_id = tvm.case_instance_id
 FULL OUTER JOIN
 agg_sarstat_v tsar
-ON ttc.case_instance_id = tsar.case_instance_id
+    ON   ttc.case_instance_id = tsar.case_instance_id
 FULL OUTER JOIN
-(SELECT run_id, COUNT(DISTINCT node_id) node_count FROM vmstat GROUP BY run_id) tc
-ON ttc.run_id = tc.run_id
-GROUP BY 1,2,3,4,5,6;
+(
+SELECT  run_id, COUNT(DISTINCT node_id) node_count 
+FROM vmstat 
+GROUP   BY run_id) tc
+    ON   ttc.run_id = tc.run_id
+GROUP   BY 1,2,3,4,5,6;
 
 ------------------ CONCURRENCY
 
-SELECT 
+SELECT  
         COUNT(t1.case_instance_id) total_jobs,
         AVG(t1.elapsed_ms)/1000 elapsed_sec, 
         AVG(rmbs) rmbs, AVG(wmbs) wmbs,  --AVG(util) util, 
@@ -316,14 +333,14 @@ FROM
 perf_test t0
 LEFT OUTER JOIN 
 perf_test_case t1
-ON
+    ON   
 t0.run_id = t1.run_id
-AND
+    AND 
 t0.start_tstamp <= t1.start_tstamp
-AND
+    AND 
 t0.start_tstamp + INTERVAL '2 hour' >=  t1.start_tstamp
 LEFT OUTER JOIN 
 agg_stat_seq_v t2
-ON t1.run_id = t2.run_id
-AND t1.case_instance_id = t2.case_instance_id
-WHERE t0.run_id IN (1340726830170) 
+    ON   t1.run_id = t2.run_id
+    AND t1.case_instance_id = t2.case_instance_id
+WHERE  t0.run_id IN (1340726830170) 
