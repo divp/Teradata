@@ -92,11 +92,12 @@ DEFINE
     ,in_util (VARCHAR(30))
 FILE=$INPUT_FILE;
 
-SHOW;
+DROP TABLE ERR1;
+DROP TABLE ERR2;
 
-.BEGIN LOADING benchmark.stage_iostat ERRORFILES benchmark.ERR1, benchmark.ERR2;
+.BEGIN LOADING stage_iostat ERRORFILES ERR1, ERR2;
 
-INSERT INTO benchmark.stage_iostat VALUES (
+INSERT INTO stage_iostat VALUES (
     :in_tstamp_epoch
     ,:in_x0
     ,:in_node_id
@@ -194,11 +195,12 @@ DEFINE
     ,in_cpu_st (VARCHAR(30))
 FILE=$INPUT_FILE;
 
-SHOW;
+DROP TABLE ERR1;
+DROP TABLE ERR2;
 
-BEGIN LOADING benchmark.stage_vmstat ERRORFILES benchmark.ERR1, benchmark.ERR2;
+BEGIN LOADING stage_vmstat ERRORFILES ERR1, ERR2;
 
-INSERT INTO benchmark.stage_vmstat VALUES (
+INSERT INTO stage_vmstat VALUES (
     :in_tstamp_epoch
     ,:in_x0
     ,:in_node_id
@@ -287,11 +289,12 @@ DEFINE
     ,in_rxmcsts (VARCHAR(30))
 FILE=$INPUT_FILE;
 
-SHOW;
+DROP TABLE ERR1;
+DROP TABLE ERR2;
 
-.BEGIN LOADING benchmark.stage_sarstat ERRORFILES benchmark.ERR1, benchmark.ERR2;
+.BEGIN LOADING stage_sarstat ERRORFILES ERR1, ERR2;
 
-INSERT INTO benchmark.stage_sarstat VALUES (
+INSERT INTO stage_sarstat VALUES (
     :in_tstamp_epoch
     ,:in_x0    
     ,:in_node_id
