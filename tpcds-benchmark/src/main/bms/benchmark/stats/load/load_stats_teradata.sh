@@ -46,7 +46,7 @@ function stage_csv_data {
     echo "Import CSV test data"
 LOG_FILE=$BMS_OUTPUT_PATH/stage_jmeter_log_summary.$RUN_ID.log
 
-log_info "Staging jmeter log summary data(detail log at $LOG_FILE)"
+log_info "Staging jmeter log summary data (detail log at $LOG_FILE)"
 
 fastload 2>&1 > $LOG_FILE <<EOF
 
@@ -116,13 +116,13 @@ EOF
 rc=$?
 if [ $rc -ne 0 ]
 then
-    log "ERROR: unable to stage jmeter log summary data(code: $rc)"
+    log "ERROR: unable to stage jmeter log summary data (code: $rc)"
     exit 1
 fi
 
 LOG_FILE=$BMS_OUTPUT_PATH/stage_jmeter_log.$RUN_ID.log
 
-log_info "Staging jmeter log detail data(detail log at $LOG_FILE)"
+log_info "Staging jmeter log detail data (detail log at $LOG_FILE)"
 
 fastload 2>&1 > $LOG_FILE <<EOF
 
@@ -191,7 +191,7 @@ EOF
 rc=$?
 if [ $rc -ne 0 ]
 then
-    log "ERROR: unable to stage jmeter log data(code: $rc)"
+    log "ERROR: unable to stage jmeter log data (code: $rc)"
     exit 1
 fi
 
