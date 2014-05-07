@@ -9,11 +9,19 @@ set -o nounset
 . $BENCHMARK_PATH/lib/lib.sh
 
 table_name="$1"
-fastload <<EOF
+
+bteq <<EOF
     .LOGON ${BMS_TERADATA_DB_HOST}/${BMS_TERADATA_DB_UID},${BMS_TERADATA_DB_PWD};
     DATABASE ${BMS_TERADATA_DBNAME_ETL1};        
-    BEGIN LOADING ${table_name} ERRORFILES FASTLOAD_ERR1, FASTLOAD_ERR2;
-    END LOADING;
+    
+    CREATE TABLE ${table_name}_bak AS (
+        SELECT * FROM ${table_name}
+    ) WITH NO DATA;
+    
+    DROP TABLE ${table_name};
+    
+    RENAME TABLE ${table_name}_bak to ${table_name};
+    
     LOGOFF;
 EOF
 
