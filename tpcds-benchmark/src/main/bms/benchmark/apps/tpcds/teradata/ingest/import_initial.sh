@@ -144,13 +144,13 @@ else
     tables=(inventory ship_mode time_dim web_site household_demographics store call_center warehouse catalog_page item web_page catalog_returns catalog_sales customer date_dim income_band store_returns customer_demographics web_returns customer_address reason store_sales promotion web_sales)
 fi
 
-$BENCHMARK_PATH/apps/tpcds/teradata/schema/backup_target_tables.sh move
-rc=$?
-if [ $rc -ne 0 ]
-then
-    log_error "Unable to complete target table backup - cancelling import"
-    exit 1
-fi    
+#$BENCHMARK_PATH/apps/tpcds/teradata/schema/backup_target_tables.sh move
+#rc=$?
+#if [ $rc -ne 0 ]
+#then
+#    log_error "Unable to complete target table backup - cancelling import"
+#    exit 1
+#fi    
 
 for table in ${tables[@]}
 do
