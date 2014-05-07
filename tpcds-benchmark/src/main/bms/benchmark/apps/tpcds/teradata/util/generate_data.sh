@@ -11,6 +11,7 @@ do
     for batch in 1 2 3 4
     do
         mkdir -p /data/benchmark/tpcds/sf${scale}/00${batch}
-        time dsdgen -DIR /data/benchmark/tpcds/sf${scale}/00${batch} -scale ${scale} -RNGSEED 0 -UPDATE 1
+        time dsdgen -DIR /data/benchmark/tpcds/sf${scale}/00${batch} -scale ${scale} -UPDATE ${batch}
+        find /data/benchmark/tpcds/sf${scale}/00${batch} -type f | while read f; do echo mv $f ${f/_[0-9]/}; done | bash
     done
 done) &
