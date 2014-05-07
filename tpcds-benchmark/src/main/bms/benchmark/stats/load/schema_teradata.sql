@@ -15,21 +15,20 @@ CREATE SET TABLE test_cluster,
 )
 UNIQUE PRIMARY INDEX (cluster_id);
 
-DROP TABLE cluster_node;
+DROP TABLE perf_node_config;
 
-CREATE TABLE cluster_node,
+CREATE TABLE perf_node_config,
     NO FALLBACK ,
     NO BEFORE JOURNAL,
     NO AFTER JOURNAL,
     CHECKSUM = DEFAULT (
-    node_id INT GENERATED ALWAYS AS IDENTITY,
-    cluster_id INT,
-    node_name VARCHAR(200),
-    node_ip_address VARCHAR(50),
-    ram_mb INT,
-    config_desc VARCHAR(32768)
+    run_id BIGINT,
+	node_address VARCHAR(200),
+	data_source VARCHAR(200),
+	metric_key VARCHAR(2000),
+	metric_value VARCHAR(65535)
 )
-UNIQUE PRIMARY INDEX (node_id);
+UNIQUE PRIMARY INDEX (node_address,data_source);
 
 DROP VIEW perf_test_v;
 
