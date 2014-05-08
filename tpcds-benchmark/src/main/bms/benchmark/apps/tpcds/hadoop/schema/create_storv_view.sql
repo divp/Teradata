@@ -8,7 +8,7 @@ SELECT
     MAX(s_store_sk) OVER (ORDER BY 1) + 
         ROW_NUMBER() OVER (ORDER BY 1) s_store_sk
     ,stor_store_id s_store_id
-    ,CAST(to_date(FROM_UNIXTIME(UNIX_TIMESTAMP()-1*24*60*60)) as DATE) s_rec_start_date
+    ,CAST(to_date(FROM_UNIXTIME(UNIX_TIMESTAMP())) as DATE) s_rec_start_date
     ,CAST(NULL as DATE) s_rec_end_date
     ,d1.d_date_sk s_closed_date_sk
     ,s_s.stor_name s_store_name
