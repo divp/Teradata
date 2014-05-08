@@ -181,7 +181,6 @@ do
     get_fastload_script $table $input_file > $script
     [ $? -ne 0 ] && (tail $log; log_error "Error generating fastload script. See detail log: $log"; exit 1)
     
-    remove_fastload_table_lock $table
     log_info "Running fastload into '${table}' from ${input_file}. Script: ${script}" | tee -a $log
     fastload <$script >> $log
     [ $? -ne 0 ] && (tail $log; log_error "Error running fastload script ($script). See detail log: $log"; exit 1)
