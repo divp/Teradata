@@ -1,3 +1,8 @@
 derby.log
 TempStatsStore/
 nohup.out
+.classpath
+.settings/
+target/
+~*
+*.tmp
