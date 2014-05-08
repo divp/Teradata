@@ -98,7 +98,7 @@ EOF
         
         DROP TABLE FASTLOAD_ERR1;
         DROP TABLE FASTLOAD_ERR2;
-        
+
         BEGIN LOADING ${table_name} ERRORFILES FASTLOAD_ERR1, FASTLOAD_ERR2;
         
         INSERT INTO ${table_name} VALUES (
@@ -132,6 +132,41 @@ EOF
     rm $out_script
 }
 
+function recreate_table {
+    
+    table_name=$1
+    
+    log_info "Creating empty copy of table ${table_name}"
+    
+    bteq <<EOF
+        .LOGON ${BMS_TERADATA_DB_HOST}/${BMS_TERADATA_DB_UID},${BMS_TERADATA_DB_PWD};
+        DATABASE ${BMS_TERADATA_DBNAME_ETL1};
+        
+        SELECT 1 FROM dbc.TablesV WHERE databasename = DATABASE AND TableName = '${table_name}_bak';
+        .IF activitycount = 0 THEN .GOTO skipDrop
+        DROP TABLE ${table_name}_bak;
+        
+        .LABEL skipDrop
+        
+        CREATE TABLE ${table_name}_bak AS (
+        SELECT * FROM ${table_name}
+        ) WITH NO DATA;
+    
+        DROP TABLE ${table_name};
+    
+        RENAME TABLE ${table_name}_bak to ${table_name};
+        .LOGOFF
+        .QUIT
+EOF
+
+    rc=$?
+    if [ $rc -ne 0 ]
+    then
+        log_error "Unable to recreate table $table_name"
+        exit 1
+    fi
+}
+
 log=$(mktemp /tmp/$(basename $0).log.XXXXXXXXXX)
 log_info "Full detail log: $log"
 
@@ -144,24 +179,25 @@ else
     tables=(inventory ship_mode time_dim web_site household_demographics store call_center warehouse catalog_page item web_page catalog_returns catalog_sales customer date_dim income_band store_returns customer_demographics web_returns customer_address reason store_sales promotion web_sales)
 fi
 
-#$BENCHMARK_PATH/apps/tpcds/teradata/schema/backup_target_tables.sh move
-#rc=$?
-#if [ $rc -ne 0 ]
-#then
-#    log_error "Unable to complete target table backup - cancelling import"
-#    exit 1
-#fi    
-
 for table in ${tables[@]}
 do
     log_info "Processing table $table"
     input_file=$BMS_SOURCE_DATA_PATH/tpcds/$BMS_ETL_SCALE_TAG/000/${table}.dat
+    
+    recreate_table $table
+    
     script=$(mktemp /tmp/$(basename $0).fastload.script.XXXXXXXXXX)
     get_fastload_script $table $input_file > $script
     
     log_info "Running fastload script ($script)" | tee -a $log
     fastload <$script >> $log
-    [ $? -ne 0 ] && (tail $log; log_error "Error running fastload script ($script). See detail log: $log"; exit 1)
+    rc=$?
+    if [ $rc -ne 0 ]
+    then
+        log_error "Error running fastload script ($script). See detail log: $log (tail below)"
+        tail -20 $log
+        exit 1
+    fi
 done
 
 echo $BMS_TOKEN_EXIT_OK
