@@ -33,8 +33,20 @@ VERSION="1.0.271"
 log_info "Starting Benchmark Management System test driver (v. $VERSION)"
 
 function print_help {
-    echo "Usage: $0 [-s [full|nostats] -j JMETER_TEST_PLAN -p PROPERTIES_FILE"
-    echo "e.g. $0 -s full -j mytest.jmx -p myprops.properties"
+    echo
+    echo "NAME"
+    echo "        $(basename $0) - Run a BMS test suite."
+    echo "SYNOPSIS"
+    echo "        $(basename $0) [-e] [-g] -j JMETER_TEST_PLAN [-n] -p PROPERTIES_FILE [-s full|nostats]"
+    echo "OPTIONS"
+    echo "    -e  Exports only. Generate runtime exports ($BENCHMARK_PATH/exports.sh) and exit immediately. Used for debugging of"
+    echo "    -g  Enable debug output"
+    echo "        test sampler scripts without running the BMS framework"    
+    echo "    -j  JMeter test plan file, e.g. $BENCHMARK_PATH/benchmark.jmx"
+    echo "    -n  Express run: no configuration checks, no statistics"    
+    echo "    -p  BMS properties file, e.g. $BENCHMARK_PATH/config/test.etl.hadoop.properties"
+    echo "    -s  Statistics collection level. 'full' by default -- use 'nostats' to bypass system statistics collection"
+    echo
 }
 
 function check_cli_options {
@@ -43,13 +55,13 @@ function check_cli_options {
     if [ -z ${BMS_PROPS_FILE-} ]
     then
         log_error "Test properties file (e.g. ${BENCHMARK_PATH}/config/test.properties) was not specified. Must use -p option to provide path"
-        exit 1
+        return 1
     fi
     echo "BMS_PROPS_FILE=${BMS_PROPS_FILE}"
     if [ -z ${BMS_JMX_FILE-} ]
     then
         log_error "JMeter test plan file (e.g. ${BENCHMARK_PATH}/esg_benchmark.jmx) was not specified. Must use -j option to provide path"
-        exit 1
+        return 1
     fi
     echo "BMS_JMX_FILE=${BMS_JMX_FILE}"
     case $STATS in
@@ -62,7 +74,7 @@ function check_cli_options {
                 log_warning "Statistics collection is disabled"
             else
                 log_error "Prompt declined. Test aborted at statistics disabled warning"
-                exit 1
+                return 1
             fi
             ;;
         full)
@@ -70,13 +82,14 @@ function check_cli_options {
             ;;
         *)
             log_error "Invalid statistics collection option (-s $STATS)"
-            print_help >&2
+            return 1
         ;;
     esac
     if [ -n "$JMETER_OPTIONS" ]
     then
         log_warning "Found JMeter options '$JMETER_OPTIONS' on command line. They will be passed to JMeter and override values set for any of these variables"
     fi
+    return 0
 }
 
 function check_jmeter {
@@ -396,6 +409,7 @@ rc=$?
 if [ $rc -ne 0 ]
 then
     log_error "Invalid command line parameters. Stopping test."
+    print_help >&2
     exit 1
 fi
 
