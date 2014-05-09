@@ -1,5 +1,3 @@
-USE orc_tpcds1000g;
-
 DROP VIEW IF EXISTS storv;
 
 CREATE VIEW storv AS
@@ -35,7 +33,7 @@ SELECT
     ,s.s_country
     ,s.s_gmt_offset
     ,s_s.stor_tax_percentage s_tax_percentage
-FROM  raw_ingest_sf1000.s_store AS s_s
+FROM  ${SOURCE_DB}.s_store AS s_s
   LEFT OUTER JOIN store AS s
     ON (s_s.stor_store_id = s.s_store_id 
     AND (s.s_rec_end_date IS NULL ) )

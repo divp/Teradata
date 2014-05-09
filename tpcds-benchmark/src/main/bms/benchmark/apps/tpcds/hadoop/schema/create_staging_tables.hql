@@ -1,10 +1,10 @@
 
-CREATE DATABASE IF NOT EXISTS raw_ingest_sf1000;
-USE raw_ingest_sf1000;
+CREATE DATABASE IF NOT EXISTS ${SOURCE_DB};
+USE ${SOURCE_DB};
 
 DROP TABLE IF EXISTS s_purchase_lineitem;
 
-CREATE TABLE s_purchase_lineitem
+CREATE EXTERNAL TABLE s_purchase_lineitem
 	(
         plin_purchase_id INT,
         plin_line_number INT,
@@ -17,10 +17,10 @@ CREATE TABLE s_purchase_lineitem
     )
 row format delimited fields terminated by '|' lines terminated by '\n'
 stored as textfile
-location '/data/benchmark/tpcds/sf1000/001/s_purchase_lineitem';
+location '${TARGET}/s_purchase_lineitem';
 
 DROP TABLE IF EXISTS s_purchase;
-CREATE TABLE s_purchase
+CREATE EXTERNAL TABLE s_purchase
 	(
     purc_purchase_id    INT,
     purc_store_id       STRING,
@@ -37,7 +37,7 @@ location '/data/benchmark/tpcds/sf1000/001/s_purchase';
 
 
 DROP TABLE IF EXISTS s_store;
-CREATE TABLE s_store
+CREATE EXTERNAL TABLE s_store
 	(
     stor_store_id STRING,
     stor_closed_date  STRING,
