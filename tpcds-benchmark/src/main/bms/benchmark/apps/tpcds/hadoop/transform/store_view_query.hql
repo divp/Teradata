@@ -3,6 +3,11 @@
 -- create a query/view to get most recent row from 'store'
 --
 
+DROP TABLE IF EXISTS store_next;
+CREATE TABLE store_next LIKE store;
+
+-- EXPLAIN
+INSERT INTO TABLE store_next
 SELECT  
 s_store_sk,
 s_store_id,
@@ -46,3 +51,10 @@ FROM
 ) x
 where x.r_num = 1;
 ;
+
+
+-- swap tables
+ALTER TABLE store RENAME TO store_prev;
+ALTER TABLE store_next RENAME TO store;
+
+SELECT COUNT(*) FROM store;
