@@ -4,11 +4,13 @@
 # /data/benchmark/tpcds/sf1000/001 -> /data/benchmark/tpcds/sf1000/001/s_item_1.dat 
 #
 
-. ../etl_env.sh
+. ../etl_env.sh $1 $2
 
 #config
 MKDIR_PARALLELISM=24
 COPY_PARALLELISM=16
+SED_PATTERN='s/.dat//g;s/_[1-9]//g'
+EXTENSION=.dat
 
 echo "starting load for Scale Factor=$SCALE_FACTOR, Batch=$BATCH"
 
@@ -16,7 +18,7 @@ echo "starting load for Scale Factor=$SCALE_FACTOR, Batch=$BATCH"
 echo "Making HDFS directories..."
 cd $BASE &&
 ls -1 *.dat |
-  sed -e 's/_[0-9].dat//g'| 
+  sed -e $SED_PATTERN | 
   xargs --verbose -r --max-args=16 --max-procs=$MKDIR_PARALLELISM -I {} hadoop fs -mkdir -p $TARGET/{} 
 
 # perform the copy
@@ -24,7 +26,7 @@ ls -1 *.dat |
 echo "Copying..."
 cd $BASE &&
 ls -1 *.dat |
-  sed -e 's/_[0-9].dat//g'| 
+  sed -e  $SED_PATTERN | 
   xargs --verbose -r --max-args=1 --max-procs=$COPY_PARALLELISM -I {} hadoop fs -copyFromLocal -f $BASE/{}$EXTENSION $TARGET/{}/ 
 
 echo "done"
