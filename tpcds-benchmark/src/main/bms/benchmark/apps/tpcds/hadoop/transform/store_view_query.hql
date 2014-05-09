@@ -54,7 +54,7 @@ where x.r_num = 1;
 
 
 -- swap tables
-ALTER TABLE store RENAME TO store_prev;
-ALTER TABLE store_next RENAME TO store;
+-- ALTER TABLE store RENAME TO store_prev;
+-- ALTER TABLE store_next RENAME TO store;
 
-SELECT COUNT(*) FROM store;
+SELECT COUNT(*) FROM store_next;
